@@ -32,7 +32,7 @@ const PlayMeditationScreen = () => {
   const getAudioById = (id: string | string[] | number): any => {
     const numericId = typeof id === 'string' ? parseInt(id, 10) : 
                       Array.isArray(id) ? parseInt(id[0], 10) : id;
-   np 
+   
     // Map of audio files - update these paths to match your actual files
     const audioFiles: Record<number, any> = {
       1: require("../../assets/audios/audio 1.mp3"),
