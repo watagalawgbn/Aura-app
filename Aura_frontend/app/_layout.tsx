@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity  } from "react-native";
 import React from "react";
 import { Link, router, Slot } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { navigate } from "expo-router/build/global-state/routing";
+// import { navigate } from "expo-router/build/global-state/routing";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 

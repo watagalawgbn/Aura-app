@@ -1,13 +1,21 @@
+// app/index.tsx
 import { useEffect } from "react";
 import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Index = () => {
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      router.push("/screens/home");
-    }, 0); 
+    const checkAuth = async () => {
+      const token = await AsyncStorage.getItem("token");
 
-    return () => clearTimeout(timeout); 
+      if (token) {
+        router.replace("/screens/home");
+      } else {
+        router.replace("/(auth)/SignIn");
+      }
+    };
+
+    checkAuth();
   }, []);
 
   return null;
