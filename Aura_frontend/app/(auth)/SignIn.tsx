@@ -4,30 +4,54 @@ import { useRouter } from "expo-router";
 import axios from "axios";
 import { SignInRequest, AuthResponse } from "../../types/auth";
 import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "@/context/AuthContext";
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { login } = useAuth();
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
 
   const handleSignUp = async () => {
     const payload: SignInRequest = { email, password };
+
+    if (!email || !password) {
+      alert("Please fill out all fields.");
+      return;
+    }
+
+    if (!email.includes("@")) {
+      alert("Please enter a valid email address.");
+      return;
+    }    
+    
     try {
       const res = await axios.post<AuthResponse>(
         "http://192.168.94.44:3000/api/auth/signin",
         payload
       );
+
+      const token = res.data.token;
+      await login(token);
+      
       alert("Signed in successfully");
       router.replace("/(tabs)/home");
-    } catch (error) {
-      alert("Sign in failed. Try again.");
-    }
+    } catch (error: any) {
+      const message = error?.response?.data?.message || "Sign in failed. Try again.";
+      alert(message);
+    }    
   };
 
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/images/logo.png")} // Your leaf logo
+        source={require("../../assets/images/logo.png")} 
         style={styles.logo}
       />
       <Text style={styles.title}>Log in to your account</Text>
@@ -46,11 +70,18 @@ const SignIn: React.FC = () => {
       <Ionicons name="lock-closed" size={20} color="#888" style={styles.icon} />
       <TextInput
           placeholder="Your password"
-          secureTextEntry
+          secureTextEntry={!isPasswordVisible}
           value={password}
           onChangeText={setPassword}
           style={styles.input}
         />
+        <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIcon}>
+        <Ionicons
+          name={isPasswordVisible ? "eye-off" : "eye"} // Change icon based on state
+          size={20}
+          color="#888"
+        />
+      </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.googleButton} onPress={() => { /* Handle Google login */ }}>
@@ -110,6 +141,11 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginBottom: 10,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 10,
+    padding: 5,
   },
   googleText: { color: "#333" },
   mainButton: {

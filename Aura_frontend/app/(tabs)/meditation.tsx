@@ -35,7 +35,7 @@ const MeditationScreen = () => {
     },
     {
       id: 5,
-      title: "Sleep Aid",
+      title: "Dreamscape",
       image: require("../../assets/images/audio 5.jpg"),
     },
     {
@@ -59,11 +59,14 @@ const MeditationScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton}>
-          <Feather name="arrow-left" size={24} color="#52AE77" />
-          <Text style={styles.backText}>Back</Text>
+          <View style={styles.circle}>
+            <Feather name="arrow-left" size={20} color="white" />
+          </View>
         </TouchableOpacity>
 
+        <View style={styles.titleWrapper}>
         <Text style={styles.headerTitle}>Daily Meditation</Text>
+        </View>
 
         <TouchableOpacity>
           <Feather name="more-vertical" size={24} color="#52AE77" />
@@ -82,9 +85,9 @@ const MeditationScreen = () => {
                     onPress={() =>
                       router.push({
                         pathname: "/(tabs)/playMeditation",
-                        params: { 
+                        params: {
                           id: audio.id,
-                          title: audio.title 
+                          title: audio.title,
                         },
                       })
                     }
@@ -97,12 +100,12 @@ const MeditationScreen = () => {
                   {/* Second audio in the row (if it exists) */}
                   {audios[index + 1] && (
                     <TouchableOpacity
-                      onPress={() => 
+                      onPress={() =>
                         router.push({
                           pathname: "/(tabs)/playMeditation",
-                          params: { 
+                          params: {
                             id: audios[index + 1].id,
-                            title: audios[index + 1].title 
+                            title: audios[index + 1].title,
                           },
                         })
                       }
@@ -140,6 +143,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 15,
   },
+  circle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#52AE77",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   backButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -147,6 +158,9 @@ const styles = StyleSheet.create({
   backText: {
     marginLeft: 5,
     fontSize: 16,
+  },
+  titleWrapper:{
+    marginTop: 65,
   },
   headerTitle: {
     fontSize: 22,

@@ -14,9 +14,12 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import MoodLog from "./mood";
+import { useAuth } from "../../context/AuthContext";
 
 const HomeScreen = () => {
   const [isMoodLogVisible, setMoodLogVisible] = useState(false);
+  const { user } = useAuth();
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -36,7 +39,7 @@ const HomeScreen = () => {
               source={require("../../assets/images/logo.png")}
               style={styles.logo}
             />
-            <Text style={styles.greeting}>Hello Sara,</Text>
+            <Text style={styles.greeting}>Hello {user?.name || "there"} !</Text>
           </View>
           <TouchableOpacity style={styles.notificationIcon}>
             <Feather name="bell" size={24} color="#52AE77" />

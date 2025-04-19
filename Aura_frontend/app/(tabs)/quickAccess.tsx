@@ -3,6 +3,7 @@ import {
   View,
   Text,
   Image,
+  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
@@ -20,11 +21,14 @@ const QuickAccessScreen = () => {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton}>
-          <Feather name="arrow-left" size={24} color="#52AE77" />
-          <Text style={styles.backText}>Back</Text>
+          <View style={styles.circle}>
+            <Feather name="arrow-left" size={20} color="white" />
+          </View>
         </TouchableOpacity>
 
-        <Text style={styles.headerTitle}>Self Care</Text>
+        <View style={styles.titleWrapper}>
+          <Text style={styles.headerTitle}>Self Care</Text>
+        </View>
 
         <TouchableOpacity>
           <Feather name="more-vertical" size={24} color="#52AE77" />
@@ -34,8 +38,14 @@ const QuickAccessScreen = () => {
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Feather name="menu" size={20} color="#52AE77" />
-        <Text style={styles.searchText}>Search</Text>
-        <Feather name="search" size={20} color="#52AE77" />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search"
+          placeholderTextColor="#52AE77"
+        />
+        <TouchableOpacity>
+          <Feather name="search" size={20} color="#52AE77" />
+        </TouchableOpacity>
       </View>
 
       {/* Content Grid */}
@@ -43,11 +53,14 @@ const QuickAccessScreen = () => {
         {/* Beat Stress Card - Full Width */}
         <View style={styles.fullCard}>
           <Image
-            source={require("../../assets/images/stress.jpg")} 
+            source={require("../../assets/images/stress.jpg")}
             style={styles.fullCardImage}
           />
           <View style={styles.playButtonContainer}>
-            <TouchableOpacity onPress={() => router.navigate("/(tabs)/meditation")} style={styles.playButton}>
+            <TouchableOpacity
+              onPress={() => router.navigate("/(tabs)/meditation")}
+              style={styles.playButton}
+            >
               <Feather name="play" size={20} color="#52AE77" />
             </TouchableOpacity>
           </View>
@@ -58,10 +71,10 @@ const QuickAccessScreen = () => {
         <View style={styles.rowContainer}>
           {/* Ease Anxiety Card */}
           <View style={styles.halfCard}>
-          <Image
-            source={require("../../assets/images/anxiety.jpg")} 
-            style={styles.fullCardImage}
-          />
+            <Image
+              source={require("../../assets/images/anxiety.jpg")}
+              style={styles.fullCardImage}
+            />
             <View style={styles.playButtonContainer}>
               <TouchableOpacity style={styles.playButton}>
                 <Feather name="play" size={16} color="#52AE77" />
@@ -72,10 +85,10 @@ const QuickAccessScreen = () => {
 
           {/* Calm Your Mind Card */}
           <View style={styles.halfCard}>
-          <Image
-            source={require("../../assets/images/calm.jpeg")} 
-            style={styles.fullCardImage}
-          />
+            <Image
+              source={require("../../assets/images/calm.jpeg")}
+              style={styles.fullCardImage}
+            />
             <View style={styles.playButtonContainer}>
               <TouchableOpacity style={styles.playButton}>
                 <Feather name="play" size={16} color="#52AE77" />
@@ -89,10 +102,10 @@ const QuickAccessScreen = () => {
         <View style={styles.rowContainer}>
           {/* Boost Your Earnings Card */}
           <View style={styles.halfCard}>
-          <Image
-            source={require("../../assets/images/earning.jpg")} 
-            style={styles.fullCardImage}
-          />
+            <Image
+              source={require("../../assets/images/earning.jpg")}
+              style={styles.fullCardImage}
+            />
             <View style={styles.playButtonContainer}>
               <TouchableOpacity style={styles.playButton}>
                 <Feather name="play" size={16} color="#52AE77" />
@@ -103,10 +116,10 @@ const QuickAccessScreen = () => {
 
           {/* Study Smart Card */}
           <View style={styles.halfCard}>
-          <Image
-            source={require("../../assets/images/study.jpg")} 
-            style={styles.fullCardImage}
-          />
+            <Image
+              source={require("../../assets/images/study.jpg")}
+              style={styles.fullCardImage}
+            />
             <View style={styles.playButtonContainer}>
               <TouchableOpacity style={styles.playButton}>
                 <Feather name="play" size={16} color="#52AE77" />
@@ -125,12 +138,40 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
   },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    marginBottom: 20,
+    borderColor:'#52AE77',
+    borderWidth: 1,
+    alignSelf: "stretch",
+
+    marginHorizontal:20
+  },
+  searchInput: {
+    flex: 1,
+    marginLeft: 10,
+    fontSize: 16,
+    color: "#333",
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 15,
     paddingVertical: 15,
+  },
+  circle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#52AE77",
+    justifyContent: "center",
+    alignItems: "center",
   },
   backButton: {
     flexDirection: "row",
@@ -144,14 +185,8 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
   },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 15,
-    marginBottom: 15,
-    backgroundColor: "#f2f0f7",
-    borderRadius: 10,
-    padding: 10,
+  titleWrapper: {
+    marginTop: 65,
   },
   searchText: {
     flex: 1,

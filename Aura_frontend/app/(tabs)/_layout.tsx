@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "space-between",
       paddingHorizontal: 16,
-      borderTopEndRadius: 25,
-      borderTopStartRadius: 25,
+      borderTopEndRadius: 10,
+      borderTopStartRadius: 10,
     },
     borderWrapper: {
       position: "absolute",
@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
       height: 60,
       width: "100%",
       backgroundColor: "#52AE77",
-      borderTopEndRadius: 25,
-      borderTopStartRadius: 25,
+      borderTopEndRadius: 10,
+      borderTopStartRadius: 10,
       padding: 1,
     },
     container2: {

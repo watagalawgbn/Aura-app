@@ -20,7 +20,7 @@ const PlayMeditationScreen = () => {
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState("0:00");
   const [totalTime, setTotalTime] = useState("10:00");
-  
+
   // Create a ref for the sound object with proper typing
   const soundRef = useRef<Audio.Sound | null>(null);
   // Track if sound is loaded
@@ -30,9 +30,13 @@ const PlayMeditationScreen = () => {
 
   // Get audio file based on id
   const getAudioById = (id: string | string[] | number): any => {
-    const numericId = typeof id === 'string' ? parseInt(id, 10) : 
-                      Array.isArray(id) ? parseInt(id[0], 10) : id;
-   
+    const numericId =
+      typeof id === "string"
+        ? parseInt(id, 10)
+        : Array.isArray(id)
+        ? parseInt(id[0], 10)
+        : id;
+
     // Map of audio files - update these paths to match your actual files
     const audioFiles: Record<number, any> = {
       1: require("../../assets/audios/audio 1.mp3"),
@@ -48,10 +52,16 @@ const PlayMeditationScreen = () => {
   };
 
   // Look up the image by id
-  const getImageById = (id: string | string[] | number): ImageSourcePropType => {
-    const numericId = typeof id === 'string' ? parseInt(id, 10) : 
-      Array.isArray(id) ? parseInt(id[0], 10) : id;
-    
+  const getImageById = (
+    id: string | string[] | number
+  ): ImageSourcePropType => {
+    const numericId =
+      typeof id === "string"
+        ? parseInt(id, 10)
+        : Array.isArray(id)
+        ? parseInt(id[0], 10)
+        : id;
+
     // Map of audio images - should match your audio array from MeditationScreen
     const images: Record<number, ImageSourcePropType> = {
       1: require("../../assets/images/audio 1.jpg"),
@@ -90,10 +100,10 @@ const PlayMeditationScreen = () => {
           { shouldPlay: false },
           onPlaybackStatusUpdate
         );
-        
+
         soundRef.current = sound;
         setIsLoaded(true);
-        
+
         // Set total duration if available if it's a loaded status
         if (status.isLoaded && status.durationMillis !== undefined) {
           setTotalDuration(status.durationMillis);
@@ -122,20 +132,20 @@ const PlayMeditationScreen = () => {
   const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
     // Check if status is loaded first
     if (!status.isLoaded) return;
-    
+
     // Update progress
     if (status.durationMillis !== undefined && status.durationMillis > 0) {
       setProgress(status.positionMillis / status.durationMillis);
     }
-    
+
     // Update current time
     const minutes = Math.floor(status.positionMillis / 60000);
     const seconds = Math.floor((status.positionMillis % 60000) / 1000);
     setCurrentTime(`${minutes}:${seconds.toString().padStart(2, "0")}`);
-    
+
     // Update playing state
     setIsPlaying(status.isPlaying);
-    
+
     // If reached the end, reset
     if (status.didJustFinish) {
       setIsPlaying(false);
@@ -152,7 +162,7 @@ const PlayMeditationScreen = () => {
   // Handle play/pause
   const togglePlayPause = async () => {
     if (!isLoaded || !soundRef.current) return;
-    
+
     if (isPlaying) {
       await soundRef.current.pauseAsync();
     } else {
@@ -163,7 +173,7 @@ const PlayMeditationScreen = () => {
   // Handle rewind (30 seconds)
   const handleRewind = async () => {
     if (!isLoaded || !soundRef.current) return;
-    
+
     const status = await soundRef.current.getStatusAsync();
     if (status.isLoaded) {
       const newPosition = Math.max(0, status.positionMillis - 30000);
@@ -174,11 +184,13 @@ const PlayMeditationScreen = () => {
   // Handle forward (30 seconds)
   const handleForward = async () => {
     if (!isLoaded || !soundRef.current) return;
-    
+
     const status = await soundRef.current.getStatusAsync();
     if (status.isLoaded) {
       const newPosition = Math.min(
-        status.durationMillis !== undefined ? status.durationMillis : totalDuration, 
+        status.durationMillis !== undefined
+          ? status.durationMillis
+          : totalDuration,
         status.positionMillis + 30000
       );
       await soundRef.current.setPositionAsync(newPosition);
@@ -203,25 +215,34 @@ const PlayMeditationScreen = () => {
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.header}>
             <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-              <Feather name="arrow-left" size={24} color="#52AE77" />
-              <Text style={styles.backText}>Back</Text>
+              <View style={styles.circle}>
+                <Feather name="arrow-left" size={20} color="#52AE77" />
+              </View>
+              {/* <Text style={styles.backText}>Back</Text> */}
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>{title}</Text>
-            <TouchableOpacity>
+            {/* <Text style={styles.headerTitle}>{title}</Text> */}
+            {/* <TouchableOpacity>
               <Feather name="more-vertical" size={24} color="#52AE77" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
 
           <View style={styles.content}>
             <View style={styles.meditationInfo}>
               <Text style={styles.meditationTitle}>{title}</Text>
-              <Text style={styles.meditationSubtitle}>Find your inner peace</Text>
+              <Text style={styles.meditationSubtitle}>
+                Find your inner peace
+              </Text>
             </View>
 
             <View style={styles.playerContainer}>
               <View style={styles.progressContainer}>
                 <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+                  <View
+                    style={[
+                      styles.progressFill,
+                      { width: `${progress * 100}%` },
+                    ]}
+                  />
                 </View>
                 <View style={styles.timeLabels}>
                   <Text style={styles.timeText}>{currentTime}</Text>
@@ -230,42 +251,34 @@ const PlayMeditationScreen = () => {
               </View>
 
               <View style={styles.controls}>
-                <TouchableOpacity style={styles.controlButton} onPress={handleRewind}>
+                <TouchableOpacity
+                  style={styles.controlButton}
+                  onPress={handleRewind}
+                >
                   <Feather name="rewind" size={24} color="#fff" />
                 </TouchableOpacity>
-                
-                <TouchableOpacity 
-                  style={[styles.playButton, !isLoaded && styles.playButtonDisabled]} 
+
+                <TouchableOpacity
+                  style={[
+                    styles.playButton,
+                    !isLoaded && styles.playButtonDisabled,
+                  ]}
                   onPress={togglePlayPause}
                   disabled={!isLoaded}
                 >
-                  <Feather name={isPlaying ? "pause" : "play"} size={36} color="#fff" />
+                  <Feather
+                    name={isPlaying ? "pause" : "play"}
+                    size={36}
+                    color="#fff"
+                  />
                 </TouchableOpacity>
-                
-                <TouchableOpacity style={styles.controlButton} onPress={handleForward}>
+
+                <TouchableOpacity
+                  style={styles.controlButton}
+                  onPress={handleForward}
+                >
                   <Feather name="fast-forward" size={24} color="#fff" />
                 </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.sectionTitle}>About this meditation</Text>
-            <Text style={styles.sectionText}>
-              This guided meditation helps you achieve a state of deep calm and relaxation. 
-              Perfect for reducing stress and anxiety, this session uses breathing techniques
-              and visualization to help quiet the mind and relax the body.
-            </Text>
-            
-            <View style={styles.tags}>
-              <View style={styles.tag}>
-                <Text style={styles.tagText}>Stress Relief</Text>
-              </View>
-              <View style={styles.tag}>
-                <Text style={styles.tagText}>{totalTime}</Text>
-              </View>
-              <View style={styles.tag}>
-                <Text style={styles.tagText}>Beginner</Text>
               </View>
             </View>
           </View>
@@ -299,6 +312,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  circle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white", 
+    justifyContent: "center",
+    alignItems: "center",
+  },  
   backText: {
     marginLeft: 5,
     fontSize: 16,
@@ -315,6 +336,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 40,
     paddingHorizontal: 20,
+    marginTop: 300,
   },
   meditationInfo: {
     alignItems: "center",

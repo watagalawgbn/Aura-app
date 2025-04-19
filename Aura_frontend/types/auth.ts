@@ -1,15 +1,14 @@
-// types/auth.ts
-export interface AuthResponse {
-  token: string;
-}
+export type SignInRequest = {
+  email: string;
+  password: string;
+};
 
-export interface SignUpRequest {
+export type SignUpRequest = {
   name: string;
   email: string;
   password: string;
-}
+};
 
-export interface SignInRequest {
-  email: string;
-  password: string;
-}
+export type AuthResponse = {
+  token: string;
+};
