@@ -1,3 +1,4 @@
+//controller/authController.js
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");

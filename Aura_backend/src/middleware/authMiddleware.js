@@ -1,3 +1,4 @@
+//middleware/authMiddleware.js
 const jwt = require("jsonwebtoken");
 
 const authenticateToken = (req, res, next) => {
@@ -11,6 +12,7 @@ const authenticateToken = (req, res, next) => {
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) {
+      console.log("JWT_SECRET:", process.env.JWT_SECRET);
       console.log("Invalid token:", err.message);
       return res.status(403).json({ msg: "Invalid token" });
     }

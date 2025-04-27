@@ -1,3 +1,4 @@
+//app/(auth)/SignIn.tsx
 import React, { useState } from "react";
 import {
   View,
@@ -12,6 +13,7 @@ import axios from "axios";
 import { SignUpRequest, AuthResponse } from "../../types/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
+import { BASE_URL } from "@/constants/Api";
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState("");
@@ -41,7 +43,7 @@ const SignUp: React.FC = () => {
 
     try {
       const res = await axios.post<AuthResponse>(
-        "http://192.168.94.44:3000/api/auth/signup",
+        `${BASE_URL}/api/auth/signup`,
         payload
       );
       await login(res.data.token);

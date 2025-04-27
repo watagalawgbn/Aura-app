@@ -9,7 +9,6 @@ import {
   SafeAreaView,
   StatusBar,
   ScrollView,
-  Button,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -75,7 +74,7 @@ const HomeScreen = () => {
 
           <View style={styles.insightsContainer}>
             {/* Mental Health Assessment Card */}
-            <TouchableOpacity style={styles.insightCard}>
+            <TouchableOpacity style={styles.insightCard} onPress={() => router.navigate("/(tabs)/assessment")}>
               <Text style={styles.insightCardTitle}>
                 Mental Health Assessment
               </Text>
@@ -221,9 +220,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 5,
     marginBottom: 20,
-    
   },
   searchInput: {
     flex: 1,

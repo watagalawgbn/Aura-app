@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-// import { useRouter } from "expo-router"; 
+import { BASE_URL } from "@/constants/Api";
 
 type User = {
   name: string;
@@ -21,17 +21,16 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  // const router = useRouter();
   
   const login = async (token: string) => {
     try {
       await SecureStore.setItemAsync("authToken", token); // Save token securely
-      const res = await axios.get("http://192.168.94.44:3000/api/auth/me", {
+      const res = await axios.get(`${BASE_URL}/api/auth/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+      console.log("Auth Token:", token);      
 
       setUser(res.data); // Set the authenticated user
     } catch (error) {

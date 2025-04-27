@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import Modal from 'react-native-modal';
+import axios from 'axios';
+import * as SecureStore from 'expo-secure-store';
 
 type MoodLogProps = {
   isVisible: boolean;
@@ -18,7 +20,7 @@ const moods = [
 const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
 
-  const handleNoteMood = () => {
+  const handleNoteMood = async () => {
     if (selectedMood) {
       Alert.alert(
         "Mood Noted",
@@ -27,6 +29,24 @@ const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
       );
     } else {
       Alert.alert("No Mood Selected", "Please select a mood before proceeding.");
+    }
+
+    try{
+      const token = await SecureStore.getItemAsync("authToken");
+      if(!token) throw new Error("No token found");
+
+      await axios.post(
+        "http://192.168.94.44:3000/api/moods",
+        { mood: selectedMood },
+        { headers: {Authorization: `Bearer ${token}`}}
+      );
+
+      Alert.alert("Mood Noted", `You selected "${selectedMood}" as your mood.`,[
+        {text: "OK", onPress:onClose},
+      ]);
+    }catch(err){
+      console.error("Error saving mood: ", err);
+      Alert.alert("Error", "Failed to log mood. Try again");
     }
   };
 
@@ -107,7 +127,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   selectedMood: {
-    backgroundColor: '#A7E9AF', // Highlight color for selected mood
+    backgroundColor: '#A7E9AF', 
   },
   moodImage: {
     width: 40,
@@ -115,7 +135,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   moodLabel: {
-    fontSize: 10,
+    fontSize: 9,
   },
   prompt: {
     fontSize: 14,

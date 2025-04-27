@@ -144,12 +144,11 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 5,
     marginBottom: 20,
     borderColor:'#52AE77',
     borderWidth: 1,
-    alignSelf: "stretch",
-
+    // alignSelf: "stretch",
     marginHorizontal:20
   },
   searchInput: {

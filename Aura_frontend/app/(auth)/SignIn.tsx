@@ -1,3 +1,4 @@
+//app/(auth)/SignIn.tsx
 import React, { useState } from "react";
 import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
@@ -5,6 +6,7 @@ import axios from "axios";
 import { SignInRequest, AuthResponse } from "../../types/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
+import { BASE_URL } from "@/constants/Api";
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -33,7 +35,7 @@ const SignIn: React.FC = () => {
     
     try {
       const res = await axios.post<AuthResponse>(
-        "http://192.168.94.44:3000/api/auth/signin",
+        `${BASE_URL}/api/auth/signin`,
         payload
       );
 
