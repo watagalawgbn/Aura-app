@@ -3,7 +3,10 @@ const express = require("express");
 const connectDB = require("./src/config/db");
 const cors = require("cors");
 
+const auth = require("./src/routes/auth");
 const assessmentRoutes = require('./src/routes/assessmentRoutes');
+const moods = require("./src/routes/mood");
+
 
 const app = express();
 connectDB();
@@ -13,10 +16,10 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 // Route for authentication
-app.use("/api/auth", require("./src/routes/auth"));
+app.use("/api/auth", auth);
 
 //route for mood
-app.use("/api/moods", require("./src/routes/mood"));
+app.use("/api/moods", moods);
 
 //route for assessments
 app.use("/api/assessment/questions", assessmentRoutes);

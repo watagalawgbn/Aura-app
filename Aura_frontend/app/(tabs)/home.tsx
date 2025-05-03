@@ -47,7 +47,7 @@ const HomeScreen = () => {
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Feather name="menu" size={20} color="#52AE77" />
+          
           <TextInput
             style={styles.searchInput}
             placeholder="Search"

@@ -37,7 +37,6 @@ const QuickAccessScreen = () => {
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <Feather name="menu" size={20} color="#52AE77" />
         <TextInput
           style={styles.searchInput}
           placeholder="Search"
@@ -146,10 +145,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 5,
     marginBottom: 20,
-    borderColor:'#52AE77',
+    borderColor: "#52AE77",
     borderWidth: 1,
     // alignSelf: "stretch",
-    marginHorizontal:20
+    marginHorizontal: 20,
   },
   searchInput: {
     flex: 1,

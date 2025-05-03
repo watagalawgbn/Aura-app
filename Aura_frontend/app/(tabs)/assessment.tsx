@@ -11,6 +11,8 @@ import { fetchAssessmentQuestions } from "../services/assessmentService";
 import { ProgressBar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { BASE_URL } from "@/constants/Api";
+import axios from "axios";
 
 type Option = {
   label: string;
@@ -51,12 +53,24 @@ export default function Assessment() {
     loadQuestions();
   }, []);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       fadeIn();
     } else {
-      alert("Assessment completed!");
+      try{
+        const res = await axios.post(`${BASE_URL}/api/assessment/save`, {
+          answers: selectedOption,
+        });
+        router.push({
+          pathname: "/(tabs)/result",
+          params:{resultId: res.data._id},
+        });
+      }
+      catch(error){
+        console.error("Failed to save answers:", error);
+        alert("Failed to save answers. Please try again."); 
+      }
     }
   };
 
@@ -221,7 +235,6 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: '#EBFCDE', 
-    borderColor: '#5FB21F',
     borderWidth: 1,
   },  
   nextButton: {
