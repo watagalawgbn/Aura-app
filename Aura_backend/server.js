@@ -22,7 +22,7 @@ app.use("/api/auth", auth);
 app.use("/api/moods", moods);
 
 //route for assessments
-app.use("/api/assessment/questions", assessmentRoutes);
+app.use("/api/assessment", assessmentRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => console.log(`Server running on port ${PORT}`));

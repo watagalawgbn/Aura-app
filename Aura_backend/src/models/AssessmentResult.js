@@ -33,7 +33,7 @@ const AssessmentResultsSchema = new mongoose.Schema({
         }
     },
     rawResponses: [{
-        questionIds: String,
+        questionId: String,
         questionType: String,
         answer: Number
     }]

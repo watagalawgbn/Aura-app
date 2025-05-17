@@ -1,6 +1,13 @@
 //app/(auth)/SignIn.tsx
 import React, { useState } from "react";
-import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  TextInput,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import { SignInRequest, AuthResponse } from "../../types/auth";
@@ -31,8 +38,8 @@ const SignIn: React.FC = () => {
     if (!email.includes("@")) {
       alert("Please enter a valid email address.");
       return;
-    }    
-    
+    }
+
     try {
       const res = await axios.post<AuthResponse>(
         `${BASE_URL}/api/auth/signin`,
@@ -41,26 +48,33 @@ const SignIn: React.FC = () => {
 
       const token = res.data.token;
       await login(token);
-      
+      console.log("Tokennn:", token);
+
       alert("Signed in successfully");
       router.replace("/(tabs)/home");
     } catch (error: any) {
-      const message = error?.response?.data?.message || "Sign in failed. Try again.";
+      const message =
+        error?.response?.data?.message || "Sign in failed. Try again.";
       alert(message);
-    }    
+    }
   };
 
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/images/logo.png")} 
+        source={require("../../assets/images/logo.png")}
         style={styles.logo}
       />
       <Text style={styles.title}>Log in to your account</Text>
 
       <View style={styles.inputContainer}>
-      <Ionicons name="mail-outline" size={18} color="#888" style={styles.icon} />
-      <TextInput
+        <Ionicons
+          name="mail-outline"
+          size={18}
+          color="#888"
+          style={styles.icon}
+        />
+        <TextInput
           placeholder="Your Email Address"
           value={email}
           onChangeText={setEmail}
@@ -69,35 +83,47 @@ const SignIn: React.FC = () => {
       </View>
 
       <View style={styles.inputContainer}>
-      <Ionicons name="lock-closed" size={20} color="#888" style={styles.icon} />
-      <TextInput
+        <Ionicons
+          name="lock-closed"
+          size={20}
+          color="#888"
+          style={styles.icon}
+        />
+        <TextInput
           placeholder="Your password"
           secureTextEntry={!isPasswordVisible}
           value={password}
           onChangeText={setPassword}
           style={styles.input}
         />
-        <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIcon}>
-        <Ionicons
-          name={isPasswordVisible ? "eye-off" : "eye"} // Change icon based on state
-          size={20}
-          color="#888"
-        />
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={togglePasswordVisibility}
+          style={styles.eyeIcon}
+        >
+          <Ionicons
+            name={isPasswordVisible ? "eye-off" : "eye"} 
+            size={20}
+            color="#888"
+          />
+        </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.googleButton} onPress={() => { /* Handle Google login */ }}>
-  <View style={styles.googleContent}>
-    <Image
-      source={{
-        uri: 'https://img.icons8.com/?size=100&id=17949&format=png&color=000000',
-      }}
-      style={styles.googleIcon}
-    />
-    <Text style={styles.googleText}>Sign in with Google</Text>
-  </View>
-</TouchableOpacity>
-
+      <TouchableOpacity
+        style={styles.googleButton}
+        onPress={() => {
+          /* Handle Google login */
+        }}
+      >
+        <View style={styles.googleContent}>
+          <Image
+            source={{
+              uri: "https://img.icons8.com/?size=100&id=17949&format=png&color=000000",
+            }}
+            style={styles.googleIcon}
+          />
+          <Text style={styles.googleText}>Sign in with Google</Text>
+        </View>
+      </TouchableOpacity>
 
       <TouchableOpacity onPress={handleSignUp} style={styles.mainButton}>
         <Text style={styles.mainButtonText}>Sign In</Text>
@@ -145,7 +171,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   eyeIcon: {
-    position: 'absolute',
+    position: "absolute",
     right: 10,
     padding: 5,
   },
@@ -167,11 +193,10 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     marginRight: 10,
-  },  
+  },
   mainButtonText: { color: "white", fontWeight: "bold", fontSize: 16 },
   footer: { marginTop: 10 },
   link: { color: "#4CAF50", fontWeight: "500" },
 });
-
 
 export default SignIn;

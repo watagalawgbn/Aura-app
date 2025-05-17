@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
-import Modal from 'react-native-modal';
-import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Alert,
+} from "react-native";
+import Modal from "react-native-modal";
+import axios from "axios";
+import { BASE_URL } from "@/constants/Api";
+import * as SecureStore from "expo-secure-store";
 
 type MoodLogProps = {
   isVisible: boolean;
@@ -10,11 +18,11 @@ type MoodLogProps = {
 };
 
 const moods = [
-  { label: 'Happy', image: require('../../assets/images/happy.png') },
-  { label: 'Neutral', image: require('../../assets/images/neutral.png') },
-  { label: 'Sad', image: require('../../assets/images/sad.png') },
-  { label: 'Depressed', image: require('../../assets/images/depressed.png') },
-  { label: 'Angry', image: require('../../assets/images/angry.png') },
+  { label: "Happy", image: require("../../assets/images/happy.png") },
+  { label: "Neutral", image: require("../../assets/images/neutral.png") },
+  { label: "Sad", image: require("../../assets/images/sad.png") },
+  { label: "Depressed", image: require("../../assets/images/depressed.png") },
+  { label: "Angry", image: require("../../assets/images/angry.png") },
 ];
 
 const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
@@ -25,26 +33,31 @@ const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
       Alert.alert(
         "Mood Noted",
         `You selected "${selectedMood}" as your mood.`,
-        [{ text: "OK", onPress: onClose }] 
+        [{ text: "OK", onPress: onClose }]
       );
     } else {
-      Alert.alert("No Mood Selected", "Please select a mood before proceeding.");
+      Alert.alert(
+        "No Mood Selected",
+        "Please select a mood before proceeding."
+      );
     }
 
-    try{
+    try {
       const token = await SecureStore.getItemAsync("authToken");
-      if(!token) throw new Error("No token found");
+      if (!token) throw new Error("No token found");
 
       await axios.post(
-        "http://192.168.94.44:3000/api/moods",
+        `${BASE_URL}/api/moods`,
         { mood: selectedMood },
-        { headers: {Authorization: `Bearer ${token}`}}
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      Alert.alert("Mood Noted", `You selected "${selectedMood}" as your mood.`,[
-        {text: "OK", onPress:onClose},
-      ]);
-    }catch(err){
+      Alert.alert(
+        "Mood Noted",
+        `You selected "${selectedMood}" as your mood.`,
+        [{ text: "OK", onPress: onClose }]
+      );
+    } catch (err) {
       console.error("Error saving mood: ", err);
       Alert.alert("Error", "Failed to log mood. Try again");
     }
@@ -81,7 +94,9 @@ const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
           ))}
         </View>
 
-        <Text style={styles.prompt}>How do you feel about your current emotions?</Text>
+        <Text style={styles.prompt}>
+          How do you feel about your current emotions?
+        </Text>
 
         <TouchableOpacity style={styles.button} onPress={handleNoteMood}>
           <Text style={styles.buttonText}>Note Mood</Text>
@@ -93,11 +108,11 @@ const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
 
 const styles = StyleSheet.create({
   modal: {
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
     margin: 0,
   },
   container: {
-    backgroundColor: '#DFF3E4',
+    backgroundColor: "#DFF3E4",
     padding: 20,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
@@ -105,29 +120,29 @@ const styles = StyleSheet.create({
   swipeBar: {
     width: 40,
     height: 5,
-    backgroundColor: '#ccc',
-    alignSelf: 'center',
+    backgroundColor: "#ccc",
+    alignSelf: "center",
     borderRadius: 3,
     marginBottom: 10,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   moodRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
   moodItem: {
-    alignItems: 'center',
+    alignItems: "center",
     width: 60,
     padding: 5,
     borderRadius: 10,
   },
   selectedMood: {
-    backgroundColor: '#A7E9AF', 
+    backgroundColor: "#A7E9AF",
   },
   moodImage: {
     width: 40,
@@ -140,17 +155,17 @@ const styles = StyleSheet.create({
   prompt: {
     fontSize: 14,
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
     paddingVertical: 12,
     borderRadius: 25,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
     fontSize: 16,
   },
 });

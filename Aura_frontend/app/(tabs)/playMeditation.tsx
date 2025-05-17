@@ -28,7 +28,6 @@ const PlayMeditationScreen = () => {
   // Track total duration in milliseconds
   const [totalDuration, setTotalDuration] = useState(600000); // Default 10 min
 
-  // Get audio file based on id
   const getAudioById = (id: string | string[] | number): any => {
     const numericId =
       typeof id === "string"
@@ -37,7 +36,6 @@ const PlayMeditationScreen = () => {
         ? parseInt(id[0], 10)
         : id;
 
-    // Map of audio files - update these paths to match your actual files
     const audioFiles: Record<number, any> = {
       1: require("../../assets/audios/audio 1.mp3"),
       2: require("../../assets/audios/audio 2.mp3"),
@@ -51,7 +49,6 @@ const PlayMeditationScreen = () => {
     return audioFiles[numericId];
   };
 
-  // Look up the image by id
   const getImageById = (
     id: string | string[] | number
   ): ImageSourcePropType => {
@@ -62,7 +59,7 @@ const PlayMeditationScreen = () => {
         ? parseInt(id[0], 10)
         : id;
 
-    // Map of audio images - should match your audio array from MeditationScreen
+    // Map of audio images - should match audio array from MeditationScreen
     const images: Record<number, ImageSourcePropType> = {
       1: require("../../assets/images/audio 1.jpg"),
       2: require("../../assets/images/audio 2.jpg"),
@@ -76,16 +73,13 @@ const PlayMeditationScreen = () => {
     return images[numericId];
   };
 
-  // Get image based on id
   const image = id ? getImageById(id) : null;
-  // Get audio based on id
   const audio = id ? getAudioById(id) : null;
 
   // Load and initialize audio
   useEffect(() => {
     const loadAudio = async () => {
       try {
-        // Set audio mode
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: false,
           staysActiveInBackground: true,
@@ -94,7 +88,6 @@ const PlayMeditationScreen = () => {
           playThroughEarpieceAndroid: false,
         });
 
-        // Load the audio file
         const { sound, status } = await Audio.Sound.createAsync(
           audio,
           { shouldPlay: false },
@@ -130,15 +123,12 @@ const PlayMeditationScreen = () => {
 
   // Status update callback for audio playback
   const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
-    // Check if status is loaded first
     if (!status.isLoaded) return;
 
-    // Update progress
     if (status.durationMillis !== undefined && status.durationMillis > 0) {
       setProgress(status.positionMillis / status.durationMillis);
     }
 
-    // Update current time
     const minutes = Math.floor(status.positionMillis / 60000);
     const seconds = Math.floor((status.positionMillis % 60000) / 1000);
     setCurrentTime(`${minutes}:${seconds.toString().padStart(2, "0")}`);
@@ -146,7 +136,6 @@ const PlayMeditationScreen = () => {
     // Update playing state
     setIsPlaying(status.isPlaying);
 
-    // If reached the end, reset
     if (status.didJustFinish) {
       setIsPlaying(false);
       setProgress(0);
@@ -154,12 +143,10 @@ const PlayMeditationScreen = () => {
     }
   };
 
-  // Handle navigation back
   const handleBack = () => {
     router.back();
   };
 
-  // Handle play/pause
   const togglePlayPause = async () => {
     if (!isLoaded || !soundRef.current) return;
 
@@ -170,7 +157,6 @@ const PlayMeditationScreen = () => {
     }
   };
 
-  // Handle rewind (30 seconds)
   const handleRewind = async () => {
     if (!isLoaded || !soundRef.current) return;
 
@@ -181,7 +167,6 @@ const PlayMeditationScreen = () => {
     }
   };
 
-  // Handle forward (30 seconds)
   const handleForward = async () => {
     if (!isLoaded || !soundRef.current) return;
 
@@ -216,14 +201,9 @@ const PlayMeditationScreen = () => {
           <View style={styles.header}>
             <TouchableOpacity style={styles.backButton} onPress={handleBack}>
               <View style={styles.circle}>
-                <Feather name="arrow-left" size={20} color="#52AE77" />
+                <Feather name="arrow-left" size={20} color="black" />
               </View>
-              {/* <Text style={styles.backText}>Back</Text> */}
             </TouchableOpacity>
-            {/* <Text style={styles.headerTitle}>{title}</Text> */}
-            {/* <TouchableOpacity>
-              <Feather name="more-vertical" size={24} color="#52AE77" />
-            </TouchableOpacity> */}
           </View>
 
           <View style={styles.content}>
@@ -316,7 +296,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "white", 
+    backgroundColor: "white",
+    borderWidth:1,
+    borderColor: "#52AE77",
     justifyContent: "center",
     alignItems: "center",
   },  

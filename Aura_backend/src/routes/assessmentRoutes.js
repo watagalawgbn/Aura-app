@@ -5,15 +5,22 @@ const router = express.Router();
 const { getShuffledQuestions } = require("../services/assessmentService");
 const { calculateScores } = require("../services/scoringService");
 const AssessmentResult = require("../models/AssessmentResult");
+const authenticateToken = require("../middleware/authMiddleware");
 
 router.get("/", (req, res) => {
   const shuffledQuestions = getShuffledQuestions();
   res.json(shuffledQuestions);
 });
 
-router.post("/submit", async (req, res) => {
+
+router.post("/submit", authenticateToken, async (req, res) => {
   try {
-    const { userId, answers } = req.body;
+    const userId = req.user.id; 
+    const { answers } = req.body;
+
+    if (!Array.isArray(answers)) {
+      return res.status(400).json({ error: "Invalid answers format" });
+    }
 
     const scores = calculateScores(answers);
 
@@ -30,9 +37,11 @@ router.post("/submit", async (req, res) => {
     await newResult.save();
     res.json({ message: "Assessment submitted successfully", scores });
   } catch (error) {
-    console.error(error);
+    console.error("Assessment submission error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
 
 module.exports = router;

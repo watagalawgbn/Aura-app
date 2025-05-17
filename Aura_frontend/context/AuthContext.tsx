@@ -4,10 +4,18 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { BASE_URL } from "@/constants/Api";
+import { jwtDecode } from "jwt-decode";
 
 type User = {
   name: string;
   email: string;
+};
+
+type JwtPayload = {
+  id: string;
+  name: string;
+  email: string;
+  exp: number;
 };
 
 type AuthContextType = {
@@ -25,16 +33,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (token: string) => {
     try {
       await SecureStore.setItemAsync("authToken", token); // Save token securely
-      const res = await axios.get(`${BASE_URL}/api/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log("Auth Token:", token);      
-
-      setUser(res.data); // Set the authenticated user
+  
+      // Decode token locally
+      const decoded: JwtPayload = jwtDecode(token);
+      setUser({ name: decoded.name, email: decoded.email });
+  
+      // Persist userId for API calls
+      await SecureStore.setItemAsync("userId", decoded.id);
     } catch (error) {
-      console.error("Failed to fetch user data", error);
+      console.error("Login error", error);
     }
   };
 
@@ -45,7 +52,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    console.log("Restoring user...");
     const restoreUser = async () => {
       const token = await SecureStore.getItemAsync("authToken");
       if (token) await login(token); // Restore user session

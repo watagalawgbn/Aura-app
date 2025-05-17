@@ -10,7 +10,7 @@ import {
   SafeAreaView,
   StatusBar,
 } from "react-native";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 const QuickAccessScreen = () => {
@@ -20,9 +20,9 @@ const QuickAccessScreen = () => {
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <View style={styles.circle}>
-            <Feather name="arrow-left" size={20} color="white" />
+            <Feather name="arrow-left" size={20} color="black" />
           </View>
         </TouchableOpacity>
 
@@ -49,7 +49,7 @@ const QuickAccessScreen = () => {
 
       {/* Content Grid */}
       <ScrollView style={styles.contentContainer}>
-        {/* Beat Stress Card - Full Width */}
+        {/* Beat Stress Card*/}
         <View style={styles.fullCard}>
           <Image
             source={require("../../assets/images/stress.jpg")}
@@ -97,7 +97,6 @@ const QuickAccessScreen = () => {
           </View>
         </View>
 
-        {/* Second Row of Two Column Cards */}
         <View style={styles.rowContainer}>
           {/* Boost Your Earnings Card */}
           <View style={styles.halfCard}>
@@ -167,7 +166,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#52AE77",
+    backgroundColor: "white",
+    borderWidth:1,
+    borderColor: "#52AE77",
     justifyContent: "center",
     alignItems: "center",
   },

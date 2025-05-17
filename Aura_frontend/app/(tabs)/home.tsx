@@ -14,40 +14,56 @@ import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import MoodLog from "./mood";
 import { useAuth } from "../../context/AuthContext";
+import { LinearGradient } from "expo-linear-gradient";
 
 const HomeScreen = () => {
   const [isMoodLogVisible, setMoodLogVisible] = useState(false);
   const { user } = useAuth();
 
+  const currentTime = new Date();
+  const currentHour = currentTime.getHours();
+
+  let greetingMessage = "";
+  if (currentHour >= 5 && currentHour < 12) {
+    greetingMessage = "Good Morning";
+  } else if (currentHour >= 12 && currentHour < 17) {
+    greetingMessage = "Good Afternoon";
+  } else if (currentHour >= 17 && currentHour < 21) {
+    greetingMessage = "Good Evening";
+  } else {
+    greetingMessage = "Good to see you Again";
+  }
+
+  const currentDate = currentTime.toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      {/* Header Background */}
-      <Image
-        source={require("../../assets/images/bg.jpg")}
-        style={styles.headerBackground}
-      />
-
-      {/* Header Content */}
-      <View style={styles.header}>
+      <LinearGradient colors={["#5FB21F", "#224831"]} style={styles.header}>
         <View style={styles.headerTop}>
           <View style={styles.logoContainer}>
             <Image
               source={require("../../assets/images/logo.png")}
               style={styles.logo}
             />
-            <Text style={styles.greeting}>Hello {user?.name || "there"} !</Text>
+          </View>
+          <View style={styles.greetingContainer}>
+            <Text style={styles.date}>{currentDate}</Text>
+            <Text style={styles.greeting}>{greetingMessage},</Text>
+            <Text style={styles.greeting}>{user?.name}!</Text>
           </View>
           <TouchableOpacity style={styles.notificationIcon}>
-            <Feather name="bell" size={24} color="#52AE77" />
+            <Feather name="bell" size={24} color="black" border="1" />
           </TouchableOpacity>
         </View>
 
-        {/* Search Bar */}
         <View style={styles.searchContainer}>
-          
           <TextInput
             style={styles.searchInput}
             placeholder="Search"
@@ -57,7 +73,7 @@ const HomeScreen = () => {
             <Feather name="search" size={20} color="#52AE77" />
           </TouchableOpacity>
         </View>
-      </View>
+      </LinearGradient>
 
       {/* Content */}
       <ScrollView
@@ -67,14 +83,16 @@ const HomeScreen = () => {
       >
         {/* Curved Content Container */}
         <View style={styles.curvedContentContainer}>
-          {/* My Insights Section */}
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>My Insights</Text>
           </View>
 
           <View style={styles.insightsContainer}>
             {/* Mental Health Assessment Card */}
-            <TouchableOpacity style={styles.insightCard} onPress={() => router.navigate("/(tabs)/assessment")}>
+            <TouchableOpacity
+              style={styles.insightCard}
+              onPress={() => router.navigate("/(tabs)/assessment")}
+            >
               <Text style={styles.insightCardTitle}>
                 Mental Health Assessment
               </Text>
@@ -86,7 +104,7 @@ const HomeScreen = () => {
 
             {/* Track your mood Card */}
             <TouchableOpacity
-              onPress={() => setMoodLogVisible(true)} // Trigger the modal
+              onPress={() => setMoodLogVisible(true)} 
               style={styles.insightCard}
             >
               <Text style={styles.insightCardTitle}>Track your mood</Text>
@@ -95,23 +113,21 @@ const HomeScreen = () => {
                 style={styles.insightCardImage}
               />
             </TouchableOpacity>
-            {/* Modal Trigger */}
             {isMoodLogVisible && (
               <MoodLog isVisible onClose={() => setMoodLogVisible(false)} />
             )}
           </View>
 
-          {/* Quick Access Section */}
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Access</Text>
-            <TouchableOpacity onPress={() => router.navigate("/(tabs)/quickAccess")}>
+            <TouchableOpacity
+              onPress={() => router.navigate("/(tabs)/quickAccess")}
+            >
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Quick Access Items */}
           <View style={styles.quickAccessContainer}>
-            {/* Stress-Free Meditation Item */}
             <TouchableOpacity style={styles.quickAccessItem}>
               <View style={styles.imageContainer}>
                 <Image
@@ -138,7 +154,6 @@ const HomeScreen = () => {
               </View>
             </TouchableOpacity>
 
-            {/* Boost Your Earnings Item */}
             <TouchableOpacity style={styles.quickAccessItem}>
               <View style={styles.imageContainer}>
                 <Image
@@ -176,25 +191,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  headerBackground: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: "35%",
-    width: "100%",
-    opacity: 0.9,
-  },
   header: {
     paddingTop: 30,
     paddingHorizontal: 20,
-    zIndex: 1, // header stays above content
+    paddingBottom: 20,
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
   },
   headerTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
   },
   logoContainer: {
     flexDirection: "row",
@@ -206,13 +213,33 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: 20,
   },
+  greetingContainer: {
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+  },
   greeting: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
     color: "white",
+    textAlign: "center",
+  },
+  date: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "white",
+    textAlign: "center",
+    marginVertical: 5,
   },
   notificationIcon: {
-    padding: 5,
+    width: 40, 
+    height: 40, 
+    borderRadius: 20, 
+    backgroundColor: "white", 
+    justifyContent: "center", 
+    alignItems: "center", 
+    padding: 5, 
   },
   searchContainer: {
     flexDirection: "row",
@@ -221,7 +248,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 15,
     paddingVertical: 5,
-    marginBottom: 20,
+    marginTop: 10,
   },
   searchInput: {
     flex: 1,
@@ -233,8 +260,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    flexGrow: 1, //content takes up space as needed for scrolling
-    paddingBottom: 30
+    flexGrow: 1,
+    paddingBottom: 30,
   },
   curvedContentContainer: {
     backgroundColor: "white",
@@ -242,7 +269,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
     paddingTop: 15,
-    flex: 1, // Take up remaining space
   },
   sectionHeader: {
     flexDirection: "row",
@@ -258,7 +284,7 @@ const styles = StyleSheet.create({
   },
   seeAllText: {
     fontSize: 16,
-    color: "#666",
+    color: "#52AE77",
   },
   insightsContainer: {
     flexDirection: "row",
@@ -272,8 +298,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#eee",
     justifyContent: "space-between",
-    height: 250, // Shadow for Android
-    elevation: 5, // Shadow for iOS
+    height: 250,
+    elevation: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -283,7 +309,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#333",
-    maxWidth: "90%",
   },
   insightCardImage: {
     width: 130,
@@ -300,8 +325,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     marginBottom: 10,
-    elevation: 3, // Android shadow
-    shadowColor: "#000", // iOS shadow
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -333,7 +358,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   exploreButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#52AE77",
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 12,

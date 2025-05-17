@@ -22,7 +22,6 @@ export default function Profile() {
     <View style={styles.container}>
       <TouchableOpacity style={styles.back} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={24} color="black" />
-        <Text>Back</Text>
       </TouchableOpacity>
 
       <Text style={styles.title}>Profile</Text>
@@ -120,7 +119,15 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#fff" },
-  back: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
+  back: { width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth:1,
+    borderColor: "#52AE77",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   title: { fontSize: 28, fontWeight: "bold", marginBottom: 20 },
   avatar: {
     alignSelf: "center",
@@ -137,12 +144,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   input: {
-    // backgroundColor:'grey',
     borderWidth: 1,
     borderColor: "#80C29B",
     borderRadius: 8,
     padding: 10,marginBottom: 16,
-    paddingRight: 40, // space for the icon
+    paddingRight: 40, 
   },
   eyeIcon: {
     position: "absolute",

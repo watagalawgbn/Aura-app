@@ -12,6 +12,8 @@ import { ProgressBar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { BASE_URL } from "@/constants/Api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import axios from "axios";
 
 type Option = {
@@ -31,7 +33,7 @@ export default function Assessment() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedOption, setSelectedOption] = useState<{[questionIndex: number] :number}>({});
+  const [selectedOption, setSelectedOption] = useState<{[index: number]: { id: string, type: string, answer: number } }>({});
   const isOptionSelected = selectedOption[currentQuestionIndex] !== undefined;
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -54,25 +56,46 @@ export default function Assessment() {
   }, []);
 
   const handleNext = async () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      fadeIn();
-    } else {
-      try{
-        const res = await axios.post(`${BASE_URL}/api/assessment/save`, {
-          answers: selectedOption,
-        });
-        router.push({
-          pathname: "/(tabs)/result",
-          params:{resultId: res.data._id},
-        });
-      }
-      catch(error){
-        console.error("Failed to save answers:", error);
-        alert("Failed to save answers. Please try again."); 
-      }
+  if (currentQuestionIndex < questions.length - 1) {
+    setCurrentQuestionIndex(currentQuestionIndex + 1);
+    fadeIn();
+  } else {
+    const formattedAnswers = Object.values(selectedOption);
+
+    try {
+      const asyncStorageToken = await AsyncStorage.getItem('token');
+      const token = await SecureStore.getItemAsync("authToken");
+
+      const response = await fetch(`${BASE_URL}/api/assessment/submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          answers: formattedAnswers,
+        }),
+      });
+
+      const data = await response.json();
+
+      router.push({
+        pathname: "/(tabs)/assessmentResult",
+        params: {
+          phqScore: data.scores.PHQ.totalScore,
+          phqSeverity: data.scores.PHQ.severity,
+          gadScore: data.scores.GAD.totalScore,
+          gadSeverity: data.scores.GAD.severity,
+          dassScore: data.scores.DASS.totalScore,
+          dassSeverity: data.scores.DASS.severity,
+        },
+      });
+
+    } catch (error) {
+      console.error("Failed to submit assessment", error);
     }
-  };
+  }
+};
 
   const handleBack = () => {
     if (currentQuestionIndex === 0) {
@@ -147,16 +170,20 @@ export default function Assessment() {
         <Text style={styles.currentQuestion}>{currentQuestion.question}?</Text>
 
         {currentQuestion.options.map((opt) => {
-          const isSelected = selectedOption[currentQuestionIndex] === opt.value;
+          const isSelected = selectedOption[currentQuestionIndex]?.answer === opt.value;
           return (
             <TouchableOpacity
               key={`${currentQuestion.id}-${opt.value}`}
               onPress={() => {
-                setSelectedOption(prev => ({
+                setSelectedOption((prev) => ({
                   ...prev,
-                  [currentQuestionIndex]: opt.value,
-                }))
-              }} 
+                  [currentQuestionIndex]: {
+                    id: currentQuestion.id,
+                    type: currentQuestion.type,
+                    answer: opt.value,
+                  },
+                }));
+              }}
               style={[
                 styles.options,
                 isSelected && styles.selectedOption, 

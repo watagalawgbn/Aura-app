@@ -60,12 +60,12 @@ const MeditationScreen = () => {
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton}>
           <View style={styles.circle}>
-            <Feather name="arrow-left" size={20} color="white" />
+            <Feather name="arrow-left" size={20} color="black" />
           </View>
         </TouchableOpacity>
 
         <View style={styles.titleWrapper}>
-        <Text style={styles.headerTitle}>Daily Meditation</Text>
+          <Text style={styles.headerTitle}>Daily Meditation</Text>
         </View>
 
         <TouchableOpacity>
@@ -146,8 +146,10 @@ const styles = StyleSheet.create({
   circle: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: "#52AE77",
+    borderRadius: 50,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#52AE77",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -159,7 +161,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 16,
   },
-  titleWrapper:{
+  titleWrapper: {
     marginTop: 65,
   },
   headerTitle: {
