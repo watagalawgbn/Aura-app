@@ -7,56 +7,27 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
+  StatusBar,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 const MeditationScreen = () => {
   const audios = [
-    {
-      id: 1,
-      title: "Deep Calm",
-      image: require("../../assets/images/audio 1.jpg"),
-    },
-    {
-      id: 2,
-      title: "Relaxation",
-      image: require("../../assets/images/audio 2.jpg"),
-    },
-    {
-      id: 3,
-      title: "Focus Boost",
-      image: require("../../assets/images/audio 3.jpg"),
-    },
-    {
-      id: 4,
-      title: "Mindfulness",
-      image: require("../../assets/images/audio 4.jpg"),
-    },
-    {
-      id: 5,
-      title: "Dreamscape",
-      image: require("../../assets/images/audio 5.jpg"),
-    },
-    {
-      id: 6,
-      title: "Stress Relief",
-      image: require("../../assets/images/audio 6.jpg"),
-    },
-    {
-      id: 7,
-      title: "Inner Peace",
-      image: require("../../assets/images/audio 7.jpg"),
-    },
-    {
-      id: 8,
-      title: "Positive Energy",
-      image: require("../../assets/images/audio 8.jpg"),
-    },
+    { id: 1, title: "Deep Calm", image: require("../../assets/images/audio 1.jpg") },
+    { id: 2, title: "Relaxation", image: require("../../assets/images/audio 2.jpg") },
+    { id: 3, title: "Focus Boost", image: require("../../assets/images/audio 3.jpg") },
+    { id: 4, title: "Mindfulness", image: require("../../assets/images/audio 4.jpg") },
+    { id: 5, title: "Dreamscape", image: require("../../assets/images/audio 5.jpg") },
+    { id: 6, title: "Stress Relief", image: require("../../assets/images/audio 6.jpg") },
+    { id: 7, title: "Inner Peace", image: require("../../assets/images/audio 7.jpg") },
+    { id: 8, title: "Positive Energy", image: require("../../assets/images/audio 8.jpg") },
   ];
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton}>
           <View style={styles.circle}>
@@ -76,19 +47,14 @@ const MeditationScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.meditationContainer}>
           {audios.map((audio, index) => {
-            // Start a new row for every 2 items
             if (index % 2 === 0) {
               return (
                 <View key={index} style={styles.meditationRow}>
-                  {/* First audio in the row */}
                   <TouchableOpacity
                     onPress={() =>
                       router.push({
                         pathname: "/(tabs)/playMeditation",
-                        params: {
-                          id: audio.id,
-                          title: audio.title,
-                        },
+                        params: { id: audio.id, title: audio.title },
                       })
                     }
                     style={styles.audioCard}
@@ -97,7 +63,6 @@ const MeditationScreen = () => {
                     <Text style={styles.imgTitle}>{audio.title}</Text>
                   </TouchableOpacity>
 
-                  {/* Second audio in the row (if it exists) */}
                   {audios[index + 1] && (
                     <TouchableOpacity
                       onPress={() =>
@@ -111,19 +76,14 @@ const MeditationScreen = () => {
                       }
                       style={styles.audioCard}
                     >
-                      <Image
-                        source={audios[index + 1].image}
-                        style={styles.imgs}
-                      />
-                      <Text style={styles.imgTitle}>
-                        {audios[index + 1].title}
-                      </Text>
+                      <Image source={audios[index + 1].image} style={styles.imgs} />
+                      <Text style={styles.imgTitle}>{audios[index + 1].title}</Text>
                     </TouchableOpacity>
                   )}
                 </View>
               );
             }
-            return null; // Skip rendering for the second item in the row
+            return null;
           })}
         </View>
       </ScrollView>

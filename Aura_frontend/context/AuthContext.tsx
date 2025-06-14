@@ -7,6 +7,7 @@ import { BASE_URL } from "@/constants/Api";
 import { jwtDecode } from "jwt-decode";
 
 type User = {
+  id: string;
   name: string;
   email: string;
 };
@@ -36,7 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
       // Decode token locally
       const decoded: JwtPayload = jwtDecode(token);
-      setUser({ name: decoded.name, email: decoded.email });
+      setUser({ id: decoded.id, name: decoded.name, email: decoded.email });
   
       // Persist userId for API calls
       await SecureStore.setItemAsync("userId", decoded.id);

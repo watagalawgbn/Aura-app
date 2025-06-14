@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  StatusBar,
 } from "react-native";
 import { useAuth } from "../../context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
@@ -20,6 +21,8 @@ export default function Profile() {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+
       <TouchableOpacity style={styles.back} onPress={() => router.back()}>
         <Ionicons name="arrow-back" size={24} color="black" />
       </TouchableOpacity>
@@ -118,17 +121,26 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#fff" },
-  back: { width: 40,
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#fff",
+  },
+  back: {
+    width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: "white",
-    borderWidth:1,
+    borderWidth: 1,
     borderColor: "#52AE77",
     justifyContent: "center",
     alignItems: "center",
   },
-  title: { fontSize: 28, fontWeight: "bold", marginBottom: 20 },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
   avatar: {
     alignSelf: "center",
     backgroundColor: "#E6F2EB",
@@ -147,8 +159,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#80C29B",
     borderRadius: 8,
-    padding: 10,marginBottom: 16,
-    paddingRight: 40, 
+    padding: 10,
+    marginBottom: 16,
+    paddingRight: 40,
   },
   eyeIcon: {
     position: "absolute",
@@ -162,7 +175,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
   },
-  buttonText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
   logoutButton: {
     backgroundColor: "#FF5C5C",
     paddingVertical: 12,

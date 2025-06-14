@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Animated,
+  StatusBar,
 } from "react-native";
 import { fetchAssessmentQuestions } from "../services/assessmentService";
 import { ProgressBar } from "react-native-paper";
@@ -14,7 +15,6 @@ import { useRouter } from "expo-router";
 import { BASE_URL } from "@/constants/Api";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
-import axios from "axios";
 
 type Option = {
   label: string;
@@ -33,7 +33,9 @@ export default function Assessment() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedOption, setSelectedOption] = useState<{[index: number]: { id: string, type: string, answer: number } }>({});
+  const [selectedOption, setSelectedOption] = useState<{
+    [index: number]: { id: string; type: string; answer: number };
+  }>({});
   const isOptionSelected = selectedOption[currentQuestionIndex] !== undefined;
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -56,46 +58,42 @@ export default function Assessment() {
   }, []);
 
   const handleNext = async () => {
-  if (currentQuestionIndex < questions.length - 1) {
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
-    fadeIn();
-  } else {
-    const formattedAnswers = Object.values(selectedOption);
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      fadeIn();
+    } else {
+      const formattedAnswers = Object.values(selectedOption);
 
-    try {
-      const asyncStorageToken = await AsyncStorage.getItem('token');
-      const token = await SecureStore.getItemAsync("authToken");
+      try {
+        const token = await SecureStore.getItemAsync("authToken");
 
-      const response = await fetch(`${BASE_URL}/api/assessment/submit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          answers: formattedAnswers,
-        }),
-      });
+        const response = await fetch(`${BASE_URL}/api/assessment/submit`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ answers: formattedAnswers }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      router.push({
-        pathname: "/(tabs)/assessmentResult",
-        params: {
-          phqScore: data.scores.PHQ.totalScore,
-          phqSeverity: data.scores.PHQ.severity,
-          gadScore: data.scores.GAD.totalScore,
-          gadSeverity: data.scores.GAD.severity,
-          dassScore: data.scores.DASS.totalScore,
-          dassSeverity: data.scores.DASS.severity,
-        },
-      });
-
-    } catch (error) {
-      console.error("Failed to submit assessment", error);
+        router.push({
+          pathname: "/(tabs)/assessmentResult",
+          params: {
+            phqScore: data.scores.PHQ.totalScore,
+            phqSeverity: data.scores.PHQ.severity,
+            gadScore: data.scores.GAD.totalScore,
+            gadSeverity: data.scores.GAD.severity,
+            dassScore: data.scores.DASS.totalScore,
+            dassSeverity: data.scores.DASS.severity,
+          },
+        });
+      } catch (error) {
+        console.error("Failed to submit assessment", error);
+      }
     }
-  }
-};
+  };
 
   const handleBack = () => {
     if (currentQuestionIndex === 0) {
@@ -107,9 +105,9 @@ export default function Assessment() {
   };
 
   const fadeIn = () => {
-    fadeAnim.setValue(0); // Reset to invisible
+    fadeAnim.setValue(0);
     Animated.timing(fadeAnim, {
-      toValue: 1, // Fully visible
+      toValue: 1,
       duration: 500,
       useNativeDriver: true,
     }).start();
@@ -142,17 +140,17 @@ export default function Assessment() {
 
   return (
     <View style={styles.mainContainer}>
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+
       <TouchableOpacity onPress={handleBack} style={styles.handleBackButton}>
         <Ionicons name="arrow-back" size={22} color="black" />
       </TouchableOpacity>
 
-      {/* animated content */}
       <Animated.View style={{ opacity: fadeAnim }}>
         {currentQuestionIndex === 0 && (
           <Text style={styles.Title}>Let's check your status.</Text>
         )}
 
-        {/* progress Bar */}
         <ProgressBar
           progress={progress}
           color="#4CAF50"
@@ -170,11 +168,12 @@ export default function Assessment() {
         <Text style={styles.currentQuestion}>{currentQuestion.question}?</Text>
 
         {currentQuestion.options.map((opt) => {
-          const isSelected = selectedOption[currentQuestionIndex]?.answer === opt.value;
+          const isSelected =
+            selectedOption[currentQuestionIndex]?.answer === opt.value;
           return (
             <TouchableOpacity
               key={`${currentQuestion.id}-${opt.value}`}
-              onPress={() => {
+              onPress={() =>
                 setSelectedOption((prev) => ({
                   ...prev,
                   [currentQuestionIndex]: {
@@ -182,11 +181,11 @@ export default function Assessment() {
                     type: currentQuestion.type,
                     answer: opt.value,
                   },
-                }));
-              }}
+                }))
+              }
               style={[
                 styles.options,
-                isSelected && styles.selectedOption, 
+                isSelected && styles.selectedOption,
               ]}
             >
               <Text
@@ -201,7 +200,14 @@ export default function Assessment() {
         })}
       </Animated.View>
 
-      <TouchableOpacity onPress={handleNext} style={[styles.nextButton, {opacity: isOptionSelected? 1:0.5}]} disabled={!isOptionSelected}>
+      <TouchableOpacity
+        onPress={handleNext}
+        style={[
+          styles.nextButton,
+          { opacity: isOptionSelected ? 1 : 0.5 },
+        ]}
+        disabled={!isOptionSelected}
+      >
         <Text style={{ color: "white", fontWeight: "bold" }}>Next</Text>
       </TouchableOpacity>
     </View>
@@ -218,6 +224,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     marginTop: 20,
+    backgroundColor: "#fff",
   },
   handleBackButton: {
     width: 40,
@@ -261,9 +268,9 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   selectedOption: {
-    backgroundColor: '#EBFCDE', 
+    backgroundColor: "#EBFCDE",
     borderWidth: 1,
-  },  
+  },
   nextButton: {
     backgroundColor: "#4CAF50",
     paddingVertical: 15,

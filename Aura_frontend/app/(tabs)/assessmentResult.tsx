@@ -4,6 +4,7 @@ import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import MentalHealthDonutChart from "../components/MentalHealthDonutChart";
+import { StatusBar } from "react-native";
 
 export default function AssessmentResult() {
   // Get parameters from the navigation (sent after submitting the assessment)
@@ -50,6 +51,8 @@ export default function AssessmentResult() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+
       <Text style={styles.title}>Your Mental Health Result</Text>
 
       <MentalHealthDonutChart data={data} />

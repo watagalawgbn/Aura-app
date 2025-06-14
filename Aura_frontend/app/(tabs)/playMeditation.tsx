@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   playButtonDisabled: {
-    backgroundColor: "#52AE7799", // Semi-transparent to indicate disabled state
+    backgroundColor: "#52AE7799", 
   },
   infoSection: {
     padding: 20,

@@ -43,7 +43,7 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar backgroundColor="#5FB21F" barStyle="light-content" />
 
       <LinearGradient colors={["#5FB21F", "#224831"]} style={styles.header}>
         <View style={styles.headerTop}>

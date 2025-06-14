@@ -20,7 +20,10 @@ const QuickAccessScreen = () => {
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <View style={styles.circle}>
             <Feather name="arrow-left" size={20} color="black" />
           </View>
@@ -89,7 +92,10 @@ const QuickAccessScreen = () => {
               style={styles.fullCardImage}
             />
             <View style={styles.playButtonContainer}>
-              <TouchableOpacity style={styles.playButton}>
+              <TouchableOpacity
+                onPress={() => router.navigate("/(tabs)/breathingExercise")}
+                style={styles.playButton}
+              >
                 <Feather name="play" size={16} color="#52AE77" />
               </TouchableOpacity>
             </View>
@@ -167,7 +173,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     backgroundColor: "white",
-    borderWidth:1,
+    borderWidth: 1,
     borderColor: "#52AE77",
     justifyContent: "center",
     alignItems: "center",
