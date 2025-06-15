@@ -49,7 +49,7 @@ const SignUp: React.FC = () => {
       await login(res.data.token);
       alert("Signed up successfully");
 
-      router.replace("/(tabs)/home");
+      router.replace("/screens/home");
     } catch (error: any) {
       const message =
         error?.response?.data?.message || "Sign up failed. Try again.";

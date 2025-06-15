@@ -12,31 +12,14 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
+import BackButton from "../components/BackButton";
 
 const QuickAccessScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <View style={styles.circle}>
-            <Feather name="arrow-left" size={20} color="black" />
-          </View>
-        </TouchableOpacity>
-
-        <View style={styles.titleWrapper}>
-          <Text style={styles.headerTitle}>Self Care</Text>
-        </View>
-
-        <TouchableOpacity>
-          <Feather name="more-vertical" size={24} color="#52AE77" />
-        </TouchableOpacity>
-      </View>
+      <BackButton title={"Self Care"} />
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
@@ -52,7 +35,6 @@ const QuickAccessScreen = () => {
 
       {/* Content Grid */}
       <ScrollView style={styles.contentContainer}>
-        {/* Beat Stress Card*/}
         <View style={styles.fullCard}>
           <Image
             source={require("../../assets/images/stress.jpg")}
@@ -60,7 +42,7 @@ const QuickAccessScreen = () => {
           />
           <View style={styles.playButtonContainer}>
             <TouchableOpacity
-              onPress={() => router.navigate("/(tabs)/meditation")}
+              onPress={() => router.navigate("/screens/meditation")}
               style={styles.playButton}
             >
               <Feather name="play" size={20} color="#52AE77" />
@@ -71,7 +53,6 @@ const QuickAccessScreen = () => {
 
         {/* Two Column Cards */}
         <View style={styles.rowContainer}>
-          {/* Ease Anxiety Card */}
           <View style={styles.halfCard}>
             <Image
               source={require("../../assets/images/anxiety.jpg")}
@@ -85,7 +66,6 @@ const QuickAccessScreen = () => {
             <Text style={styles.cardTitleSmall}>Ease{"\n"}Anxiety</Text>
           </View>
 
-          {/* Calm Your Mind Card */}
           <View style={styles.halfCard}>
             <Image
               source={require("../../assets/images/calm.jpeg")}
@@ -93,7 +73,7 @@ const QuickAccessScreen = () => {
             />
             <View style={styles.playButtonContainer}>
               <TouchableOpacity
-                onPress={() => router.navigate("/(tabs)/breathingExercise")}
+                onPress={() => router.navigate("/screens/breathingExercise")}
                 style={styles.playButton}
               >
                 <Feather name="play" size={16} color="#52AE77" />
@@ -104,7 +84,6 @@ const QuickAccessScreen = () => {
         </View>
 
         <View style={styles.rowContainer}>
-          {/* Boost Your Earnings Card */}
           <View style={styles.halfCard}>
             <Image
               source={require("../../assets/images/earning.jpg")}
@@ -118,14 +97,14 @@ const QuickAccessScreen = () => {
             <Text style={styles.cardTitleSmall}>Boost Your{"\n"}Earnings</Text>
           </View>
 
-          {/* Study Smart Card */}
           <View style={styles.halfCard}>
             <Image
               source={require("../../assets/images/study.jpg")}
               style={styles.fullCardImage}
             />
             <View style={styles.playButtonContainer}>
-              <TouchableOpacity style={styles.playButton}>
+              <TouchableOpacity style={styles.playButton}
+              onPress={() => router.navigate("/screens/PomodoroScreen")}>
                 <Feather name="play" size={16} color="#52AE77" />
               </TouchableOpacity>
             </View>

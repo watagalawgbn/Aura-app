@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
+import BackButton from "../components/BackButton";
 
 const MeditationScreen = () => {
   const audios = [
@@ -28,21 +29,7 @@ const MeditationScreen = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton}>
-          <View style={styles.circle}>
-            <Feather name="arrow-left" size={20} color="black" />
-          </View>
-        </TouchableOpacity>
-
-        <View style={styles.titleWrapper}>
-          <Text style={styles.headerTitle}>Daily Meditation</Text>
-        </View>
-
-        <TouchableOpacity>
-          <Feather name="more-vertical" size={24} color="#52AE77" />
-        </TouchableOpacity>
-      </View>
+      <BackButton title={"Beat Stress"}/>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.meditationContainer}>
@@ -53,7 +40,7 @@ const MeditationScreen = () => {
                   <TouchableOpacity
                     onPress={() =>
                       router.push({
-                        pathname: "/(tabs)/playMeditation",
+                        pathname: "/screens/playMeditation",
                         params: { id: audio.id, title: audio.title },
                       })
                     }
@@ -67,7 +54,7 @@ const MeditationScreen = () => {
                     <TouchableOpacity
                       onPress={() =>
                         router.push({
-                          pathname: "/(tabs)/playMeditation",
+                          pathname: "/screens/playMeditation",
                           params: {
                             id: audios[index + 1].id,
                             title: audios[index + 1].title,

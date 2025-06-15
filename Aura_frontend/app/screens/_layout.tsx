@@ -10,12 +10,12 @@ const TabsLayout = () => {
       <Slot />
       <View style={styles.borderWrapper}>
         <View style={styles.container}>
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/home")} style={styles.itemsCenter}>
+          <TouchableOpacity onPress={() => router.navigate("/screens/home")} style={styles.itemsCenter}>
             <Ionicons name="home-outline" size={24} color="#52AE77" />
             <Text style={{ color: "#52AE77" }}>Home</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/meditation")} style={styles.itemsCenter}>
+          <TouchableOpacity onPress={() => router.navigate("/screens/meditation")} style={styles.itemsCenter}>
             <Image
               source={require("../../assets/images/lotus.png")}
               style={styles.iconImage} 
@@ -23,12 +23,12 @@ const TabsLayout = () => {
             <Text style={{ color: "#52AE77" }}>Meditation</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/quickAccess")} style={styles.itemsCenter}>
+          <TouchableOpacity onPress={() => router.navigate("/screens/quickAccess")} style={styles.itemsCenter}>
             <MaterialCommunityIcons name="widgets-outline" size={24} color="#52AE77" />
             <Text style={{ color: "#52AE77" }}>Quick Access</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/profile")} style={styles.itemsCenter}>
+          <TouchableOpacity onPress={() => router.navigate("/screens/profile")} style={styles.itemsCenter}>
             <Ionicons name="person-outline" size={24} color="#52AE77" />
             <Text style={{ color: "#52AE77" }}>Profile</Text>
           </TouchableOpacity>

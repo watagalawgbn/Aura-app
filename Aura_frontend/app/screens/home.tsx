@@ -91,7 +91,7 @@ const HomeScreen = () => {
             {/* Mental Health Assessment Card */}
             <TouchableOpacity
               style={styles.insightCard}
-              onPress={() => router.navigate("/(tabs)/assessment")}
+              onPress={() => router.navigate("/screens/assessment")}
             >
               <Text style={styles.insightCardTitle}>
                 Mental Health Assessment
@@ -121,7 +121,7 @@ const HomeScreen = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Access</Text>
             <TouchableOpacity
-              onPress={() => router.navigate("/(tabs)/quickAccess")}
+              onPress={() => router.navigate("/screens/quickAccess")}
             >
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
@@ -140,7 +140,7 @@ const HomeScreen = () => {
                   Stress-Free Meditation
                 </Text>
                 <TouchableOpacity
-                  onPress={() => router.navigate("/(tabs)/quickAccess")}
+                  onPress={() => router.navigate("/screens/quickAccess")}
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>
@@ -164,7 +164,7 @@ const HomeScreen = () => {
               <View style={styles.quickAccessContent}>
                 <Text style={styles.quickAccessTitle}>Boost Your Earnings</Text>
                 <TouchableOpacity
-                  onPress={() => router.navigate("/(tabs)/quickAccess")}
+                  onPress={() => router.navigate("/screens/quickAccess")}
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>

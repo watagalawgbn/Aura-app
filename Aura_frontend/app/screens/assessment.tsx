@@ -79,7 +79,7 @@ export default function Assessment() {
         const data = await response.json();
 
         router.push({
-          pathname: "/(tabs)/assessmentResult",
+          pathname: "/screens/assessmentResult",
           params: {
             phqScore: data.scores.PHQ.totalScore,
             phqSeverity: data.scores.PHQ.severity,
@@ -97,7 +97,7 @@ export default function Assessment() {
 
   const handleBack = () => {
     if (currentQuestionIndex === 0) {
-      router.navigate("/(tabs)/home");
+      router.navigate("/screens/home");
     } else {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
       fadeIn();

@@ -51,7 +51,7 @@ const SignIn: React.FC = () => {
       console.log("Tokennn:", token);
 
       alert("Signed in successfully");
-      router.replace("/(tabs)/home");
+      router.replace("/screens/home");
     } catch (error: any) {
       const message =
         error?.response?.data?.message || "Sign in failed. Try again.";
