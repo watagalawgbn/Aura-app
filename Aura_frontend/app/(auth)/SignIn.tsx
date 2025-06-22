@@ -101,7 +101,7 @@ const SignIn: React.FC = () => {
           style={styles.eyeIcon}
         >
           <Ionicons
-            name={isPasswordVisible ? "eye-off" : "eye"} 
+            name={isPasswordVisible ? "eye-off" : "eye"}
             size={20}
             color="#888"
           />
@@ -109,9 +109,16 @@ const SignIn: React.FC = () => {
       </View>
 
       <TouchableOpacity
+      onPress={()=>{}}>
+        <View style={styles.forgotPassword}>
+          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity
         style={styles.googleButton}
         onPress={() => {
-          /* Handle Google login */
+          // TODO: google login
         }}
       >
         <View style={styles.googleContent}>
@@ -146,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  logo: {  width: 120, height: 120, marginBottom: 20},
+  logo: { width: 120, height: 120, marginBottom: 20 },
   title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
   inputContainer: {
     flexDirection: "row",
@@ -161,6 +168,14 @@ const styles = StyleSheet.create({
   },
   icon: { marginRight: 10 },
   input: { flex: 1 },
+  forgotPassword: {
+    marginRight: 230,
+    marginBottom: 10,
+  },
+  forgotPasswordText: {
+    color: "#555",
+    fontWeight: "regular",
+  },
   googleButton: {
     backgroundColor: "#eee",
     borderRadius: 10,
