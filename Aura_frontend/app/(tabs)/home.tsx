@@ -49,7 +49,7 @@ const HomeScreen = () => {
         <View style={styles.headerTop}>
           <View style={styles.logoContainer}>
             <Image
-              source={require("../../assets/images/logo.png")}
+              source={require("../../assets/images/aura.png")}
               style={styles.logo}
             />
           </View>
@@ -91,7 +91,7 @@ const HomeScreen = () => {
             {/* Mental Health Assessment Card */}
             <TouchableOpacity
               style={styles.insightCard}
-              onPress={() => router.navigate("/screens/assessment")}
+              onPress={() => router.navigate("/(tabs)/assessment")}
             >
               <Text style={styles.insightCardTitle}>
                 Mental Health Assessment
@@ -121,7 +121,7 @@ const HomeScreen = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Access</Text>
             <TouchableOpacity
-              onPress={() => router.navigate("/screens/quickAccess")}
+              onPress={() => router.navigate("/(tabs)/quickAccess")}
             >
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
@@ -140,7 +140,7 @@ const HomeScreen = () => {
                   Stress-Free Meditation
                 </Text>
                 <TouchableOpacity
-                  onPress={() => router.navigate("/screens/quickAccess")}
+                  onPress={() => router.navigate("/(tabs)/quickAccess")}
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>
@@ -164,7 +164,7 @@ const HomeScreen = () => {
               <View style={styles.quickAccessContent}>
                 <Text style={styles.quickAccessTitle}>Boost Your Earnings</Text>
                 <TouchableOpacity
-                  onPress={() => router.navigate("/screens/quickAccess")}
+                  onPress={() => router.navigate("/(tabs)/quickAccess")}
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>

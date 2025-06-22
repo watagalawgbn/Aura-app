@@ -1,3 +1,5 @@
+//routes/mood.js
+
 const express = require("express");
 const { addMood, getMoods } = require("../controllers/moodController");
 const authenticateToken = require("../middleware/authMiddleware");

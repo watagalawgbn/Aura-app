@@ -40,7 +40,7 @@ const MeditationScreen = () => {
                   <TouchableOpacity
                     onPress={() =>
                       router.push({
-                        pathname: "/screens/playMeditation",
+                        pathname: "/(tabs)/playMeditation",
                         params: { id: audio.id, title: audio.title },
                       })
                     }
@@ -54,7 +54,7 @@ const MeditationScreen = () => {
                     <TouchableOpacity
                       onPress={() =>
                         router.push({
-                          pathname: "/screens/playMeditation",
+                          pathname: "/(tabs)/playMeditation",
                           params: {
                             id: audios[index + 1].id,
                             title: audios[index + 1].title,

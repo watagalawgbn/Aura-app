@@ -51,7 +51,7 @@ const SignIn: React.FC = () => {
       console.log("Tokennn:", token);
 
       alert("Signed in successfully");
-      router.replace("/screens/home");
+      router.replace("/(tabs)/home");
     } catch (error: any) {
       const message =
         error?.response?.data?.message || "Sign in failed. Try again.";
@@ -62,7 +62,7 @@ const SignIn: React.FC = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require("../../assets/images/logo.png")}
+        source={require("../../assets/images/aura.png")}
         style={styles.logo}
       />
       <Text style={styles.title}>Log in to your account</Text>
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  logo: { width: 100, height: 80, marginBottom: 20, borderRadius: 15 },
+  logo: {  width: 120, height: 120, marginBottom: 20},
   title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
   inputContainer: {
     flexDirection: "row",
