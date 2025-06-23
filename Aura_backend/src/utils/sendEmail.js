@@ -20,6 +20,7 @@ module.exports = async (to, subject, text, html) => {
       html,
     });
     console.log("Email sent successfully!!", info.response);
+    console.log("Sending from:", process.env.EMAIL_USER);
   } catch (err) {
     console.error("Error sending email:", err);
   }

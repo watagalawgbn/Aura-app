@@ -23,12 +23,12 @@ const TabsLayout = () => {
             <Text style={{ color: "#52AE77" }}>Meditation</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/quickAccess")} style={styles.itemsCenter}>
+          <TouchableOpacity onPress={() => router.navigate("/(tabs)/QuickAccess")} style={styles.itemsCenter}>
             <MaterialCommunityIcons name="widgets-outline" size={24} color="#52AE77" />
             <Text style={{ color: "#52AE77" }}>Quick Access</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/profile")} style={styles.itemsCenter}>
+          <TouchableOpacity onPress={() => router.navigate("/(tabs)/Profile")} style={styles.itemsCenter}>
             <Ionicons name="person-outline" size={24} color="#52AE77" />
             <Text style={{ color: "#52AE77" }}>Profile</Text>
           </TouchableOpacity>

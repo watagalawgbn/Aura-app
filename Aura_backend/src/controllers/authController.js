@@ -86,10 +86,10 @@ exports.forgotPassword = async (req, res) => {
 
   const token = crypto.randomBytes(32).toString("hex");
   user.resetPasswordToken = token;
-  user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; //15 mins
+  user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 mins
   await user.save();
 
-  const link = `${FRONTEND_URL}/reset-password/${token}`;
+  const link = `exp://exp.host/@watagala/Aura_frontend/--(auth)/reset-password/${token}`;
   const html = resetPasswordTemplate(user.name, link);
 
   await sendEmail(
