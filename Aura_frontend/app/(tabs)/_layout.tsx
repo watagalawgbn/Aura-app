@@ -15,7 +15,7 @@ const TabsLayout = () => {
             <Text style={{ color: "#52AE77" }}>Home</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/meditation")} style={styles.itemsCenter}>
+          <TouchableOpacity onPress={() => router.navigate("/(tabs)/Meditation")} style={styles.itemsCenter}>
             <Image
               source={require("../../assets/images/lotus.png")}
               style={styles.iconImage} 

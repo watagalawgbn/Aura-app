@@ -6,10 +6,8 @@ import * as Linking from 'expo-linking';
 
 export default function RootLayout() {
   useEffect(() => {
-    // Handle deep links when app is already running
     const subscription = Linking.addEventListener('url', ({ url }) => {
       console.log('Deep link received:', url);
-      // Expo Router will automatically handle the navigation
     });
 
     return () => subscription?.remove();

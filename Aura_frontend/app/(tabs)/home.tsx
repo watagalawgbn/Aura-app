@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
-import MoodLog from "./mood";
+import MoodLog from "./Mood";
 import { useAuth } from "../../context/AuthContext";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -91,7 +91,7 @@ const HomeScreen = () => {
             {/* Mental Health Assessment Card */}
             <TouchableOpacity
               style={styles.insightCard}
-              onPress={() => router.navigate("/(tabs)/assessment")}
+              onPress={() => router.navigate("/(tabs)/Assessment")}
             >
               <Text style={styles.insightCardTitle}>
                 Mental Health Assessment
