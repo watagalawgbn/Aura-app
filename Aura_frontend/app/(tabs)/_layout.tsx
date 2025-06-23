@@ -10,7 +10,7 @@ const TabsLayout = () => {
       <Slot />
       <View style={styles.borderWrapper}>
         <View style={styles.container}>
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/home")} style={styles.itemsCenter}>
+          <TouchableOpacity onPress={() => router.navigate("/(tabs)/Home")} style={styles.itemsCenter}>
             <Ionicons name="home-outline" size={24} color="#52AE77" />
             <Text style={{ color: "#52AE77" }}>Home</Text>
           </TouchableOpacity>

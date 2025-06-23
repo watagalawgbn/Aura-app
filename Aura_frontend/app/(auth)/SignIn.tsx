@@ -7,6 +7,9 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import axios from "axios";
@@ -51,7 +54,7 @@ const SignIn: React.FC = () => {
       console.log("Tokennn:", token);
 
       alert("Signed in successfully");
-      router.replace("/(tabs)/home");
+      router.replace("/(tabs)/Home");
     } catch (error: any) {
       const message =
         error?.response?.data?.message || "Sign in failed. Try again.";
@@ -60,99 +63,117 @@ const SignIn: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("../../assets/images/aura.png")}
-        style={styles.logo}
-      />
-      <Text style={styles.title}>Log in to your account</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Image
+          source={require("../../assets/images/aura.png")}
+          style={styles.logo}
+        />
+        <Text style={styles.title}>Log in to your account</Text>
 
-      <View style={styles.inputContainer}>
-        <Ionicons
-          name="mail-outline"
-          size={18}
-          color="#888"
-          style={styles.icon}
-        />
-        <TextInput
-          placeholder="Your Email Address"
-          value={email}
-          onChangeText={setEmail}
-          style={styles.input}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Ionicons
-          name="lock-closed"
-          size={20}
-          color="#888"
-          style={styles.icon}
-        />
-        <TextInput
-          placeholder="Your password"
-          secureTextEntry={!isPasswordVisible}
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
-        />
-        <TouchableOpacity
-          onPress={togglePasswordVisibility}
-          style={styles.eyeIcon}
-        >
+        <View style={styles.inputContainer}>
           <Ionicons
-            name={isPasswordVisible ? "eye-off" : "eye"}
+            name="mail-outline"
+            size={18}
+            color="#888"
+            style={styles.icon}
+          />
+          <TextInput
+            placeholder="Your Email Address"
+            value={email}
+            onChangeText={setEmail}
+            style={styles.input}
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Ionicons
+            name="lock-closed"
             size={20}
             color="#888"
+            style={styles.icon}
           />
+          <TextInput
+            placeholder="Your password"
+            secureTextEntry={!isPasswordVisible}
+            value={password}
+            onChangeText={setPassword}
+            style={styles.input}
+          />
+          <TouchableOpacity
+            onPress={togglePasswordVisibility}
+            style={styles.eyeIcon}
+          >
+            <Ionicons
+              name={isPasswordVisible ? "eye-off" : "eye"}
+              size={20}
+              color="#888"
+            />
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity onPress={() => router.push("/(auth)/ForgotPassword")}>
+          <View style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </View>
         </TouchableOpacity>
-      </View>
 
-      <TouchableOpacity
-      onPress={()=>router.push("/(auth)/ForgotPassword")}>
-        <View style={styles.forgotPassword}>
-          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.googleButton}
+          onPress={() => {
+            // TODO: google login
+          }}
+        >
+          <View style={styles.googleContent}>
+            <Image
+              source={{
+                uri: "https://img.icons8.com/?size=100&id=17949&format=png&color=000000",
+              }}
+              style={styles.googleIcon}
+            />
+            <Text style={styles.googleText}>Sign in with Google</Text>
+          </View>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.googleButton}
-        onPress={() => {
-          // TODO: google login
-        }}
-      >
-        <View style={styles.googleContent}>
-          <Image
-            source={{
-              uri: "https://img.icons8.com/?size=100&id=17949&format=png&color=000000",
-            }}
-            style={styles.googleIcon}
-          />
-          <Text style={styles.googleText}>Sign in with Google</Text>
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={handleSignUp} style={styles.mainButton}>
+          <Text style={styles.mainButtonText}>Sign In</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleSignUp} style={styles.mainButton}>
-        <Text style={styles.mainButtonText}>Sign In</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.footer}>
-        Don't have an account?{" "}
-        <Text style={styles.link} onPress={() => router.push("/(auth)/SignUp")}>
-          Sign Up
+        <Text style={styles.footer}>
+          Don't have an account?{" "}
+          <Text
+            style={styles.link}
+            onPress={() => router.push("/(auth)/SignUp")}
+          >
+            Sign Up
+          </Text>
         </Text>
-      </Text>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  // container: {
+  //   flex: 1,
+  //   padding: 20,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  // },
+  scrollContainer: {
     padding: 20,
-    alignItems: "center",
+    flexGrow: 1,
     justifyContent: "center",
+    alignItems: "center",
   },
+
   logo: { width: 120, height: 100, marginBottom: 20 },
   title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
   inputContainer: {

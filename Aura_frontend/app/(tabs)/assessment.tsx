@@ -97,7 +97,7 @@ export default function Assessment() {
 
   const handleBack = () => {
     if (currentQuestionIndex === 0) {
-      router.navigate("/(tabs)/home");
+      router.navigate("/(tabs)/Home");
     } else {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
       fadeIn();

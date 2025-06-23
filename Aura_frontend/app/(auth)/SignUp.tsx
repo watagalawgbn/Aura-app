@@ -7,6 +7,9 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useRouter } from "expo-router";
 import axios from "axios";
@@ -49,7 +52,7 @@ const SignUp: React.FC = () => {
       await login(res.data.token);
       alert("Signed up successfully");
 
-      router.replace("/(tabs)/home");
+      router.replace("/(tabs)/Home");
     } catch (error: any) {
       const message =
         error?.response?.data?.message || "Sign up failed. Try again.";
@@ -58,103 +61,119 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={require("../../assets/images/aura.png")}
-        style={styles.logo}
-      />
-      <Text style={styles.title}>Create your account</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Image
+          source={require("../../assets/images/aura.png")}
+          style={styles.logo}
+        />
+        <Text style={styles.title}>Create your account</Text>
 
-      <View style={styles.inputContainer}>
-        <Ionicons
-          name="person-outline"
-          size={20}
-          color="#888"
-          style={styles.icon}
-        />
-        <TextInput
-          placeholder="Your Name"
-          value={name}
-          onChangeText={setName}
-          style={styles.input}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Ionicons
-          name="mail-outline"
-          size={18}
-          color="#888"
-          style={styles.icon}
-        />
-        <TextInput
-          placeholder="Your Email Address"
-          value={email}
-          onChangeText={setEmail}
-          style={styles.input}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <Ionicons
-          name="lock-closed"
-          size={20}
-          color="#888"
-          style={styles.icon}
-        />
-        <TextInput
-          placeholder="Your password"
-          secureTextEntry={!isPasswordVisible}
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
-        />
-        <TouchableOpacity
-          onPress={togglePasswordVisibility}
-          style={styles.eyeIcon}
-        >
+        <View style={styles.inputContainer}>
           <Ionicons
-            name={isPasswordVisible ? "eye-off" : "eye"} // Change icon based on state
+            name="person-outline"
             size={20}
             color="#888"
+            style={styles.icon}
           />
-        </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity style={styles.googleButton} onPress={() => {}}>
-        <View style={styles.googleContent}>
-          <Image
-            source={{
-              uri: "https://img.icons8.com/?size=100&id=17949&format=png&color=000000",
-            }}
-            style={styles.googleIcon}
+          <TextInput
+            placeholder="Your Name"
+            value={name}
+            onChangeText={setName}
+            style={styles.input}
           />
-          <Text style={styles.googleText}>Sign in with Google</Text>
         </View>
-      </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleSignUp} style={styles.mainButton}>
-        <Text style={styles.mainButtonText}>Sign Up</Text>
-      </TouchableOpacity>
+        <View style={styles.inputContainer}>
+          <Ionicons
+            name="mail-outline"
+            size={18}
+            color="#888"
+            style={styles.icon}
+          />
+          <TextInput
+            placeholder="Your Email Address"
+            value={email}
+            onChangeText={setEmail}
+            style={styles.input}
+          />
+        </View>
 
-      <Text style={styles.footer}>
-        Already have an account?{" "}
-        <Text style={styles.link} onPress={() => router.push("/(auth)/SignIn")}>
-          Sign In
+        <View style={styles.inputContainer}>
+          <Ionicons
+            name="lock-closed"
+            size={20}
+            color="#888"
+            style={styles.icon}
+          />
+          <TextInput
+            placeholder="Your password"
+            secureTextEntry={!isPasswordVisible}
+            value={password}
+            onChangeText={setPassword}
+            style={styles.input}
+          />
+          <TouchableOpacity
+            onPress={togglePasswordVisibility}
+            style={styles.eyeIcon}
+          >
+            <Ionicons
+              name={isPasswordVisible ? "eye-off" : "eye"}
+              size={20}
+              color="#888"
+            />
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity style={styles.googleButton} onPress={() => {}}>
+          <View style={styles.googleContent}>
+            <Image
+              source={{
+                uri: "https://img.icons8.com/?size=100&id=17949&format=png&color=000000",
+              }}
+              style={styles.googleIcon}
+            />
+            <Text style={styles.googleText}>Sign in with Google</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleSignUp} style={styles.mainButton}>
+          <Text style={styles.mainButtonText}>Sign Up</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.footer}>
+          Already have an account?{" "}
+          <Text
+            style={styles.link}
+            onPress={() => router.push("/(auth)/SignIn")}
+          >
+            Sign In
+          </Text>
         </Text>
-      </Text>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  // container: {
+  //   flex: 1,
+  //   padding: 20,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  // },
+  scrollContainer: {
     padding: 20,
-    alignItems: "center",
+    flexGrow: 1,
     justifyContent: "center",
+    alignItems: "center",
   },
-  logo: { width: 120, height: 100, marginBottom: 20,  },
+
+  logo: { width: 120, height: 100, marginBottom: 20 },
   title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
   inputContainer: {
     flexDirection: "row",

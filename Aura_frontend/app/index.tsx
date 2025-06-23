@@ -9,7 +9,7 @@ const Index = () => {
       const token = await AsyncStorage.getItem("token");
 
       if (token) {
-        router.replace("/(tabs)/home");
+        router.replace("/(tabs)/Home");
       } else {
         router.replace("/(auth)/SignIn");
       }
