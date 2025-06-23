@@ -109,7 +109,7 @@ const SignIn: React.FC = () => {
       </View>
 
       <TouchableOpacity
-      onPress={()=>{}}>
+      onPress={()=>router.push("/(auth)/ForgotPassword")}>
         <View style={styles.forgotPassword}>
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </View>
