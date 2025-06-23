@@ -17,7 +17,7 @@ const resetPasswordTemplate = (userName, resetLink) => `
     <p>If you didn't request this, just ignore this email.</p>
     <br/>
     <p>Thanks,</p>
-    <p><strong>Your App Team</strong></p>
+    <p><strong>Your Aura Team</strong></p>
   </div>
 `;
 

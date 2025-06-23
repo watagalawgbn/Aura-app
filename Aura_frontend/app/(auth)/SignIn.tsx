@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  logo: { width: 120, height: 120, marginBottom: 20 },
+  logo: { width: 120, height: 100, marginBottom: 20 },
   title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
   inputContainer: {
     flexDirection: "row",
