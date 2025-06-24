@@ -78,7 +78,6 @@ const PomodoroScreen = () => {
 
   const toggleTimer = () => {
     if (tasks.length === 0 || currentTaskIndex === null) {
-      // Optional: alert the user
       alert("Please add a task before starting the timer.");
       return;
     }
@@ -125,6 +124,7 @@ const PomodoroScreen = () => {
         </View>
       </LinearGradient>
 
+      <ScrollView contentContainerStyle={styles.scrollContent}>
       {currentTaskIndex !== null && tasks.length > 0 && (
         <View style={styles.currentTaskCard}>
           <View
@@ -137,9 +137,9 @@ const PomodoroScreen = () => {
           >
             <Feather
               name="bookmark"
-              size={40}
+              size={35}
               color="#294C0D"
-              style={{ marginRight: 10 }}
+              style={{ marginRight: 5 }}
             />
             <Text
               style={[styles.currentTaskName, { maxWidth: "75%" }]}
@@ -170,7 +170,7 @@ const PomodoroScreen = () => {
         </View>
       )}
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      
         <View style={{ paddingHorizontal: 20, marginTop: 30 }}>
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
