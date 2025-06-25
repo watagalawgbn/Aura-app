@@ -17,6 +17,7 @@ type Audio = {
   _id: string;
   title: string;
   filename: string;
+  image: string; // Assuming the backend now sends the image URL or GridFS ID
 };
 
 const MeditationScreen = () => {
@@ -26,43 +27,26 @@ const MeditationScreen = () => {
     const fetchMeditations = async () => {
       try {
         const response = await fetch(`${BASE_URL}/api/meditations`);
-        console.log(
-          "Fetching meditations from:",
-          `${BASE_URL}/api/meditations`
-        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch meditations");
+        }
+
         const data = await response.json();
         console.log("Fetched meditations:", data);
         setAudios(data);
       } catch (err) {
-        console.error("Failed to fetch meditations", err);
+        console.error("Failed to fetch meditations:", err);
       }
     };
 
     fetchMeditations();
   }, []);
 
-  const images = [
-    require("../../assets/images/audio 1.jpg"),
-    require("../../assets/images/audio 2.jpg"),
-    require("../../assets/images/audio 3.jpg"),
-    require("../../assets/images/audio 4.jpg"),
-    require("../../assets/images/audio 5.jpg"),
-    require("../../assets/images/audio 6.jpg"),
-    require("../../assets/images/audio 7.jpg"),
-    require("../../assets/images/audio 8.jpg"),
-    require("../../assets/images/audio 9.jpg"),
-    require("../../assets/images/audio 10.jpg"),
-    require("../../assets/images/audio 11.jpg"),
-    require("../../assets/images/audio 12.jpg"),
-    require("../../assets/images/audio 13.jpg"),
-    require("../../assets/images/audio 14.jpg"),
-    require("../../assets/images/audio 15.jpg"),
-    require("../../assets/images/audio 16.jpg"),
-    require("../../assets/images/audio 17.jpg"),
-    require("../../assets/images/audio 18.jpg"),
-    require("../../assets/images/audio 19.jpg"),
-    require("../../assets/images/audio 20.jpg"),
-  ];
+  // This function fetches the image URL dynamically
+  const getImageUrl = (imageId?: string) => {
+    if (!imageId) return "";
+    return `${BASE_URL}/api/images/${imageId}`;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -71,9 +55,7 @@ const MeditationScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.meditationContainer}>
           {audios.map((audio, index) => {
-            const image =
-              images[index % images.length] ||
-              require("../../assets/images/default.jpg");
+            const imageUrl = getImageUrl(audio.image);
             if (index % 2 === 0) {
               return (
                 <View key={index} style={styles.meditationRow}>
@@ -90,7 +72,25 @@ const MeditationScreen = () => {
                     }
                     style={styles.audioCard}
                   >
-                    <Image source={image} style={styles.imgs} />
+                    {audio.image && typeof audio.image === "string" ? (
+                      <Image
+                        source={{ uri: getImageUrl(audio.image) }}
+                        style={styles.imgs}
+                      />
+                    ) : (
+                      <View
+                        style={[
+                          styles.imgs,
+                          {
+                            backgroundColor: "#eee",
+                            justifyContent: "center",
+                            alignItems: "center", 
+                          },
+                        ]}
+                      >
+                        <Text>No Image</Text>
+                      </View>
+                    )}
                     <Text style={styles.imgTitle}>{audio.title}</Text>
                   </TouchableOpacity>
 
@@ -109,10 +109,7 @@ const MeditationScreen = () => {
                       style={styles.audioCard}
                     >
                       <Image
-                        source={
-                          images[(index + 1) % images.length] ||
-                          require("../../assets/images/default.jpg")
-                        }
+                        source={{ uri: getImageUrl(audios[index + 1].image) }}
                         style={styles.imgs}
                       />
                       <Text style={styles.imgTitle}>

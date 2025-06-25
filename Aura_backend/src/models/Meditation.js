@@ -7,6 +7,7 @@ const MeditationSchema = new mongoose.Schema({
     description: String,
     filename: String,
     duration: Number,
+    image: { type: mongoose.Schema.Types.ObjectId, ref: "Image" },
 });
 
 module.exports = mongoose.model("Meditation", MeditationSchema);

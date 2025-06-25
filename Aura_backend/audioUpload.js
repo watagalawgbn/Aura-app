@@ -1,53 +1,60 @@
-//audioUpload.js
-
 require("dotenv").config();
-
 const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
 const { MongoClient, GridFSBucket } = require("mongodb");
 const Meditation = require("./src/models/Meditation");
+const Image = require("./src/models/Image");
 
 const mongoURI = process.env.MONGO_URI;
-console.log("Connecting to MongoDB at:", mongoURI);
-const audioDir = path.join(__dirname, "src", "uploads");
-console.log("Uploading from directory:", audioDir);
-console.log("Files found:", fs.readdirSync(audioDir));
+const audioDir = path.join(__dirname, "src", "uploads", "audio");
+const imageDir = path.join(__dirname, "src", "uploads", "images");
 
-mongoose
-  .connect(mongoURI)
-  .then(async () => {
-    console.log("MongoDB connected");
+async function uploadImagesAndLink() {
+  await mongoose.connect(mongoURI);
+  const client = await MongoClient.connect(mongoURI);
+  const db = client.db();
+  const imageBucket = new GridFSBucket(db, { bucketName: "images" });
 
-    const client = await MongoClient.connect(mongoURI);
-    const db = client.db(); 
-    const bucket = new GridFSBucket(db, { bucketName: "audios" });
+  // 1. Upload images to GridFS and create Image docs
+  const imageFiles = fs.readdirSync(imageDir);
+  const images = [];
+  for (const file of imageFiles) {
+    const fullPath = path.join(imageDir, file);
+    const uploadStream = imageBucket.openUploadStream(file);
+    const fileStream = fs.createReadStream(fullPath);
 
-    const files = fs.readdirSync(audioDir);
-    console.log(`files to upload:`, files);
+    await new Promise((resolve, reject) => {
+      fileStream.pipe(uploadStream).on("error", reject).on("finish", resolve);
+    });
 
-    for (const file of files) {
-      const fullPath = path.join(audioDir, file);
-      const uploadStream = bucket.openUploadStream(file);
-      const fileStream = fs.createReadStream(fullPath);
+    const imageDoc = await Image.create({
+      filename: file,
+      gridfsId: uploadStream.id,
+    });
+    images.push(imageDoc);
+    console.log(`✅ Uploaded image: ${file}`);
+  }
 
-      await new Promise((resolve, reject) => {
-        fileStream.pipe(uploadStream).on("error", reject).on("finish", resolve);
-      });
+  // 2. Link images to meditations (randomly or by your logic)
+  const meditations = await Meditation.find();
+  for (const meditation of meditations) {
+    // Pick a random image
+    const randomImage = images[Math.floor(Math.random() * images.length)];
+    meditation.image = randomImage._id;
+    await meditation.save();
 
-      console.log(`Uploaded file: ${file}`);
-      await Meditation.create({
-        title: path.basename(file, path.extname(file)),
-        description: "Soothing Audio",
-        filename: file,
-        duration: 180,
-      });
-      console.log(`✅ Uploaded: ${file}`);
-    }
+    // Optionally, link meditation to image
+    randomImage.meditation = meditation._id;
+    await randomImage.save();
 
-    await mongoose.disconnect();
-    await client.close();
-  })
-  .catch((error) => {
-    console.error("MongoDB connection error:", error);
-  });
+    console.log(
+      `🔗 Linked image ${randomImage.filename} to meditation ${meditation.title}`
+    );
+  }
+
+  await mongoose.disconnect();
+  await client.close();
+}
+
+uploadImagesAndLink().catch(console.error);

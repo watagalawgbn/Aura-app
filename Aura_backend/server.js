@@ -7,6 +7,7 @@ const { connectGridFs, getGfs } = require("./gridfs");
 const { MongoClient, GridFSBucket } = require("mongodb");
 
 const Meditation = require("./src/models/Meditation");
+const Image = require("./src/models/Image"); // <-- ADD THIS LINE
 const auth = require("./src/routes/auth");
 const assessmentRoutes = require("./src/routes/assessmentRoutes");
 const moods = require("./src/routes/mood");
@@ -28,7 +29,10 @@ app.get("/api/audio/:filename", async (req, res) => {
     const bucket = new GridFSBucket(db, { bucketName: "audios" });
 
     // Find the file first (optional, for error handling)
-    const files = await db.collection("audios.files").find({ filename: req.params.filename }).toArray();
+    const files = await db
+      .collection("audios.files")
+      .find({ filename: req.params.filename })
+      .toArray();
     if (!files || files.length === 0) {
       return res.status(404).send("File not found");
     }
@@ -41,13 +45,27 @@ app.get("/api/audio/:filename", async (req, res) => {
   } catch (err) {
     console.error("Server error:", err);
     res.status(500).send("Server error");
-  } 
+  }
 });
 
-
 app.get("/api/meditations", async (req, res) => {
-  const data = await Meditation.find();
-  res.json(data);
+  try {
+    const meditations = await Meditation.find().populate("image");
+    res.json(meditations); // Ensure this is returning proper JSON
+  } catch (err) {
+    console.error("Error fetching meditations:", err);
+    res.status(500).json({ error: "Failed to fetch meditations" }); // Send a JSON error response if something goes wrong
+  }
+});
+
+app.get("/api/images/:imageId", async (req, res) => {
+  const gfs = getGfs(); // Assuming you have a function to get GridFS stream
+  const file = await gfs.files.findOne({ _id: req.params.imageId });
+  if (!file) {
+    return res.status(404).send("File not found");
+  }
+  const readStream = gfs.createReadStream(file.filename);
+  readStream.pipe(res);
 });
 
 app.use("/api/auth", auth);

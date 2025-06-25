@@ -12,9 +12,12 @@ import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import { BASE_URL } from "@/constants/Api";
+
 const PlayMeditationScreen = () => {
   const router = useRouter();
-  const { title = "Deep Calm", filename } = useLocalSearchParams(); // <-- Move here
+  const { title = "Deep Calm", filename, imageId } = useLocalSearchParams();
+
+  const titleString = Array.isArray(title) ? title[0] : title;
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -22,36 +25,26 @@ const PlayMeditationScreen = () => {
   const [totalTime, setTotalTime] = useState("10:00");
   const [totalDuration, setTotalDuration] = useState(600000);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [imageUrl, setImageUrl] = useState(""); // State for image URL
 
   const soundRef = useRef<Audio.Sound | null>(null);
 
-  const images = [
-    require("../../assets/images/audio 1.jpg"),
-    require("../../assets/images/audio 2.jpg"),
-    require("../../assets/images/audio 3.jpg"),
-    require("../../assets/images/audio 4.jpg"),
-    require("../../assets/images/audio 5.jpg"),
-    require("../../assets/images/audio 6.jpg"),
-    require("../../assets/images/audio 7.jpg"),
-    require("../../assets/images/audio 8.jpg"),
-    require("../../assets/images/audio 9.jpg"),
-    require("../../assets/images/audio 10.jpg"),
-    require("../../assets/images/audio 11.jpg"),
-    require("../../assets/images/audio 12.jpg"),
-    require("../../assets/images/audio 13.jpg"),
-    require("../../assets/images/audio 14.jpg"),
-    require("../../assets/images/audio 15.jpg"),
-    require("../../assets/images/audio 16.jpg"),
-    require("../../assets/images/audio 17.jpg"),
-    require("../../assets/images/audio 18.jpg"),
-    require("../../assets/images/audio 19.jpg"),
-    require("../../assets/images/audio 20.jpg"),
-  ];
-
-  const hash =
-    (filename as string)?.length || Math.floor(Math.random() * images.length);
-  const image =
-    images[hash % images.length] || require("../../assets/images/default.jpg");
+  // Fetch the image URL from the backend based on imageId
+  useEffect(() => {
+    const fetchImage = async () => {
+      if (imageId) {
+        try {
+          const response = await fetch(`${BASE_URL}/api/images/${imageId}`);
+          const blob = await response.blob();
+          const imageUrl = URL.createObjectURL(blob);
+          setImageUrl(imageUrl);
+        } catch (error) {
+          console.error("Failed to fetch image", error);
+        }
+      }
+    };
+    fetchImage();
+  }, [imageId]);
 
   const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
     if (!status.isLoaded) return;
@@ -140,7 +133,7 @@ const PlayMeditationScreen = () => {
 
   return (
     <ImageBackground
-      source={image}
+      source={{ uri: imageUrl }} // Dynamically set the background image
       style={styles.background}
       resizeMode="cover"
     >
@@ -184,10 +177,7 @@ const PlayMeditationScreen = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={[
-                    styles.playButton,
-                    !isLoaded && styles.playButtonDisabled,
-                  ]}
+                  style={[styles.playButton, !isLoaded && styles.playButtonDisabled]}
                   onPress={togglePlayPause}
                   disabled={!isLoaded}
                 >
