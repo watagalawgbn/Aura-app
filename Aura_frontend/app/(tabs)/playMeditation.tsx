@@ -13,19 +13,24 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import { BASE_URL } from "@/constants/Api";
 
-const getImageByTitle = (title: string) => {
-  const imageMap: Record<string, any> = {
-    "Deep Calm": require("../../assets/images/audio 1.jpg"),
-    Relaxation: require("../../assets/images/audio 2.jpg"),
-    "Focus Boost": require("../../assets/images/audio 3.jpg"),
-    Mindfulness: require("../../assets/images/audio 4.jpg"),
-    Dreamscape: require("../../assets/images/audio 5.jpg"),
-    "Stress Relief": require("../../assets/images/audio 6.jpg"),
-    "Inner Peace": require("../../assets/images/audio 7.jpg"),
-    "Positive Energy": require("../../assets/images/audio 8.jpg"),
-  };
-  return imageMap[title] || require("../../assets/images/audio 1.jpg");
+type AudioType = { filename: string };
+
+const imageMap: Record<string, any> = {
+  "audio 1": require("../../assets/images/audio 1.jpg"),
+  "audio 2": require("../../assets/images/audio 2.jpg"),
+  "audio 3": require("../../assets/images/audio 3.jpg"),
+  "audio 4": require("../../assets/images/audio 4.jpg"),
+  "audio 5": require("../../assets/images/audio 5.jpg"),
+  "audio 6": require("../../assets/images/audio 6.jpg"),
+  "audio 7": require("../../assets/images/audio 7.jpg"),
+  "audio 8": require("../../assets/images/audio 8.jpg"),
 };
+
+const getImageByAudio = (filename: string) => {
+  const baseName = filename.replace(/\.[^/.]+$/, ""); // remove .mp3
+  return imageMap[baseName] || require("../../assets/images/default.jpg");
+};
+
 
 const PlayMeditationScreen = () => {
   const { title = "Deep Calm", filename } = useLocalSearchParams();
@@ -125,7 +130,7 @@ const PlayMeditationScreen = () => {
     await soundRef.current.setPositionAsync(newPos);
   };
 
-  const image = getImageByTitle(title as string);
+  const image = getImageByAudio(filename as string);
 
   return (
     <ImageBackground
@@ -206,8 +211,6 @@ const PlayMeditationScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  // Same styles as your original file...
-  // (You can reuse what you already have)
   background: { flex: 1 },
   safeArea: { flex: 1 },
   container: {

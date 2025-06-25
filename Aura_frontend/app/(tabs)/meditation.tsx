@@ -25,8 +25,11 @@ const MeditationScreen = () => {
   useEffect(() => {
     const fetchMeditations = async () => {
       try {
-        const response = await fetch(`${BASE_URL}/api/meditations`); 
-        console.log("Fetching meditations from:", `${BASE_URL}/api/meditations`);
+        const response = await fetch(`${BASE_URL}/api/meditations`);
+        console.log(
+          "Fetching meditations from:",
+          `${BASE_URL}/api/meditations`
+        );
         const data = await response.json();
         console.log("Fetched meditations:", data);
         setAudios(data);
@@ -38,19 +41,16 @@ const MeditationScreen = () => {
     fetchMeditations();
   }, []);
 
-  const getImageByTitle = (title: string) => {
-    const imageMap: Record<string, any> = {
-      "Deep Calm": require("../../assets/images/audio 1.jpg"),
-      "Relaxation": require("../../assets/images/audio 2.jpg"),
-      "Focus Boost": require("../../assets/images/audio 3.jpg"),
-      "Mindfulness": require("../../assets/images/audio 4.jpg"),
-      "Dreamscape": require("../../assets/images/audio 5.jpg"),
-      "Stress Relief": require("../../assets/images/audio 6.jpg"),
-      "Inner Peace": require("../../assets/images/audio 7.jpg"),
-      "Positive Energy": require("../../assets/images/audio 8.jpg"),
-    };
-    return imageMap[title] || require("../../assets/images/audio 1.jpg");
-  };
+  const images = [
+    require("../../assets/images/audio 1.jpg"),
+    require("../../assets/images/audio 2.jpg"),
+    require("../../assets/images/audio 3.jpg"),
+    require("../../assets/images/audio 4.jpg"),
+    require("../../assets/images/audio 5.jpg"),
+    require("../../assets/images/audio 6.jpg"),
+    require("../../assets/images/audio 7.jpg"),
+    require("../../assets/images/audio 8.jpg"),
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -59,7 +59,9 @@ const MeditationScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.meditationContainer}>
           {audios.map((audio, index) => {
-            const image = getImageByTitle(audio.title);
+            const image =
+              images[index % images.length] ||
+              require("../../assets/images/default.jpg");
             if (index % 2 === 0) {
               return (
                 <View key={index} style={styles.meditationRow}>
@@ -95,7 +97,10 @@ const MeditationScreen = () => {
                       style={styles.audioCard}
                     >
                       <Image
-                        source={getImageByTitle(audios[index + 1].title)}
+                        source={
+                          images[(index + 1) % images.length] ||
+                          require("../../assets/images/default.jpg")
+                        }
                         style={styles.imgs}
                       />
                       <Text style={styles.imgTitle}>
