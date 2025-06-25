@@ -7,76 +7,62 @@ import {
   ImageBackground,
   ScrollView,
   SafeAreaView,
-  ImageSourcePropType,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Audio, AVPlaybackStatus } from "expo-av";
+import { BASE_URL } from "@/constants/Api";
+
+const getImageByTitle = (title: string) => {
+  const imageMap: Record<string, any> = {
+    "Deep Calm": require("../../assets/images/audio 1.jpg"),
+    Relaxation: require("../../assets/images/audio 2.jpg"),
+    "Focus Boost": require("../../assets/images/audio 3.jpg"),
+    Mindfulness: require("../../assets/images/audio 4.jpg"),
+    Dreamscape: require("../../assets/images/audio 5.jpg"),
+    "Stress Relief": require("../../assets/images/audio 6.jpg"),
+    "Inner Peace": require("../../assets/images/audio 7.jpg"),
+    "Positive Energy": require("../../assets/images/audio 8.jpg"),
+  };
+  return imageMap[title] || require("../../assets/images/audio 1.jpg");
+};
 
 const PlayMeditationScreen = () => {
-  const { id, title = "Deep Calm" } = useLocalSearchParams();
+  const { title = "Deep Calm", filename } = useLocalSearchParams();
   const router = useRouter();
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState("0:00");
   const [totalTime, setTotalTime] = useState("10:00");
-
-  // Create a ref for the sound object with proper typing
-  const soundRef = useRef<Audio.Sound | null>(null);
-  // Track if sound is loaded
+  const [totalDuration, setTotalDuration] = useState(600000);
   const [isLoaded, setIsLoaded] = useState(false);
-  // Track total duration in milliseconds
-  const [totalDuration, setTotalDuration] = useState(600000); // Default 10 min
 
-  const getAudioById = (id: string | string[] | number): any => {
-    const numericId =
-      typeof id === "string"
-        ? parseInt(id, 10)
-        : Array.isArray(id)
-        ? parseInt(id[0], 10)
-        : id;
+  const soundRef = useRef<Audio.Sound | null>(null);
 
-    const audioFiles: Record<number, any> = {
-      1: require("../../assets/audios/audio 1.mp3"),
-      2: require("../../assets/audios/audio 2.mp3"),
-      3: require("../../assets/audios/audio 3.mp3"),
-      4: require("../../assets/audios/audio 4.mp3"),
-      5: require("../../assets/audios/audio 5.mp3"),
-      6: require("../../assets/audios/audio 6.mp3"),
-      7: require("../../assets/audios/audio 7.mp3"),
-      8: require("../../assets/audios/audio 8.mp3"),
-    };
-    return audioFiles[numericId];
+  const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
+    if (!status.isLoaded) return;
+
+    if (
+      typeof status.durationMillis === "number" &&
+      status.durationMillis > 0
+    ) {
+      setProgress(status.positionMillis / status.durationMillis);
+    } else {
+      setProgress(0);
+    }
+    const minutes = Math.floor(status.positionMillis / 60000);
+    const seconds = Math.floor((status.positionMillis % 60000) / 1000);
+    setCurrentTime(`${minutes}:${seconds.toString().padStart(2, "0")}`);
+    setIsPlaying(status.isPlaying);
+
+    if (status.didJustFinish) {
+      setIsPlaying(false);
+      setProgress(0);
+      setCurrentTime("0:00");
+    }
   };
 
-  const getImageById = (
-    id: string | string[] | number
-  ): ImageSourcePropType => {
-    const numericId =
-      typeof id === "string"
-        ? parseInt(id, 10)
-        : Array.isArray(id)
-        ? parseInt(id[0], 10)
-        : id;
-
-    // Map of audio images - should match audio array from MeditationScreen
-    const images: Record<number, ImageSourcePropType> = {
-      1: require("../../assets/images/audio 1.jpg"),
-      2: require("../../assets/images/audio 2.jpg"),
-      3: require("../../assets/images/audio 3.jpg"),
-      4: require("../../assets/images/audio 4.jpg"),
-      5: require("../../assets/images/audio 5.jpg"),
-      6: require("../../assets/images/audio 6.jpg"),
-      7: require("../../assets/images/audio 7.jpg"),
-      8: require("../../assets/images/audio 8.jpg"),
-    };
-    return images[numericId];
-  };
-
-  const image = id ? getImageById(id) : null;
-  const audio = id ? getAudioById(id) : null;
-
-  // Load and initialize audio
   useEffect(() => {
     const loadAudio = async () => {
       try {
@@ -89,7 +75,7 @@ const PlayMeditationScreen = () => {
         });
 
         const { sound, status } = await Audio.Sound.createAsync(
-          audio,
+          { uri: `${BASE_URL}/api/audio/${filename}` }, 
           { shouldPlay: false },
           onPlaybackStatusUpdate
         );
@@ -97,8 +83,7 @@ const PlayMeditationScreen = () => {
         soundRef.current = sound;
         setIsLoaded(true);
 
-        // Set total duration if available if it's a loaded status
-        if (status.isLoaded && status.durationMillis !== undefined) {
+        if (status.isLoaded && status.durationMillis) {
           setTotalDuration(status.durationMillis);
           const minutes = Math.floor(status.durationMillis / 60000);
           const seconds = Math.floor((status.durationMillis % 60000) / 1000);
@@ -109,86 +94,38 @@ const PlayMeditationScreen = () => {
       }
     };
 
-    if (audio) {
-      loadAudio();
-    }
+    if (filename) loadAudio();
 
-    // Cleanup function
     return () => {
       if (soundRef.current) {
         soundRef.current.unloadAsync();
       }
     };
-  }, [audio]);
+  }, [filename]);
 
-  // Status update callback for audio playback
-  const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
-    if (!status.isLoaded) return;
-
-    if (status.durationMillis !== undefined && status.durationMillis > 0) {
-      setProgress(status.positionMillis / status.durationMillis);
-    }
-
-    const minutes = Math.floor(status.positionMillis / 60000);
-    const seconds = Math.floor((status.positionMillis % 60000) / 1000);
-    setCurrentTime(`${minutes}:${seconds.toString().padStart(2, "0")}`);
-
-    // Update playing state
-    setIsPlaying(status.isPlaying);
-
-    if (status.didJustFinish) {
-      setIsPlaying(false);
-      setProgress(0);
-      setCurrentTime("0:00");
-    }
-  };
-
-  const handleBack = () => {
-    router.back();
-  };
-
+  const handleBack = () => router.back();
   const togglePlayPause = async () => {
     if (!isLoaded || !soundRef.current) return;
-
-    if (isPlaying) {
-      await soundRef.current.pauseAsync();
-    } else {
-      await soundRef.current.playAsync();
-    }
+    isPlaying
+      ? await soundRef.current.pauseAsync()
+      : await soundRef.current.playAsync();
   };
 
-  const handleRewind = async () => {
+  const handleSeek = async (offset: number) => {
     if (!isLoaded || !soundRef.current) return;
-
     const status = await soundRef.current.getStatusAsync();
-    if (status.isLoaded) {
-      const newPosition = Math.max(0, status.positionMillis - 30000);
-      await soundRef.current.setPositionAsync(newPosition);
-    }
-  };
-
-  const handleForward = async () => {
-    if (!isLoaded || !soundRef.current) return;
-
-    const status = await soundRef.current.getStatusAsync();
-    if (status.isLoaded) {
-      const newPosition = Math.min(
-        status.durationMillis !== undefined
-          ? status.durationMillis
-          : totalDuration,
-        status.positionMillis + 30000
-      );
-      await soundRef.current.setPositionAsync(newPosition);
-    }
-  };
-
-  if (!image) {
-    return (
-      <SafeAreaView style={styles.errorContainer}>
-        <Text style={styles.errorText}>No image provided</Text>
-      </SafeAreaView>
+    if (!status.isLoaded) return;
+    const newPos = Math.max(
+      0,
+      Math.min(
+        status.durationMillis || totalDuration,
+        status.positionMillis + offset
+      )
     );
-  }
+    await soundRef.current.setPositionAsync(newPos);
+  };
+
+  const image = getImageByTitle(title as string);
 
   return (
     <ImageBackground
@@ -233,7 +170,7 @@ const PlayMeditationScreen = () => {
               <View style={styles.controls}>
                 <TouchableOpacity
                   style={styles.controlButton}
-                  onPress={handleRewind}
+                  onPress={() => handleSeek(-30000)}
                 >
                   <Feather name="rewind" size={24} color="#fff" />
                 </TouchableOpacity>
@@ -255,7 +192,7 @@ const PlayMeditationScreen = () => {
 
                 <TouchableOpacity
                   style={styles.controlButton}
-                  onPress={handleForward}
+                  onPress={() => handleSeek(30000)}
                 >
                   <Feather name="fast-forward" size={24} color="#fff" />
                 </TouchableOpacity>
@@ -269,12 +206,10 @@ const PlayMeditationScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-  },
+  // Same styles as your original file...
+  // (You can reuse what you already have)
+  background: { flex: 1 },
+  safeArea: { flex: 1 },
   container: {
     flexGrow: 1,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -283,34 +218,19 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
     paddingHorizontal: 15,
     paddingTop: 20,
-    paddingBottom: 15,
   },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
+  backButton: { flexDirection: "row", alignItems: "center" },
   circle: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: "white",
-    borderWidth:1,
+    borderWidth: 1,
     borderColor: "#52AE77",
     justifyContent: "center",
     alignItems: "center",
-  },  
-  backText: {
-    marginLeft: 5,
-    fontSize: 16,
-    color: "#fff",
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#fff",
   },
   content: {
     flex: 1,
@@ -320,10 +240,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 300,
   },
-  meditationInfo: {
-    alignItems: "center",
-    marginBottom: 40,
-  },
+  meditationInfo: { alignItems: "center", marginBottom: 40 },
   meditationTitle: {
     fontSize: 32,
     fontWeight: "bold",
@@ -336,13 +253,8 @@ const styles = StyleSheet.create({
     color: "#ccc",
     textAlign: "center",
   },
-  playerContainer: {
-    width: "100%",
-    padding: 20,
-  },
-  progressContainer: {
-    marginBottom: 30,
-  },
+  playerContainer: { width: "100%", padding: 20 },
+  progressContainer: { marginBottom: 30 },
   progressBar: {
     height: 8,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
@@ -380,52 +292,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   playButtonDisabled: {
-    backgroundColor: "#52AE7799", 
-  },
-  infoSection: {
-    padding: 20,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    borderRadius: 15,
-    marginHorizontal: 20,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 10,
-  },
-  sectionText: {
-    fontSize: 16,
-    color: "#ddd",
-    lineHeight: 24,
-    marginBottom: 20,
-  },
-  tags: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  tag: {
-    backgroundColor: "rgba(82, 174, 119, 0.3)",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-  tagText: {
-    color: "#fff",
-    fontSize: 14,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  errorText: {
-    fontSize: 18,
-    color: "#333",
+    backgroundColor: "#52AE7799",
   },
 });
 
