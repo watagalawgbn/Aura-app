@@ -50,6 +50,18 @@ const MeditationScreen = () => {
     require("../../assets/images/audio 6.jpg"),
     require("../../assets/images/audio 7.jpg"),
     require("../../assets/images/audio 8.jpg"),
+    require("../../assets/images/audio 9.jpg"),
+    require("../../assets/images/audio 10.jpg"),
+    require("../../assets/images/audio 11.jpg"),
+    require("../../assets/images/audio 12.jpg"),
+    require("../../assets/images/audio 13.jpg"),
+    require("../../assets/images/audio 14.jpg"),
+    require("../../assets/images/audio 15.jpg"),
+    require("../../assets/images/audio 16.jpg"),
+    require("../../assets/images/audio 17.jpg"),
+    require("../../assets/images/audio 18.jpg"),
+    require("../../assets/images/audio 19.jpg"),
+    require("../../assets/images/audio 20.jpg"),
   ];
 
   return (

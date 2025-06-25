@@ -12,29 +12,9 @@ import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import { BASE_URL } from "@/constants/Api";
-
-type AudioType = { filename: string };
-
-const imageMap: Record<string, any> = {
-  "audio 1": require("../../assets/images/audio 1.jpg"),
-  "audio 2": require("../../assets/images/audio 2.jpg"),
-  "audio 3": require("../../assets/images/audio 3.jpg"),
-  "audio 4": require("../../assets/images/audio 4.jpg"),
-  "audio 5": require("../../assets/images/audio 5.jpg"),
-  "audio 6": require("../../assets/images/audio 6.jpg"),
-  "audio 7": require("../../assets/images/audio 7.jpg"),
-  "audio 8": require("../../assets/images/audio 8.jpg"),
-};
-
-const getImageByAudio = (filename: string) => {
-  const baseName = filename.replace(/\.[^/.]+$/, ""); // remove .mp3
-  return imageMap[baseName] || require("../../assets/images/default.jpg");
-};
-
-
 const PlayMeditationScreen = () => {
-  const { title = "Deep Calm", filename } = useLocalSearchParams();
   const router = useRouter();
+  const { title = "Deep Calm", filename } = useLocalSearchParams(); // <-- Move here
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -44,6 +24,34 @@ const PlayMeditationScreen = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const soundRef = useRef<Audio.Sound | null>(null);
+
+  const images = [
+    require("../../assets/images/audio 1.jpg"),
+    require("../../assets/images/audio 2.jpg"),
+    require("../../assets/images/audio 3.jpg"),
+    require("../../assets/images/audio 4.jpg"),
+    require("../../assets/images/audio 5.jpg"),
+    require("../../assets/images/audio 6.jpg"),
+    require("../../assets/images/audio 7.jpg"),
+    require("../../assets/images/audio 8.jpg"),
+    require("../../assets/images/audio 9.jpg"),
+    require("../../assets/images/audio 10.jpg"),
+    require("../../assets/images/audio 11.jpg"),
+    require("../../assets/images/audio 12.jpg"),
+    require("../../assets/images/audio 13.jpg"),
+    require("../../assets/images/audio 14.jpg"),
+    require("../../assets/images/audio 15.jpg"),
+    require("../../assets/images/audio 16.jpg"),
+    require("../../assets/images/audio 17.jpg"),
+    require("../../assets/images/audio 18.jpg"),
+    require("../../assets/images/audio 19.jpg"),
+    require("../../assets/images/audio 20.jpg"),
+  ];
+
+  const hash =
+    (filename as string)?.length || Math.floor(Math.random() * images.length);
+  const image =
+    images[hash % images.length] || require("../../assets/images/default.jpg");
 
   const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
     if (!status.isLoaded) return;
@@ -80,7 +88,7 @@ const PlayMeditationScreen = () => {
         });
 
         const { sound, status } = await Audio.Sound.createAsync(
-          { uri: `${BASE_URL}/api/audio/${filename}` }, 
+          { uri: `${BASE_URL}/api/audio/${filename}` },
           { shouldPlay: false },
           onPlaybackStatusUpdate
         );
@@ -130,8 +138,6 @@ const PlayMeditationScreen = () => {
     await soundRef.current.setPositionAsync(newPos);
   };
 
-  const image = getImageByAudio(filename as string);
-
   return (
     <ImageBackground
       source={image}
@@ -160,10 +166,7 @@ const PlayMeditationScreen = () => {
               <View style={styles.progressContainer}>
                 <View style={styles.progressBar}>
                   <View
-                    style={[
-                      styles.progressFill,
-                      { width: `${progress * 100}%` },
-                    ]}
+                    style={[styles.progressFill, { width: `${progress * 100}%` }]}
                   />
                 </View>
                 <View style={styles.timeLabels}>
@@ -188,11 +191,7 @@ const PlayMeditationScreen = () => {
                   onPress={togglePlayPause}
                   disabled={!isLoaded}
                 >
-                  <Feather
-                    name={isPlaying ? "pause" : "play"}
-                    size={36}
-                    color="#fff"
-                  />
+                  <Feather name={isPlaying ? "pause" : "play"} size={36} color="#fff" />
                 </TouchableOpacity>
 
                 <TouchableOpacity
