@@ -12,6 +12,7 @@ exports.addMood = async (req, res) => {
     console.log("New mood saveddd: ", newMood);
     res.status(201).json(newMood);
   } catch (err) {
+    console.log(`Exception occured: ${err}`);
     res.status(500).json({ msg: "Failed to log mood!" });
   }
 };

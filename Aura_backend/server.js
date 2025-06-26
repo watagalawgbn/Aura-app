@@ -7,7 +7,7 @@ const { connectGridFs, getGfs } = require("./gridfs");
 const { MongoClient, GridFSBucket } = require("mongodb");
 
 const Meditation = require("./src/models/Meditation");
-const Image = require("./src/models/Image"); // <-- ADD THIS LINE
+const Image = require("./src/models/Image"); 
 const auth = require("./src/routes/auth");
 const assessmentRoutes = require("./src/routes/assessmentRoutes");
 const moods = require("./src/routes/mood");
@@ -51,21 +51,72 @@ app.get("/api/audio/:filename", async (req, res) => {
 app.get("/api/meditations", async (req, res) => {
   try {
     const meditations = await Meditation.find().populate("image");
-    res.json(meditations); // Ensure this is returning proper JSON
+    
+    // Transform the response to include image IDs properly
+    const meditationsWithImageIds = meditations.map(meditation => ({
+      _id: meditation._id,
+      title: meditation.title,
+      description: meditation.description,
+      filename: meditation.filename,
+      duration: meditation.duration,
+      image: meditation.image ? meditation.image._id.toString() : null
+    }));
+    
+    res.json(meditationsWithImageIds);
   } catch (err) {
     console.error("Error fetching meditations:", err);
-    res.status(500).json({ error: "Failed to fetch meditations" }); // Send a JSON error response if something goes wrong
+    res.status(500).json({ error: "Failed to fetch meditations" });
   }
 });
 
 app.get("/api/images/:imageId", async (req, res) => {
-  const gfs = getGfs(); // Assuming you have a function to get GridFS stream
-  const file = await gfs.files.findOne({ _id: req.params.imageId });
-  if (!file) {
-    return res.status(404).send("File not found");
+  try {
+    const db = mongoose.connection.db;
+    const imageBucket = new GridFSBucket(db, { bucketName: "images" });
+    
+    // Convert string ID to ObjectId
+    const objectId = new mongoose.Types.ObjectId(req.params.imageId);
+    
+    // Find the image document first
+    const imageDoc = await Image.findById(objectId);
+    if (!imageDoc) {
+      return res.status(404).send("Image not found");
+    }
+    
+    // Find the GridFS file
+    const files = await db
+      .collection("images.files")
+      .find({ _id: imageDoc.gridfsId })
+      .toArray();
+      
+    if (!files || files.length === 0) {
+      return res.status(404).send("File not found in GridFS");
+    }
+    
+    // Set appropriate headers
+    res.set({
+      'Content-Type': files[0].contentType || 'image/jpeg',
+      'Content-Length': files[0].length
+    });
+    
+    // Stream the file
+    const downloadStream = imageBucket.openDownloadStream(imageDoc.gridfsId);
+    
+    downloadStream.on("error", (err) => {
+      console.error("Download stream error:", err);
+      if (!res.headersSent) {
+        res.status(404).send("File not found");
+      }
+    });
+    
+    downloadStream.pipe(res);
+    
+  } catch (err) {
+    console.error("Error serving image:", err);
+    if (!res.headersSent) {
+      res.status(500).send("Server error");
+    }
   }
-  const readStream = gfs.createReadStream(file.filename);
-  readStream.pipe(res);
 });
 
 app.use("/api/auth", auth);

@@ -18,6 +18,7 @@ const PlayMeditationScreen = () => {
   const { title = "Deep Calm", filename, imageId } = useLocalSearchParams();
 
   const titleString = Array.isArray(title) ? title[0] : title;
+  const imageIdString = Array.isArray(imageId) ? imageId[0] : imageId;
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -25,26 +26,21 @@ const PlayMeditationScreen = () => {
   const [totalTime, setTotalTime] = useState("10:00");
   const [totalDuration, setTotalDuration] = useState(600000);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [imageUrl, setImageUrl] = useState(""); // State for image URL
+  const [imageUrl, setImageUrl] = useState(""); 
 
   const soundRef = useRef<Audio.Sound | null>(null);
 
-  // Fetch the image URL from the backend based on imageId
+  // Set the image URL directly
   useEffect(() => {
-    const fetchImage = async () => {
-      if (imageId) {
-        try {
-          const response = await fetch(`${BASE_URL}/api/images/${imageId}`);
-          const blob = await response.blob();
-          const imageUrl = URL.createObjectURL(blob);
-          setImageUrl(imageUrl);
-        } catch (error) {
-          console.error("Failed to fetch image", error);
-        }
-      }
-    };
-    fetchImage();
-  }, [imageId]);
+    if (imageIdString && imageIdString.trim() !== "") {
+      const url = `${BASE_URL}/api/images/${imageIdString}`;
+      console.log("Setting image URL:", url);
+      setImageUrl(url);
+    } else {
+      console.log("No image ID provided");
+      setImageUrl("");
+    }
+  }, [imageIdString]);
 
   const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
     if (!status.isLoaded) return;
@@ -124,87 +120,115 @@ const PlayMeditationScreen = () => {
     const newPos = Math.max(
       0,
       Math.min(
-        status.durationMillis || totalDuration,
+        status.durationMillis ?? totalDuration,
         status.positionMillis + offset
       )
     );
     await soundRef.current.setPositionAsync(newPos);
   };
 
-  return (
-    <ImageBackground
-      source={{ uri: imageUrl }} // Dynamically set the background image
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <SafeAreaView style={styles.safeArea}>
-        <ScrollView contentContainerStyle={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-              <View style={styles.circle}>
-                <Feather name="arrow-left" size={20} color="black" />
-              </View>
-            </TouchableOpacity>
+  // Fallback content when no image is available
+  const renderContent = () => {
+    if (imageUrl) {
+      return (
+        <ImageBackground
+          source={{ uri: imageUrl }}
+          style={styles.background}
+          resizeMode="cover"
+          onError={(error) => {
+            console.error("Background image load error:", error.nativeEvent.error);
+            setImageUrl(""); 
+          }}
+          onLoad={() => {
+            console.log("Background image loaded successfully");
+          }}
+        >
+          {renderPlayerContent()}
+        </ImageBackground>
+      );
+    } else {
+      // Fallback to a gradient or solid color background
+      return (
+        <View style={[styles.background, styles.fallbackBackground]}>
+          {renderPlayerContent()}
+        </View>
+      );
+    }
+  };
+
+  const renderPlayerContent = () => (
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+            <View style={styles.circle}>
+              <Feather name="arrow-left" size={20} color="black" />
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.content}>
+          <View style={styles.meditationInfo}>
+            <Text style={styles.meditationTitle}>{titleString}</Text>
+            <Text style={styles.meditationSubtitle}>
+              Find your inner peace
+            </Text>
           </View>
 
-          <View style={styles.content}>
-            <View style={styles.meditationInfo}>
-              <Text style={styles.meditationTitle}>{title}</Text>
-              <Text style={styles.meditationSubtitle}>
-                Find your inner peace
-              </Text>
+          <View style={styles.playerContainer}>
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBar}>
+                <View
+                  style={[styles.progressFill, { width: `${progress * 100}%` }]}
+                />
+              </View>
+              <View style={styles.timeLabels}>
+                <Text style={styles.timeText}>{currentTime}</Text>
+                <Text style={styles.timeText}>{totalTime}</Text>
+              </View>
             </View>
 
-            <View style={styles.playerContainer}>
-              <View style={styles.progressContainer}>
-                <View style={styles.progressBar}>
-                  <View
-                    style={[styles.progressFill, { width: `${progress * 100}%` }]}
-                  />
-                </View>
-                <View style={styles.timeLabels}>
-                  <Text style={styles.timeText}>{currentTime}</Text>
-                  <Text style={styles.timeText}>{totalTime}</Text>
-                </View>
-              </View>
+            <View style={styles.controls}>
+              <TouchableOpacity
+                style={styles.controlButton}
+                onPress={() => handleSeek(-30000)}
+              >
+                <Feather name="rewind" size={24} color="#fff" />
+              </TouchableOpacity>
 
-              <View style={styles.controls}>
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPress={() => handleSeek(-30000)}
-                >
-                  <Feather name="rewind" size={24} color="#fff" />
-                </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.playButton, !isLoaded && styles.playButtonDisabled]}
+                onPress={togglePlayPause}
+                disabled={!isLoaded}
+              >
+                <Feather name={isPlaying ? "pause" : "play"} size={36} color="#fff" />
+              </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={[styles.playButton, !isLoaded && styles.playButtonDisabled]}
-                  onPress={togglePlayPause}
-                  disabled={!isLoaded}
-                >
-                  <Feather name={isPlaying ? "pause" : "play"} size={36} color="#fff" />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPress={() => handleSeek(30000)}
-                >
-                  <Feather name="fast-forward" size={24} color="#fff" />
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                style={styles.controlButton}
+                onPress={() => handleSeek(30000)}
+              >
+                <Feather name="fast-forward" size={24} color="#fff" />
+              </TouchableOpacity>
             </View>
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    </ImageBackground>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
+
+  return renderContent();
 };
 
 const styles = StyleSheet.create({
   background: { flex: 1 },
+  fallbackBackground: {
+    backgroundColor: "#1a1a2e", 
+  },
   safeArea: { flex: 1 },
   container: {
     flexGrow: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
     paddingBottom: 30,
   },
   header: {

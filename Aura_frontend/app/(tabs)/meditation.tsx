@@ -17,11 +17,12 @@ type Audio = {
   _id: string;
   title: string;
   filename: string;
-  image: string; // Assuming the backend now sends the image URL or GridFS ID
+  image: string | null;
 };
 
 const MeditationScreen = () => {
   const [audios, setAudios] = useState<Audio[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMeditations = async () => {
@@ -32,21 +33,101 @@ const MeditationScreen = () => {
         }
 
         const data = await response.json();
-        console.log("Fetched meditations:", data);
+        console.log("Raw fetched meditations count:", data.length);
+
+        // Set fetched meditations directly
         setAudios(data);
       } catch (err) {
         console.error("Failed to fetch meditations:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchMeditations();
   }, []);
 
-  // This function fetches the image URL dynamically
-  const getImageUrl = (imageId?: string) => {
-    if (!imageId) return "";
-    return `${BASE_URL}/api/images/${imageId}`;
+  // Enhanced image URL function with meditation context
+  const getImageUrl = (imageId?: string | null, meditationTitle?: string) => {
+    if (!imageId) return null;
+    const url = `${BASE_URL}/api/images/${imageId}`;
+    return url;
   };
+
+  // Function to render a single audio card
+  const renderAudioCard = (audio: Audio) => {
+    const imageUrl = getImageUrl(audio.image, audio.title);
+
+    return (
+      <TouchableOpacity
+        key={audio._id}
+        onPress={() =>
+          router.push({
+            pathname: "/(tabs)/PlayMeditation",
+            params: {
+              id: audio._id,
+              title: audio.title,
+              filename: audio.filename,
+              imageId: audio.image ?? "",
+            },
+          })
+        }
+        style={styles.audioCard}
+      >
+        {imageUrl ? (
+          <Image
+            source={{ uri: imageUrl }}
+            style={styles.imgs}
+            onError={(error) => {
+              console.error(
+                `Image load error for "${audio.title}":`,
+                error.nativeEvent.error
+              );
+            }}
+            onLoad={() => {
+              console.log(`✓ Image loaded for "${audio.title}": ${imageUrl}`);
+            }}
+          />
+        ) : (
+          <View
+            style={[styles.imgs, { backgroundColor: "#eee", justifyContent: "center", alignItems: "center" }]}
+          >
+            <Text style={{ color: "#999" }}>No Image</Text>
+          </View>
+        )}
+        <Text style={styles.imgTitle}>{audio.title}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  // Function to create rows of 2 items each
+  const createRows = () => {
+    const rows = [];
+    for (let i = 0; i < audios.length; i += 2) {
+      const leftItem = audios[i];
+      const rightItem = audios[i + 1];
+
+      rows.push(
+        <View key={`row-${i}`} style={styles.meditationRow}>
+          {renderAudioCard(leftItem)}
+          {rightItem ? renderAudioCard(rightItem) : <View style={styles.audioCard} />}
+        </View>
+      );
+    }
+    return rows;
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <BackButton title={"Beat Stress"} />
+        <View style={styles.loadingContainer}>
+          <Text>Loading meditations...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -54,74 +135,7 @@ const MeditationScreen = () => {
       <BackButton title={"Beat Stress"} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.meditationContainer}>
-          {audios.map((audio, index) => {
-            const imageUrl = getImageUrl(audio.image);
-            if (index % 2 === 0) {
-              return (
-                <View key={index} style={styles.meditationRow}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      router.push({
-                        pathname: "/(tabs)/PlayMeditation",
-                        params: {
-                          id: audio._id,
-                          title: audio.title,
-                          filename: audio.filename,
-                        },
-                      })
-                    }
-                    style={styles.audioCard}
-                  >
-                    {audio.image && typeof audio.image === "string" ? (
-                      <Image
-                        source={{ uri: getImageUrl(audio.image) }}
-                        style={styles.imgs}
-                      />
-                    ) : (
-                      <View
-                        style={[
-                          styles.imgs,
-                          {
-                            backgroundColor: "#eee",
-                            justifyContent: "center",
-                            alignItems: "center", 
-                          },
-                        ]}
-                      >
-                        <Text>No Image</Text>
-                      </View>
-                    )}
-                    <Text style={styles.imgTitle}>{audio.title}</Text>
-                  </TouchableOpacity>
-
-                  {audios[index + 1] && (
-                    <TouchableOpacity
-                      onPress={() =>
-                        router.push({
-                          pathname: "/(tabs)/PlayMeditation",
-                          params: {
-                            id: audios[index + 1]._id,
-                            title: audios[index + 1].title,
-                            filename: audios[index + 1].filename,
-                          },
-                        })
-                      }
-                      style={styles.audioCard}
-                    >
-                      <Image
-                        source={{ uri: getImageUrl(audios[index + 1].image) }}
-                        style={styles.imgs}
-                      />
-                      <Text style={styles.imgTitle}>
-                        {audios[index + 1].title}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              );
-            }
-            return null;
-          })}
+          {createRows()}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -159,6 +173,18 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     textAlign: "center",
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  debugText: {
+    textAlign: "center",
+    color: "#666",
+    marginBottom: 15,
+    fontSize: 12,
+    fontStyle: "italic",
   },
 });
 
