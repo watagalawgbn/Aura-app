@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   greeting: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     color: "white",
     textAlign: "center",

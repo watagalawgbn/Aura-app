@@ -1,36 +1,77 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import React from "react";
-import { Slot, router } from "expo-router";
+import { Slot, router, useSegments } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const TabsLayout = () => {
+  const segments = useSegments();
+  const current = segments[segments.length - 1];
+  const isActive = (name: string) => current?.toLowerCase() === name.toLowerCase();
+
   return (
     <View style={styles.container2}>
       <Slot />
       <View style={styles.borderWrapper}>
         <View style={styles.container}>
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/Home")} style={styles.itemsCenter}>
-            <Ionicons name="home-outline" size={24} color="#52AE77" />
-            <Text style={{ color: "#52AE77" }}>Home</Text>
+          {/* Home */}
+          <TouchableOpacity
+            onPress={() => router.navigate("/(tabs)/Home")}
+            style={styles.itemsCenter}
+          >
+            <Ionicons
+              name="home-outline"
+              size={24}
+              color={isActive("Home") ? "#224831" : "#52AE77"}
+            />
+            <Text style={{ color: isActive("Home") ? "#224831" : "#52AE77" }}>Home</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/Meditation")} style={styles.itemsCenter}>
+
+          {/* Meditation */}
+          <TouchableOpacity
+            onPress={() => router.navigate("/(tabs)/Meditation")}
+            style={styles.itemsCenter}
+          >
             <Image
               source={require("../../assets/images/lotus.png")}
-              style={styles.iconImage} 
+              style={[
+                styles.iconImage,
+                { tintColor: isActive("Meditation") ? "#224831" : "#52AE77" },
+              ]}
             />
-            <Text style={{ color: "#52AE77" }}>Meditation</Text>
+            <Text style={{ color: isActive("Meditation") ? "#224831" : "#52AE77" }}>
+              Meditation
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/QuickAccess")} style={styles.itemsCenter}>
-            <MaterialCommunityIcons name="widgets-outline" size={24} color="#52AE77" />
-            <Text style={{ color: "#52AE77" }}>Quick Access</Text>
+          {/* Quick Access */}
+          <TouchableOpacity
+            onPress={() => router.navigate("/(tabs)/QuickAccess")}
+            style={styles.itemsCenter}
+          >
+            <MaterialCommunityIcons
+              name="widgets-outline"
+              size={24}
+              color={isActive("QuickAccess") ? "#224831" : "#52AE77"}
+            />
+            <Text style={{ color: isActive("QuickAccess") ? "#224831" : "#52AE77" }}>
+              Quick Access
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => router.navigate("/(tabs)/Profile")} style={styles.itemsCenter}>
-            <Ionicons name="person-outline" size={24} color="#52AE77" />
-            <Text style={{ color: "#52AE77" }}>Profile</Text>
+          {/* Profile */}
+          <TouchableOpacity
+            onPress={() => router.navigate("/(tabs)/Profile")}
+            style={styles.itemsCenter}
+          >
+            <Ionicons
+              name="person-outline"
+              size={24}
+              color={isActive("Profile") ? "#224831" : "#52AE77"}
+            />
+            <Text style={{ color: isActive("Profile") ? "#224831" : "#52AE77" }}>
+              Profile
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -39,6 +80,7 @@ const TabsLayout = () => {
 };
 
 export default TabsLayout;
+
 
 const styles = StyleSheet.create({
   container: {
