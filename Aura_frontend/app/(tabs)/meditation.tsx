@@ -12,6 +12,7 @@ import {
 import { router } from "expo-router";
 import BackButton from "../components/BackButton";
 import { BASE_URL } from "@/constants/Api";
+import { ActivityIndicator } from "react-native";
 
 type Audio = {
   _id: string;
@@ -139,7 +140,7 @@ const MeditationScreen = () => {
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
         <BackButton title={"Beat Stress"} />
         <View style={styles.loadingContainer}>
-          <Text>Loading meditations...</Text>
+          <ActivityIndicator size="large" color="#52AE77" />
         </View>
       </SafeAreaView>
     );
