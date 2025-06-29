@@ -4,7 +4,6 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  TextInput,
   StyleSheet,
   SafeAreaView,
   StatusBar,
@@ -17,7 +16,7 @@ import { useAuth } from "../../context/AuthContext";
 import { LinearGradient } from "expo-linear-gradient";
 
 const HomeScreen = () => {
-  const [isMoodLogVisible, setMoodLogVisible] = useState(false);
+  const [isMoodLogVisible, setIsMoodLogVisible] = useState(false);
   const { user } = useAuth();
 
   const currentTime = new Date();
@@ -43,9 +42,14 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#5FB21F" barStyle="light-content" />
+      <StatusBar backgroundColor="#224831" barStyle="light-content" />
 
-      <LinearGradient colors={["#5FB21F", "#224831"]} style={styles.header}>
+      <LinearGradient
+        colors={["#224831", "#5FB21F"]}
+        start={{ x: 0.5, y: 0.5 }}
+        end={{ x: 0.5, y: 1 }}
+        style={styles.header}
+      >
         <View style={styles.headerTop}>
           <View style={styles.logoContainer}>
             <Image
@@ -58,20 +62,9 @@ const HomeScreen = () => {
             <Text style={styles.greeting}>{greetingMessage},</Text>
             <Text style={styles.greeting}>{user?.name}!</Text>
           </View>
-          <TouchableOpacity style={styles.notificationIcon}>
+          {/* <TouchableOpacity style={styles.notificationIcon}>
             <Feather name="bell" size={24} color="black" border="1" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search"
-            placeholderTextColor="#52AE77"
-          />
-          <TouchableOpacity>
-            <Feather name="search" size={20} color="#52AE77" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </LinearGradient>
 
@@ -104,7 +97,7 @@ const HomeScreen = () => {
 
             {/* Track your mood Card */}
             <TouchableOpacity
-              onPress={() => setMoodLogVisible(true)} 
+              onPress={() => setIsMoodLogVisible(true)}
               style={styles.insightCard}
             >
               <Text style={styles.insightCardTitle}>Track your mood</Text>
@@ -114,7 +107,7 @@ const HomeScreen = () => {
               />
             </TouchableOpacity>
             {isMoodLogVisible && (
-              <MoodLog isVisible onClose={() => setMoodLogVisible(false)} />
+              <MoodLog isVisible onClose={() => setIsMoodLogVisible(false)} />
             )}
           </View>
 
@@ -140,7 +133,7 @@ const HomeScreen = () => {
                   Stress-Free Meditation
                 </Text>
                 <TouchableOpacity
-                  onPress={() => router.navigate("/(tabs)/QuickAccess")}
+                  onPress={() => router.navigate("/(tabs)/Meditation")}
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>
@@ -192,11 +185,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
-    paddingTop: 30,
+    paddingTop: 40,
     paddingHorizontal: 20,
-    paddingBottom: 20,
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
+    paddingBottom: 40,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
   },
   headerTop: {
     flexDirection: "row",
@@ -208,10 +201,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: 75,
-    height: 60,
+    width: 100,
+    height: 100,
     borderRadius: 20,
-    marginRight: 20,
+    // marginRight: 20,
   },
   greetingContainer: {
     flexDirection: "column",
@@ -220,7 +213,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   greeting: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "bold",
     color: "white",
     textAlign: "center",
@@ -233,13 +226,13 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   notificationIcon: {
-    width: 40, 
-    height: 40, 
-    borderRadius: 20, 
-    backgroundColor: "white", 
-    justifyContent: "center", 
-    alignItems: "center", 
-    padding: 5, 
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 5,
   },
   searchContainer: {
     flexDirection: "row",
@@ -358,7 +351,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   exploreButton: {
-    backgroundColor: "#52AE77",
+    backgroundColor: "#5FB21F",
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 12,
