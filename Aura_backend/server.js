@@ -28,7 +28,6 @@ app.get("/api/audio/:filename", async (req, res) => {
     const db = mongoose.connection.db;
     const bucket = new GridFSBucket(db, { bucketName: "audios" });
 
-    // Find the file first (optional, for error handling)
     const files = await db
       .collection("audios.files")
       .find({ filename: req.params.filename })
@@ -37,16 +36,43 @@ app.get("/api/audio/:filename", async (req, res) => {
       return res.status(404).send("File not found");
     }
 
-    res.set("Content-Type", "audio/mpeg"); // or use files[0].contentType if set
-    const downloadStream = bucket.openDownloadStreamByName(req.params.filename);
+    const file = files[0];
 
-    downloadStream.on("error", () => res.status(404).send("File not found"));
-    downloadStream.pipe(res);
+    const range = req.headers.range;
+    const contentLength = file.length;
+
+    if (range) {
+      const parts = range.replace(/bytes=/, "").split("-");
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : contentLength - 1;
+
+      const chunkSize = end - start + 1;
+      const downloadStream = bucket.openDownloadStreamByName(req.params.filename, {
+        start,
+        end: end + 1, // GridFS is exclusive
+      });
+
+      res.writeHead(206, {
+        "Content-Range": `bytes ${start}-${end}/${contentLength}`,
+        "Accept-Ranges": "bytes",
+        "Content-Length": chunkSize,
+        "Content-Type": "audio/mpeg",
+      });
+
+      downloadStream.pipe(res);
+    } else {
+      res.writeHead(200, {
+        "Content-Length": contentLength,
+        "Content-Type": "audio/mpeg",
+      });
+      bucket.openDownloadStreamByName(req.params.filename).pipe(res);
+    }
   } catch (err) {
     console.error("Server error:", err);
     res.status(500).send("Server error");
   }
 });
+
 
 app.get("/api/meditations", async (req, res) => {
   try {

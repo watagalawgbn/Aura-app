@@ -26,108 +26,202 @@ const PlayMeditationScreen = () => {
   const [totalTime, setTotalTime] = useState("10:00");
   const [totalDuration, setTotalDuration] = useState(600000);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [imageUrl, setImageUrl] = useState(""); 
+  const [imageUrl, setImageUrl] = useState("");
 
   const soundRef = useRef<Audio.Sound | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Set the image URL directly
   useEffect(() => {
     if (imageIdString && imageIdString.trim() !== "") {
       const url = `${BASE_URL}/api/images/${imageIdString}`;
-      console.log("Setting image URL:", url);
       setImageUrl(url);
+      console.log("✅ Image URL set:", url);
     } else {
-      console.log("No image ID provided");
       setImageUrl("");
+      console.log("⚠️ No image ID provided");
     }
   }, [imageIdString]);
 
-  const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
-    if (!status.isLoaded) return;
+  const waitForValidDuration = async (sound: Audio.Sound): Promise<number | null> => {
+  for (let i = 0; i < 30; i++) {
+    const status = await sound.getStatusAsync();
 
-    if (
-      typeof status.durationMillis === "number" &&
-      status.durationMillis > 0
-    ) {
-      setProgress(status.positionMillis / status.durationMillis);
+    // ✅ TypeScript guard: only proceed if status is success
+    if (status.isLoaded) {
+      if (status.durationMillis && status.durationMillis > 1000) {
+        console.log("✅ Got valid duration:", status.durationMillis);
+        return status.durationMillis;
+      } else {
+        console.log(`⏳ [${i + 1}/30] Duration still invalid:`, status.durationMillis);
+      }
     } else {
-      setProgress(0);
+      console.warn(`⚠️ Status not loaded yet (attempt ${i + 1})`);
     }
-    const minutes = Math.floor(status.positionMillis / 60000);
-    const seconds = Math.floor((status.positionMillis % 60000) / 1000);
-    setCurrentTime(`${minutes}:${seconds.toString().padStart(2, "0")}`);
-    setIsPlaying(status.isPlaying);
 
-    if (status.didJustFinish) {
-      setIsPlaying(false);
-      setProgress(0);
-      setCurrentTime("0:00");
-    }
-  };
+    await new Promise((res) => setTimeout(res, 500));
+  }
+
+  console.warn("❌ Gave up waiting for valid duration.");
+  return null;
+};
+
 
   useEffect(() => {
     const loadAudio = async () => {
-      try {
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: false,
-          staysActiveInBackground: true,
-          playsInSilentModeIOS: true,
-          shouldDuckAndroid: true,
-          playThroughEarpieceAndroid: false,
-        });
+  try {
+    console.log("🎧 Starting audio load:", filename);
 
-        const { sound, status } = await Audio.Sound.createAsync(
-          { uri: `${BASE_URL}/api/audio/${filename}` },
-          { shouldPlay: false },
-          onPlaybackStatusUpdate
-        );
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      staysActiveInBackground: true,
+      playsInSilentModeIOS: true,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: false,
+    });
 
-        soundRef.current = sound;
-        setIsLoaded(true);
+    const { sound } = await Audio.Sound.createAsync(
+      { uri: `${BASE_URL}/api/audio/${filename}` },
+      { shouldPlay: false }
+    );
 
-        if (status.isLoaded && status.durationMillis) {
-          setTotalDuration(status.durationMillis);
-          const minutes = Math.floor(status.durationMillis / 60000);
-          const seconds = Math.floor((status.durationMillis % 60000) / 1000);
-          setTotalTime(`${minutes}:${seconds.toString().padStart(2, "0")}`);
-        }
-      } catch (error) {
-        console.error("Failed to load audio", error);
-      }
-    };
+    soundRef.current = sound;
+    sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    setIsLoaded(true);
+
+    // 👇 Wait for valid duration (even if delayed)
+    const actualDuration = await waitForValidDuration(sound);
+    if (actualDuration) {
+      setTotalDuration(actualDuration);
+
+      const totalMinutes = Math.floor(actualDuration / 60000);
+      const totalSeconds = Math.floor((actualDuration % 60000) / 1000);
+      setTotalTime(`${totalMinutes}:${totalSeconds.toString().padStart(2, "0")}`);
+    }
+
+  } catch (error) {
+    console.error("❌ Failed to load audio", error);
+  }
+};
 
     if (filename) loadAudio();
 
     return () => {
       if (soundRef.current) {
         soundRef.current.unloadAsync();
+        console.log("🧹 Unloaded sound");
+      }
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        console.log("🧹 Cleared interval");
       }
     };
   }, [filename]);
 
+  useEffect(() => {
+    if (isPlaying && soundRef.current) {
+      console.log("▶️ Starting interval-based progress updater");
+      intervalRef.current = setInterval(async () => {
+        const status = await soundRef.current?.getStatusAsync();
+        if (
+          status?.isLoaded &&
+          status?.positionMillis &&
+          status?.durationMillis
+        ) {
+          console.log("🔄 Interval update | Position:", status.positionMillis);
+          onPlaybackStatusUpdate(status);
+        }
+      }, 1000);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+        console.log("⏸️ Stopped interval");
+      }
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isPlaying]);
+
+  const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
+    if (!status.isLoaded || !("durationMillis" in status)) {
+      console.warn("⚠️ Playback status not loaded properly");
+      return;
+    }
+
+    if (status.durationMillis && status.positionMillis != null) {
+      console.log(
+        `🎯 Status Update | Pos: ${status.positionMillis} / ${status.durationMillis}`
+      );
+
+      setProgress(status.positionMillis / status.durationMillis);
+
+      const currentMinutes = Math.floor(status.positionMillis / 60000);
+      const currentSeconds = Math.floor((status.positionMillis % 60000) / 1000);
+      setCurrentTime(
+        `${currentMinutes}:${currentSeconds.toString().padStart(2, "0")}`
+      );
+
+      const totalMinutes = Math.floor(status.durationMillis / 60000);
+      const totalSeconds = Math.floor((status.durationMillis % 60000) / 1000);
+      setTotalTime(
+        `${totalMinutes}:${totalSeconds.toString().padStart(2, "0")}`
+      );
+    }
+
+    setIsPlaying(status.isPlaying ?? false);
+
+    if (status.didJustFinish) {
+      console.log("🏁 Playback finished");
+      setIsPlaying(false);
+      setProgress(0);
+      setCurrentTime("0:00");
+    }
+  };
+
   const handleBack = () => router.back();
+
   const togglePlayPause = async () => {
     if (!isLoaded || !soundRef.current) return;
-    isPlaying
-      ? await soundRef.current.pauseAsync()
-      : await soundRef.current.playAsync();
+
+    if (isPlaying) {
+      console.log("⏸️ Pausing audio");
+      await soundRef.current.pauseAsync();
+    } else {
+      console.log("▶️ Playing audio");
+      await soundRef.current.playAsync();
+    }
   };
 
-  const handleSeek = async (offset: number) => {
+  const handleRewind = async () => {
     if (!isLoaded || !soundRef.current) return;
+
     const status = await soundRef.current.getStatusAsync();
-    if (!status.isLoaded) return;
-    const newPos = Math.max(
-      0,
-      Math.min(
-        status.durationMillis ?? totalDuration,
-        status.positionMillis + offset
-      )
-    );
-    await soundRef.current.setPositionAsync(newPos);
+    if (status.isLoaded) {
+      const newPosition = Math.max(0, status.positionMillis - 30000);
+      console.log("⏪ Rewinding to:", newPosition);
+      await soundRef.current.setPositionAsync(newPosition);
+    }
   };
 
-  // Fallback content when no image is available
+  const handleForward = async () => {
+    if (!isLoaded || !soundRef.current) return;
+
+    const status = await soundRef.current.getStatusAsync();
+    if (status.isLoaded) {
+      const newPosition = Math.min(
+        status.durationMillis ?? totalDuration,
+        status.positionMillis + 30000
+      );
+      console.log("⏩ Forwarding to:", newPosition);
+      await soundRef.current.setPositionAsync(newPosition);
+    }
+  };
+
   const renderContent = () => {
     if (imageUrl) {
       return (
@@ -136,18 +230,20 @@ const PlayMeditationScreen = () => {
           style={styles.background}
           resizeMode="cover"
           onError={(error) => {
-            console.error("Background image load error:", error.nativeEvent.error);
-            setImageUrl(""); 
+            console.error(
+              "🖼️ Background image error:",
+              error.nativeEvent.error
+            );
+            setImageUrl("");
           }}
           onLoad={() => {
-            console.log("Background image loaded successfully");
+            console.log("🖼️ Background image loaded");
           }}
         >
           {renderPlayerContent()}
         </ImageBackground>
       );
     } else {
-      // Fallback to a gradient or solid color background
       return (
         <View style={[styles.background, styles.fallbackBackground]}>
           {renderPlayerContent()}
@@ -170,9 +266,7 @@ const PlayMeditationScreen = () => {
         <View style={styles.content}>
           <View style={styles.meditationInfo}>
             <Text style={styles.meditationTitle}>{titleString}</Text>
-            <Text style={styles.meditationSubtitle}>
-              Find your inner peace
-            </Text>
+            <Text style={styles.meditationSubtitle}>Find your inner peace</Text>
           </View>
 
           <View style={styles.playerContainer}>
@@ -191,22 +285,29 @@ const PlayMeditationScreen = () => {
             <View style={styles.controls}>
               <TouchableOpacity
                 style={styles.controlButton}
-                onPress={() => handleSeek(-30000)}
+                onPress={handleRewind}
               >
                 <Feather name="rewind" size={24} color="#fff" />
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.playButton, !isLoaded && styles.playButtonDisabled]}
+                style={[
+                  styles.playButton,
+                  !isLoaded && styles.playButtonDisabled,
+                ]}
                 onPress={togglePlayPause}
                 disabled={!isLoaded}
               >
-                <Feather name={isPlaying ? "pause" : "play"} size={36} color="#fff" />
+                <Feather
+                  name={isPlaying ? "pause" : "play"}
+                  size={36}
+                  color="#fff"
+                />
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.controlButton}
-                onPress={() => handleSeek(30000)}
+                onPress={handleForward}
               >
                 <Feather name="fast-forward" size={24} color="#fff" />
               </TouchableOpacity>
@@ -223,7 +324,7 @@ const PlayMeditationScreen = () => {
 const styles = StyleSheet.create({
   background: { flex: 1 },
   fallbackBackground: {
-    backgroundColor: "#1a1a2e", 
+    backgroundColor: "#1a1a2e",
   },
   safeArea: { flex: 1 },
   container: {

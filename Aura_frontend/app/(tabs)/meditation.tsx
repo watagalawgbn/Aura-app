@@ -17,7 +17,7 @@ type Audio = {
   _id: string;
   title: string;
   filename: string;
-  image: string | null;
+  image?: string | { _id: string } | null;
 };
 
 const MeditationScreen = () => {
@@ -54,9 +54,15 @@ const MeditationScreen = () => {
     return url;
   };
 
+  const getImageId = (image: string | { _id: string } | null | undefined) => {
+    if (!image) return "";
+    if (typeof image === "string") return image;
+    return image._id;
+  };
+
   // Function to render a single audio card
   const renderAudioCard = (audio: Audio) => {
-    const imageUrl = getImageUrl(audio.image, audio.title);
+    const imageUrl = getImageUrl(getImageId(audio.image), audio.title);
 
     return (
       <TouchableOpacity
@@ -68,7 +74,7 @@ const MeditationScreen = () => {
               id: audio._id,
               title: audio.title,
               filename: audio.filename,
-              imageId: audio.image ?? "",
+              imageId: getImageId(audio.image),
             },
           })
         }
@@ -90,7 +96,14 @@ const MeditationScreen = () => {
           />
         ) : (
           <View
-            style={[styles.imgs, { backgroundColor: "#eee", justifyContent: "center", alignItems: "center" }]}
+            style={[
+              styles.imgs,
+              {
+                backgroundColor: "#eee",
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            ]}
           >
             <Text style={{ color: "#999" }}>No Image</Text>
           </View>
@@ -110,7 +123,11 @@ const MeditationScreen = () => {
       rows.push(
         <View key={`row-${i}`} style={styles.meditationRow}>
           {renderAudioCard(leftItem)}
-          {rightItem ? renderAudioCard(rightItem) : <View style={styles.audioCard} />}
+          {rightItem ? (
+            renderAudioCard(rightItem)
+          ) : (
+            <View style={styles.audioCard} />
+          )}
         </View>
       );
     }
@@ -134,9 +151,7 @@ const MeditationScreen = () => {
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <BackButton title={"Beat Stress"} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.meditationContainer}>
-          {createRows()}
-        </View>
+        <View style={styles.meditationContainer}>{createRows()}</View>
       </ScrollView>
     </SafeAreaView>
   );
