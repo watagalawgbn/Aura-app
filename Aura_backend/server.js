@@ -13,6 +13,9 @@ const assessmentRoutes = require("./src/routes/assessmentRoutes");
 const moods = require("./src/routes/mood");
 const taskRoutes = require("./src/routes/taskRoutes");
 const breathingSessionRoutes = require("./src/routes/breathingSessionRoutes");
+const audioRoutes = require("./src/routes/audioRoutes");
+const meditationRoutes = require("./src/routes/meditationRoutes");
+const imageRoutes = require("./src/routes/imageRoutes");
 
 const app = express();
 connectDB();
@@ -23,128 +26,9 @@ const mongoURI = process.env.MONGO_URI;
 connectGridFs(mongoURI);
 mongoose.connect(mongoURI);
 
-app.get("/api/audio/:filename", async (req, res) => {
-  try {
-    const db = mongoose.connection.db;
-    const bucket = new GridFSBucket(db, { bucketName: "audios" });
-
-    const files = await db
-      .collection("audios.files")
-      .find({ filename: req.params.filename })
-      .toArray();
-    if (!files || files.length === 0) {
-      return res.status(404).send("File not found");
-    }
-
-    const file = files[0];
-
-    const range = req.headers.range;
-    const contentLength = file.length;
-
-    if (range) {
-      const parts = range.replace(/bytes=/, "").split("-");
-      const start = parseInt(parts[0], 10);
-      const end = parts[1] ? parseInt(parts[1], 10) : contentLength - 1;
-
-      const chunkSize = end - start + 1;
-      const downloadStream = bucket.openDownloadStreamByName(req.params.filename, {
-        start,
-        end: end + 1, // GridFS is exclusive
-      });
-
-      res.writeHead(206, {
-        "Content-Range": `bytes ${start}-${end}/${contentLength}`,
-        "Accept-Ranges": "bytes",
-        "Content-Length": chunkSize,
-        "Content-Type": "audio/mpeg",
-      });
-
-      downloadStream.pipe(res);
-    } else {
-      res.writeHead(200, {
-        "Content-Length": contentLength,
-        "Content-Type": "audio/mpeg",
-      });
-      bucket.openDownloadStreamByName(req.params.filename).pipe(res);
-    }
-  } catch (err) {
-    console.error("Server error:", err);
-    res.status(500).send("Server error");
-  }
-});
-
-
-app.get("/api/meditations", async (req, res) => {
-  try {
-    const meditations = await Meditation.find().populate("image");
-    
-    // Transform the response to include image IDs properly
-    const meditationsWithImageIds = meditations.map(meditation => ({
-      _id: meditation._id,
-      title: meditation.title,
-      description: meditation.description,
-      filename: meditation.filename,
-      duration: meditation.duration,
-      image: meditation.image ? meditation.image._id.toString() : null
-    }));
-    
-    res.json(meditationsWithImageIds);
-  } catch (err) {
-    console.error("Error fetching meditations:", err);
-    res.status(500).json({ error: "Failed to fetch meditations" });
-  }
-});
-
-app.get("/api/images/:imageId", async (req, res) => {
-  try {
-    const db = mongoose.connection.db;
-    const imageBucket = new GridFSBucket(db, { bucketName: "images" });
-    
-    // Convert string ID to ObjectId
-    const objectId = new mongoose.Types.ObjectId(req.params.imageId);
-    
-    // Find the image document first
-    const imageDoc = await Image.findById(objectId);
-    if (!imageDoc) {
-      return res.status(404).send("Image not found");
-    }
-    
-    // Find the GridFS file
-    const files = await db
-      .collection("images.files")
-      .find({ _id: imageDoc.gridfsId })
-      .toArray();
-      
-    if (!files || files.length === 0) {
-      return res.status(404).send("File not found in GridFS");
-    }
-    
-    // Set appropriate headers
-    res.set({
-      'Content-Type': files[0].contentType || 'image/jpeg',
-      'Content-Length': files[0].length
-    });
-    
-    // Stream the file
-    const downloadStream = imageBucket.openDownloadStream(imageDoc.gridfsId);
-    
-    downloadStream.on("error", (err) => {
-      console.error("Download stream error:", err);
-      if (!res.headersSent) {
-        res.status(404).send("File not found");
-      }
-    });
-    
-    downloadStream.pipe(res);
-    
-  } catch (err) {
-    console.error("Error serving image:", err);
-    if (!res.headersSent) {
-      res.status(500).send("Server error");
-    }
-  }
-});
-
+app.use("/api/audio", audioRoutes);
+app.use("/api/meditations", meditationRoutes);
+app.use("/api/images", imageRoutes);
 app.use("/api/auth", auth);
 app.use("/api/moods", moods);
 app.use("/api/assessment", assessmentRoutes);

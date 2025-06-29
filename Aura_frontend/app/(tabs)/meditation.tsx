@@ -47,7 +47,6 @@ const MeditationScreen = () => {
     fetchMeditations();
   }, []);
 
-  // Enhanced image URL function with meditation context
   const getImageUrl = (imageId?: string | null, meditationTitle?: string) => {
     if (!imageId) return null;
     const url = `${BASE_URL}/api/images/${imageId}`;
@@ -91,7 +90,7 @@ const MeditationScreen = () => {
               );
             }}
             onLoad={() => {
-              console.log(`✓ Image loaded for "${audio.title}": ${imageUrl}`);
+              console.log(`Image loaded for "${audio.title}": ${imageUrl}`);
             }}
           />
         ) : (

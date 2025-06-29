@@ -20,7 +20,7 @@ async function getDurationSeconds(filePath) {
     const output = execSync(`ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`);
     return parseFloat(output.toString().trim());
   } catch (err) {
-    console.log('❌ Error getting duration for file:', filePath, err.message);
+    console.log('Error getting duration for file:', filePath, err.message);
     return null;
   }
 }
@@ -36,7 +36,7 @@ async function uploadImagesAndAudios() {
   const audioFiles = fs.readdirSync(audioDir);
 
   if (audioFiles.length > imageFiles.length) {
-    console.warn("⚠️ More audio files than images. Some audios won't get a unique image.");
+    console.warn("More audio files than images. Some audios won't get a unique image.");
   }
 
   for (let i = 0; i < audioFiles.length; i++) {
@@ -64,7 +64,7 @@ async function uploadImagesAndAudios() {
       duration: durationSec ? Math.round(durationSec) : undefined,
       audioGridFsId: audioUploadStream.id,
     });
-    console.log(`🎧 Uploaded and created meditation for audio: ${audioFile}`);
+    console.log(`Uploaded and created meditation for audio: ${audioFile}`);
 
     // Upload and link image if available
     if (imageFullPath) {
@@ -83,9 +83,9 @@ async function uploadImagesAndAudios() {
       meditation.image = imageDoc._id;
       await meditation.save();
 
-      console.log(`🖼️ Linked image "${imageFile}" to meditation "${title}"`);
+      console.log(`Linked image "${imageFile}" to meditation "${title}"`);
     } else {
-      console.warn(`⚠️ No image available for "${audioFile}"`);
+      console.log(`No image available for "${audioFile}"`);
     }
   }
 
