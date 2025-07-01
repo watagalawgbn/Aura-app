@@ -2,9 +2,8 @@
 
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from "react-native";
 import MentalHealthDonutChart from "../components/MentalHealthDonutChart";
-import { StatusBar } from "react-native";
 
 export default function AssessmentResult() {
   // Get parameters from the navigation (sent after submitting the assessment)
