@@ -31,7 +31,7 @@ exports.signup = async (req, res) => {
     console.log("Token generated:", token);
     res.json({ token });
   } catch (error) {
-    console.error("Sign-Up Error:", err.message);
+    console.error("Sign-Up Error:", error.message);
     res.status(500).send("Server error");
   }
 };
@@ -59,7 +59,7 @@ exports.signin = async (req, res) => {
     console.log("Token generated:", token);
     res.json({ token });
   } catch (error) {
-    console.error("Sign-In Error:", err.message);
+    console.error("Sign-In Error:", error.message);
     res.status(500).send("Server error");
   }
 };

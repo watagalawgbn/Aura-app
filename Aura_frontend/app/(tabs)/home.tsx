@@ -62,9 +62,9 @@ const HomeScreen = () => {
             <Text style={styles.greeting}>{greetingMessage},</Text>
             <Text style={styles.greeting}>{user?.name}!</Text>
           </View>
-          {/* <TouchableOpacity style={styles.notificationIcon}>
+          <TouchableOpacity style={styles.notificationIcon}>
             <Feather name="bell" size={24} color="black" border="1" />
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
       </LinearGradient>
 
@@ -80,7 +80,12 @@ const HomeScreen = () => {
             <Text style={styles.sectionTitle}>My Insights</Text>
           </View>
 
-          <View style={styles.insightsContainer}>
+          <ScrollView
+            horizontal
+            style={styles.insightsContainer}
+            contentContainerStyle={styles.insightsContent}
+            showsHorizontalScrollIndicator={false}
+          >
             {/* Mental Health Assessment Card */}
             <TouchableOpacity
               style={styles.insightCard}
@@ -109,7 +114,19 @@ const HomeScreen = () => {
             {isMoodLogVisible && (
               <MoodLog isVisible onClose={() => setIsMoodLogVisible(false)} />
             )}
-          </View>
+
+            {/*Sleep tracking */}
+            <TouchableOpacity
+              style={styles.insightCard}
+              onPress={() => router.navigate("/(tabs)/Assessment")}
+            >
+              <Text style={styles.insightCardTitle}>Track you sleep</Text>
+              <Image
+                source={require("../../assets/images/sleep.png")}
+                style={styles.insightCardImage}
+              />
+            </TouchableOpacity>
+          </ScrollView>
 
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Access</Text>
@@ -188,8 +205,8 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingHorizontal: 20,
     paddingBottom: 40,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   headerTop: {
     flexDirection: "row",
@@ -281,23 +298,29 @@ const styles = StyleSheet.create({
   },
   insightsContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    width: "100%",
   },
   insightCard: {
-    width: "48%",
-    backgroundColor: "white",
-    borderRadius: 25,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: "#eee",
-    justifyContent: "space-between",
-    height: 250,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
+  width: 200, // fixed width for better horizontal scrolling
+  backgroundColor: "white",
+  borderRadius: 25,
+  padding: 15,
+  marginRight: 15, // adds space between cards
+  borderWidth: 1,
+  borderColor: "#eee",
+  justifyContent: "space-between",
+  height: 250,
+  elevation: 5,
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.2,
+  shadowRadius: 4,
+},
+insightsContent: {
+  paddingLeft: 10,
+  paddingRight: 10,
+}
+,
   insightCardTitle: {
     fontSize: 16,
     fontWeight: "bold",

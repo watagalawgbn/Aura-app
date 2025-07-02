@@ -3,6 +3,11 @@
 const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: false,
+  },
   name: {
     type: String,
     required: true,
@@ -10,11 +15,6 @@ const taskSchema = new mongoose.Schema({
   note: {
     type: String,
     default: "",
-  },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: false,
   },
 });
 

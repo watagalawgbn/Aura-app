@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   ScrollView,
   StatusBar,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { router } from "expo-router";
 import BackButton from "../components/BackButton";
