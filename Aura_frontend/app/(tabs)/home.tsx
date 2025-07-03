@@ -118,7 +118,7 @@ const HomeScreen = () => {
             {/*Sleep tracking */}
             <TouchableOpacity
               style={styles.insightCard}
-              onPress={() => router.navigate("/(tabs)/Assessment")}
+              onPress={() => router.navigate("/(tabs)/SleepBetterScreen")}
             >
               <Text style={styles.insightCardTitle}>Track you sleep</Text>
               <Image
