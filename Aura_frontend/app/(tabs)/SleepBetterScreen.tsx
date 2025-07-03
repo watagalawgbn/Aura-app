@@ -1,36 +1,36 @@
-// src/screens/SleepBetterScreen.tsx
 import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  FlatList,
   StyleSheet,
   StatusBar,
   ScrollView,
 } from "react-native";
 import { useSleep } from "../../context/SleepContext";
-import SleepChart from "../components/SleepChart";
 import dayjs from "dayjs";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../components/BackButton";
+import { Feather } from "@expo/vector-icons";
+import SleepChart from "../components/SleepChart"; // Ensure this component accepts sleepRecords
 
-const weekDates = [...Array(7)].map((_, i) =>
-  dayjs()
-    .subtract(6 - i, "day")
-    .format("YYYY-MM-DD")
-);
+// Updated SleepData type with startTime and endTime
+type SleepData = {
+  duration: number;
+  date: string;
+  startTime: string;
+  endTime: string;
+};
 
 const SleepBetterScreen = () => {
   const { sleepRecords } = useSleep();
-  const [selectedDate, setSelectedDate] = useState(
-    dayjs().format("YYYY-MM-DD")
-  );
+
+  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
 
   const today = dayjs();
-  const weekDates = [...Array(7)].map((_, i) =>
-    today.subtract(6 - i, "day").format("YYYY-MM-DD")
+  const weekDates = [...Array(7)].map(
+    (_, i) => today.subtract(6 - i, "day").format("YYYY-MM-DD")
   );
 
   const averageSleep = sleepRecords.length
@@ -41,18 +41,26 @@ const SleepBetterScreen = () => {
 
   const latestEntry = sleepRecords[sleepRecords.length - 1];
 
+  const getTimeRange = () => {
+    if (latestEntry) {
+      const startTime = dayjs(latestEntry.startTime).format("hh:mmA");
+      const endTime = dayjs(latestEntry.endTime).format("hh:mmA");
+      return `${startTime} - ${endTime}`;
+    }
+    return "Select the time duration you slept";
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+
       <BackButton title={"Sleep Better"} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>How long did you sleep?</Text>
         </View>
-        {/* <View style={styles.DateContainer}>
 
-        </View> */}
-
+        {/* Date Selector */}
         <View style={styles.outerContainer}>
           {weekDates.map((date) => {
             const isSelected = date === selectedDate;
@@ -76,34 +84,46 @@ const SleepBetterScreen = () => {
             );
           })}
         </View>
+
+        {/* Time Selector */}
+        <View style={styles.timeSelector}>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/SleepTimerScreen")}>
+            <Text style={styles.timeSelectorText}>{getTimeRange()}</Text>
+            <Feather name="edit-2" size={18} color="black" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Sleep Chart */}
+        <View style={styles.sleepChartContainer}>
+          <SleepChart sleepRecords={sleepRecords} selectedDate={selectedDate} />
+        </View>
+
+        {/* Average Sleep Hours */}
+        <View style={styles.avgSleepContainer}>
+          <Text style={styles.avgSleepText}>
+            Your average sleeping hours: {averageSleep} hours
+          </Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default SleepBetterScreen;
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#ffffff" },
-  title: { fontSize: 18, fontWeight: "bold" },
-  scrollContent: {},
+  scrollContent: {
+    paddingBottom: 20,
+  },
+  titleText: {
+    fontSize: 18,
+    fontWeight: "regular",
+  },
   titleContainer: {
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 15,
     paddingVertical: 15,
   },
-  titleText: {
-    fontSize: 18,
-    fontWeight: "regular",
-  },
-  DateContainer: {
-    borderBlockColor: "black",
-    // borderColor: 'black',
-    borderWidth: 3,
-    borderRadius: 15,
-  },
-
   outerContainer: {
     flexDirection: "row",
     borderColor: "#224831", // green border
@@ -111,10 +131,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 10,
     justifyContent: "space-between",
+    margin: 20,
   },
   dateChip: {
     alignItems: "center",
-    padding: 10,
+    padding: 8,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#A5D6A7", // light green
@@ -138,19 +159,33 @@ const styles = StyleSheet.create({
   selectedText: {
     color: "white",
   },
-
-  //   dateChip: {
-  //     marginRight: 10,
-  //     padding: 10,
-  //     backgroundColor: '#D6F5D6',
-  //     borderRadius: 8,
-  //   },
-  //   editTime: {
-  //     marginVertical: 20,
-  //     padding: 15,
-  //     backgroundColor: '#CCFFCC',
-  //     borderRadius: 10,
-  //   },
-  //   chartTitle: { fontSize: 16, marginTop: 20, fontWeight: '600' },
-  //   avgText: { marginTop: 10, fontSize: 14, fontWeight: '500' },
+  timeSelector: {
+    flexDirection: "row",
+    borderColor: "224831",
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    marginHorizontal: 100,
+    marginTop: 20,
+  },
+  timeSelectorText: {
+    fontWeight: "bold",
+    fontSize: 15,
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+  sleepChartContainer: {
+    marginTop: 20,
+    padding: 10,
+  },
+  avgSleepContainer: {
+    marginTop: 20,
+    paddingHorizontal: 15,
+  },
+  avgSleepText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
 });
+
+export default SleepBetterScreen;

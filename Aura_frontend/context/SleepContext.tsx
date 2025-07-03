@@ -4,8 +4,8 @@ import dayjs from 'dayjs';
 
 type SleepData = {
   date: string;
-  sleepStart: string;
-  sleepEnd: string;
+  startTime: string;
+  endTime: string;
   duration: number;
 };
 

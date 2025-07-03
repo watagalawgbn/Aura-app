@@ -6,7 +6,7 @@ import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 type BackButtonProps = {
-  title: String;
+  title: string;
 };
 
 const BackButton = ({ title }: BackButtonProps) => {

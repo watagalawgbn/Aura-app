@@ -22,8 +22,8 @@ const SleepTimerScreen = ({ navigation }: any) => {
 
     addSleepRecord({
       date: dayjs().format('YYYY-MM-DD'),
-      sleepStart: dayjs(bedtime).format('hh:mm A'),
-      sleepEnd: dayjs(wakeTime).format('hh:mm A'),
+      startTime: dayjs(bedtime).format('hh:mm A'),
+      endTime: dayjs(wakeTime).format('hh:mm A'),
       duration: calculateHours(),
     });
 
