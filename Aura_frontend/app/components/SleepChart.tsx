@@ -1,79 +1,58 @@
-import React from 'react';
-import { BarChart } from 'react-native-chart-kit';
-import { Dimensions, View, Text } from 'react-native';
-import { useSleep } from '../../context/SleepContext';
-import dayjs from 'dayjs';
+import React from "react";
+import { View, Text } from "react-native";
+import { BarChart } from "react-native-gifted-charts";
+import dayjs from "dayjs";
 
-const screenWidth = Dimensions.get('window').width;
-
-interface SleepData {
+type SleepRecord = {
   date: string;
   duration: number;
-}
+};
 
-interface SleepChartProps {
+type SleepChartProps = {
   selectedDate: string | Date;
-  sleepRecords: SleepData[];
-}
+  sleepRecords: SleepRecord[];
+};
 
-const SleepChart: React.FC<SleepChartProps> = ({ selectedDate, sleepRecords }) => {
-  const startOfWeek = dayjs(selectedDate).startOf('week');
+const SleepChart: React.FC<SleepChartProps> = ({
+  selectedDate,
+  sleepRecords,
+}) => {
+  const startOfWeek = dayjs(selectedDate).startOf("week");
   const labels = [...Array(7)].map((_, i) =>
-    startOfWeek.add(i, 'day').format('ddd')
+    startOfWeek.add(i, "day").format("ddd")
   );
 
   const data = [...Array(7)].map((_, i) => {
-    const date = startOfWeek.add(i, 'day').format('YYYY-MM-DD');
-    const record = sleepRecords.find(r => r.date === date);
-    return record?.duration || 0;
+    const date = startOfWeek.add(i, "day").format("YYYY-MM-DD");
+    const record = sleepRecords.find((r) => r.date === date);
+    return {
+      value: record?.duration ?? 0,
+      label: dayjs(date).format("ddd"),
+      frontColor: "#4CAF50",
+      spacing: 20,
+    };
   });
 
-  // Add a hidden data point with value 12 to force the scale to go up to 12 hours
-  const chartData = {
-    labels,
-    datasets: [
-      { 
-        data: [...data, 15], // Add 12 to force scale
-        withDots: false,
-      }
-    ],
-  };
-
   return (
-    <View style={{ marginTop: 20 }}>
-      <BarChart
-        data={chartData}
-        width={screenWidth - 40}
-        height={200}
-        fromZero
-        yAxisSuffix="h"
-        segments={3} // This creates 3 segments: 0-4, 4-8, 8-12
-        chartConfig={{
-          backgroundGradientFrom: '#fff',
-          backgroundGradientTo: '#fff',
-          decimalPlaces: 1,
-          color: (opacity = 1) => `rgba(0, 128, 0, ${opacity})`,
-          labelColor: () => '#000',
-          propsForHorizontalLabels: {
-            fontSize: 12,
-          },
-          // Force the chart to show specific y-axis labels
-          formatYLabel: (value) => {
-            const numValue = parseFloat(value);
-            if (numValue === 0) return '0';
-            if (numValue === 4) return '4';
-            if (numValue === 8) return '8';
-            if (numValue === 12) return '12';
-            if (numValue === 15) return '15';
-            return Math.round(numValue).toString();
-          },
-        }}
-        style={{ marginVertical: 8, borderRadius: 8 }}
-        yAxisLabel=""
-      />
-      <Text style={{ textAlign: 'center', fontSize: 14 }}>
-        Sleep Data for Week Starting: {startOfWeek.format('MMMM D, YYYY')}
+    <View style={{ padding: 16, backgroundColor: "#fff", borderRadius: 12 }}>
+      <Text style={{ textAlign: "center", marginBottom: 20 }}>
+        Sleep Data for Week Starting: {startOfWeek.format("MMMM D, YYYY")}
       </Text>
+      <BarChart
+        data={data}
+        barWidth={22}
+        spacing={12}
+        barBorderRadius={6}
+        maxValue={15} // This controls the Y-axis max
+        noOfSections={5}
+        yAxisLabelSuffix="h"
+        yAxisTextStyle={{ color: "#888", fontSize: 12 }}
+        xAxisLabelTextStyle={{ color: "#444", fontSize: 12 }}
+        yAxisThickness={1}
+        xAxisThickness={1}
+        showGradient
+        showLine={false}
+      />
     </View>
   );
 };

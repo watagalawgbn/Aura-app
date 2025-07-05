@@ -13,7 +13,7 @@ import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../components/BackButton";
 import { Feather } from "@expo/vector-icons";
-import SleepChart from "../components/SleepChart"; // Ensure this component accepts sleepRecords
+import SleepChart from "../components/SleepChart";
 
 // Updated SleepData type with startTime and endTime
 type SleepData = {
@@ -47,7 +47,7 @@ const SleepBetterScreen = () => {
       const endTime = dayjs(latestEntry.endTime).format("hh:mmA");
       return `${startTime} - ${endTime}`;
     }
-    return "Select the time duration you slept";
+    return "Log your sleep";
   };
 
   return (
@@ -87,7 +87,7 @@ const SleepBetterScreen = () => {
 
         {/* Time Selector */}
         <View style={styles.timeSelector}>
-          <TouchableOpacity onPress={() => router.push("/(tabs)/SleepTimerScreen")}>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/SleepTimerScreen")} style={styles.timeSelectorButton}>
             <Text style={styles.timeSelectorText}>{getTimeRange()}</Text>
             <Feather name="edit-2" size={18} color="black" />
           </TouchableOpacity>
@@ -161,26 +161,39 @@ const styles = StyleSheet.create({
   },
   timeSelector: {
     flexDirection: "row",
-    borderColor: "224831",
+    borderColor: "#224831",
     borderWidth: 1,
     borderRadius: 8,
     padding: 10,
     marginHorizontal: 100,
     marginTop: 20,
+    alignItems: "center",
+    justifyContent: "center"
   },
   timeSelectorText: {
     fontWeight: "bold",
     fontSize: 15,
     alignItems: "center",
     paddingHorizontal: 10,
+    textAlign: "center"
+  },
+  timeSelectorButton:{
+    flexDirection: "row",
+    alignItems: "center"
   },
   sleepChartContainer: {
     marginTop: 20,
     padding: 10,
   },
   avgSleepContainer: {
-    marginTop: 20,
+    marginTop: 10,
     paddingHorizontal: 15,
+    alignItems:"center",
+    borderColor: "#4CAF50",
+    borderRadius: 10,
+    borderWidth: 1,
+    padding: 10,
+    marginHorizontal: 30
   },
   avgSleepText: {
     fontSize: 16,
