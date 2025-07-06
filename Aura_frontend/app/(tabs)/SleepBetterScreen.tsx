@@ -13,9 +13,8 @@ import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../components/BackButton";
 import { Feather } from "@expo/vector-icons";
-import SleepChart from "../components/SleepChart"; // Ensure this component accepts sleepRecords
+import SleepChart from "../components/SleepChart";
 
-// Updated SleepData type with startTime and endTime
 type SleepData = {
   duration: number;
   date: string;
@@ -186,12 +185,18 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   avgSleepContainer: {
-    marginTop: 20,
+    // marginTop: 10,
     paddingHorizontal: 15,
+    alignItems:"center",
+    borderColor: "#4CAF50",
+    borderRadius: 10,
+    borderWidth: 1,
+    padding: 10,
+    marginHorizontal: 30
   },
   avgSleepText: {
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "500",
   },
 });
 

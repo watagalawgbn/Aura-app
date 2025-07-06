@@ -40,7 +40,7 @@ exports.getSleepByDate = async(req, res) => {
 exports.postSleepData = async(req, res) => {
     try{
         const userId = req.user.id;
-        const { date, hours } = req.body;
+        const { date, hours, startTime, endTime } = req.body;
 
         if(! date || hours == null){
             return res.status(400).json({message: 'Date and hours are required'});
@@ -53,7 +53,7 @@ exports.postSleepData = async(req, res) => {
             await existing.save();
             res.json({message: 'Sleep data', data: existing});
         }else{
-            const newSleepData = new Sleep({ userId, date, hours });
+            const newSleepData = new Sleep({ userId, date, hours, startTime, endTime });
             await newSleepData.save();
             res.status(201).json({message: 'Slepp data saved', data: newSleepData });
         }

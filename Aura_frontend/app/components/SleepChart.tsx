@@ -3,36 +3,31 @@ import { View, Text } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import dayjs from "dayjs";
 
-type SleepRecord = {
+type SleepRecord = { //structure of the sleep record
   date: string;
   duration: number;
 };
 
 type SleepChartProps = {
-  selectedDate: string | Date;
-  sleepRecords: SleepRecord[];
+  selectedDate: string | Date; //selected day which use to figure out the week
+  sleepRecords: SleepRecord[]; //array of all sleep data entries
 };
 
 const SleepChart: React.FC<SleepChartProps> = ({
   selectedDate,
   sleepRecords,
 }) => {
-  console.log("Received sleepRecords:", sleepRecords);
   console.log("Selected date:", selectedDate);
 
-  const startOfWeek = dayjs(selectedDate).startOf("week");
-
-  console.log("📆 Incoming sleepRecords:", sleepRecords);
-  console.log("🗓️ selectedDate:", selectedDate);
-  console.log("📅 startOfWeek:", startOfWeek.format("YYYY-MM-DD"));
+  const dayOfWeek = dayjs(selectedDate).day(); // 0 = Sunday
+  const startOfWeek = dayjs(selectedDate).subtract((dayOfWeek + 6) % 7, "day");
 
   const data = [...Array(7)].map((_, i) => {
-    console.log("Chart data:", data);
 
     const date = startOfWeek.add(i, "day").format("YYYY-MM-DD");
     const record = sleepRecords.find((r) => r.date === date);
     console.log(`🔍 Checking date: ${date}`, record);
-    
+
     return {
       value: record?.duration ?? 0,
       label: dayjs(date).format("ddd"),
@@ -50,15 +45,15 @@ const SleepChart: React.FC<SleepChartProps> = ({
         data={data}
         barWidth={22}
         spacing={12}
-        barBorderRadius={6}
-        maxValue={15} // This controls the Y-axis max
+        barBorderRadius={5}
+        maxValue={15} // controls the Y-axis max
         noOfSections={5}
         yAxisLabelSuffix="h"
         yAxisTextStyle={{ color: "#888", fontSize: 12 }}
         xAxisLabelTextStyle={{ color: "#444", fontSize: 12 }}
         yAxisThickness={1}
         xAxisThickness={1}
-        showGradient
+        // showGradient
         showLine={false}
         // yAxisLabelTexts={['0', '3', '6', '9', '12', '15']}
       />
