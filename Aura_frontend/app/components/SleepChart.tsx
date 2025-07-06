@@ -57,7 +57,11 @@ const SleepChart: React.FC<SleepChartProps> = ({
         showLine={false}
         // yAxisLabelTexts={['0', '3', '6', '9', '12', '15']}
       />
-      
+      {data.every((item) => item.value === 0) && (
+        <Text style={{ textAlign: "center", color: "orange", marginTop: 10 }}>
+          No sleep data for this week yet.
+        </Text>
+      )}
     </View>
   );
 };
