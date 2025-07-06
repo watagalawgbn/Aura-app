@@ -3,7 +3,8 @@ import { View, Text } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import dayjs from "dayjs";
 
-type SleepRecord = { //structure of the sleep record
+type SleepRecord = {
+  //structure of the sleep record
   date: string;
   duration: number;
 };
@@ -23,8 +24,7 @@ const SleepChart: React.FC<SleepChartProps> = ({
   const startOfWeek = dayjs(selectedDate).subtract((dayOfWeek + 6) % 7, "day");
 
   const data = [...Array(7)].map((_, i) => {
-
-    const date = startOfWeek.add(i, "day").format("YYYY-MM-DD");
+    const date = startOfWeek.clone().add(i, "day").format("YYYY-MM-DD");
     const record = sleepRecords.find((r) => r.date === date);
     console.log(`🔍 Checking date: ${date}`, record);
 
@@ -57,6 +57,7 @@ const SleepChart: React.FC<SleepChartProps> = ({
         showLine={false}
         // yAxisLabelTexts={['0', '3', '6', '9', '12', '15']}
       />
+      
     </View>
   );
 };

@@ -40,7 +40,7 @@ export const SleepProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const token = await SecureStore.getItemAsync("authToken");
 
-      console.log("TOkennnnn: ", token);
+      console.log("Tokennnnn: ", token);
       if (!token) return;
 
       const res = await fetch(`${BASE_URL}/api/sleep`, {

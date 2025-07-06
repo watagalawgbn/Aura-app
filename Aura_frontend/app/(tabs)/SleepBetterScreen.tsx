@@ -24,12 +24,16 @@ type SleepData = {
 
 const SleepBetterScreen = () => {
   const { sleepRecords } = useSleep();
-
-  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [chartWeekStart, setChartWeekStart] = useState(
+    dayjs().startOf("week").add(1, "day")
+  );
+  const [selectedDate, setSelectedDate] = useState(
+    dayjs().format("YYYY-MM-DD")
+  );
 
   const today = dayjs();
-  const weekDates = [...Array(7)].map(
-    (_, i) => today.subtract(6 - i, "day").format("YYYY-MM-DD")
+  const weekDates = [...Array(7)].map((_, i) =>
+    today.subtract(6 - i, "day").format("YYYY-MM-DD")
   );
 
   const averageSleep = sleepRecords.length
@@ -69,6 +73,7 @@ const SleepBetterScreen = () => {
                 style={[styles.dateChip, isSelected && styles.selectedChip]}
                 onPress={() => setSelectedDate(date)}
               >
+                {/* selecting date to input sleep hours & chart use that date to show the whole week it's in */}
                 <Text
                   style={[styles.dayText, isSelected && styles.selectedText]}
                 >
@@ -86,15 +91,55 @@ const SleepBetterScreen = () => {
 
         {/* Time Selector */}
         <View style={styles.timeSelector}>
-          <TouchableOpacity onPress={() => router.push("/(tabs)/SleepTimerScreen")} style={styles.timeSelectorButton}>
+          <TouchableOpacity
+            onPress={() => router.push("/(tabs)/SleepTimerScreen")}
+            style={styles.timeSelectorButton}
+          >
             <Text style={styles.timeSelectorText}>{getTimeRange()}</Text>
             <Feather name="edit-2" size={18} color="black" />
           </TouchableOpacity>
         </View>
 
         {/* Sleep Chart */}
+        <View style={styles.sleepChart}>
+          
+          <TouchableOpacity
+            onPress={() =>
+              setChartWeekStart((prev) => dayjs(prev).subtract(1, "week"))
+            }
+          >
+            <Feather name="chevron-left" size={24} color="black" style={{paddingTop:20}} />
+          </TouchableOpacity>
+
+          <Text style={styles.weekSelector}>Week of {chartWeekStart.format("MMM D")}</Text>
+          <TouchableOpacity
+            disabled={
+              chartWeekStart.isSame(dayjs(), "week") ||
+              chartWeekStart.isAfter(dayjs())
+            }
+            onPress={() =>
+              setChartWeekStart((prev) => dayjs(prev).add(1, "week"))
+            }
+          >
+            <Feather
+              name="chevron-right"
+              size={24}
+              style={{paddingTop:20}}
+              color={
+                chartWeekStart.isSame(dayjs(), "week") ||
+                chartWeekStart.isAfter(dayjs())
+                  ? "#ccc"
+                  : "black"
+              }
+            />
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.sleepChartContainer}>
-          <SleepChart sleepRecords={sleepRecords} selectedDate={selectedDate} />
+          <SleepChart
+            sleepRecords={sleepRecords}
+            selectedDate={chartWeekStart.toISOString()}
+          />
         </View>
 
         {/* Average Sleep Hours */}
@@ -174,25 +219,32 @@ const styles = StyleSheet.create({
     fontSize: 15,
     alignItems: "center",
     paddingHorizontal: 10,
-    textAlign: "center"
+    textAlign: "center",
   },
-  timeSelectorButton:{
+  timeSelectorButton: {
     flexDirection: "row",
     alignItems: "center",
   },
   sleepChartContainer: {
-    marginTop: 20,
+    // marginTop: 10,
     padding: 10,
   },
+  sleepChart: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  weekSelector: { fontWeight: "bold", fontSize: 16, paddingTop: 20 },
   avgSleepContainer: {
     // marginTop: 10,
     paddingHorizontal: 15,
-    alignItems:"center",
+    alignItems: "center",
     borderColor: "#4CAF50",
     borderRadius: 10,
     borderWidth: 1,
     padding: 10,
-    marginHorizontal: 30
+    marginHorizontal: 30,
   },
   avgSleepText: {
     fontSize: 16,
