@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -13,8 +13,7 @@ import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../components/BackButton";
 import { Feather } from "@expo/vector-icons";
-import SleepChart from "../components/SleepChart";
-import axios from "axios";
+import SleepChart from "../components/SleepChart"; // Ensure this component accepts sleepRecords
 
 // Updated SleepData type with startTime and endTime
 type SleepData = {
@@ -25,21 +24,13 @@ type SleepData = {
 };
 
 const SleepBetterScreen = () => {
-  const { sleepRecords, fetchSleepData } = useSleep();
-  const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState( dayjs().format("YYYY-MM-DD"));
+  const { sleepRecords } = useSleep();
 
-  useEffect(() => {
-    const load = async () => {
-      fetchSleepData();
-      setLoading(false);
-    };
-    load();
-  }, []);
+  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
 
   const today = dayjs();
-  const weekDates = [...Array(7)].map((_, i) =>
-    today.subtract(6 - i, "day").format("YYYY-MM-DD")
+  const weekDates = [...Array(7)].map(
+    (_, i) => today.subtract(6 - i, "day").format("YYYY-MM-DD")
   );
 
   const averageSleep = sleepRecords.length
@@ -56,82 +47,66 @@ const SleepBetterScreen = () => {
       const endTime = dayjs(latestEntry.endTime).format("hh:mmA");
       return `${startTime} - ${endTime}`;
     }
-    return "Log your sleep";
+    return "Log Your Sleep";
   };
 
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={{ textAlign: "center", marginTop: 50 }}>
-          Loading sleep data...
-        </Text>
-      </SafeAreaView>
-    );
-  } else{
-    return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
-        <BackButton title={"Sleep Better"} />
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.titleText}>How long did you sleep?</Text>
-          </View>
+      <BackButton title={"Sleep Better"} />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>How long did you sleep?</Text>
+        </View>
 
-          {/* Date Selector */}
-          <View style={styles.outerContainer}>
-            {weekDates.map((date) => {
-              const isSelected = date === selectedDate;
-              return (
-                <TouchableOpacity
-                  key={date}
-                  style={[styles.dateChip, isSelected && styles.selectedChip]}
-                  onPress={() => setSelectedDate(date)}
+        {/* Date Selector */}
+        <View style={styles.outerContainer}>
+          {weekDates.map((date) => {
+            const isSelected = date === selectedDate;
+            return (
+              <TouchableOpacity
+                key={date}
+                style={[styles.dateChip, isSelected && styles.selectedChip]}
+                onPress={() => setSelectedDate(date)}
+              >
+                <Text
+                  style={[styles.dayText, isSelected && styles.selectedText]}
                 >
-                  <Text
-                    style={[styles.dayText, isSelected && styles.selectedText]}
-                  >
-                    {dayjs(date).format("ddd")}
-                  </Text>
-                  <Text
-                    style={[styles.dateText, isSelected && styles.selectedText]}
-                  >
-                    {dayjs(date).format("DD")}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+                  {dayjs(date).format("ddd")}
+                </Text>
+                <Text
+                  style={[styles.dateText, isSelected && styles.selectedText]}
+                >
+                  {dayjs(date).format("DD")}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
 
-          {/* Time Selector */}
-          <View style={styles.timeSelector}>
-            <TouchableOpacity
-              onPress={() => router.push("/(tabs)/SleepTimerScreen")}
-              style={styles.timeSelectorButton}
-            >
-              <Text style={styles.timeSelectorText}>{getTimeRange()}</Text>
-              <Feather name="edit-2" size={18} color="black" />
-            </TouchableOpacity>
-          </View>
+        {/* Time Selector */}
+        <View style={styles.timeSelector}>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/SleepTimerScreen")} style={styles.timeSelectorButton}>
+            <Text style={styles.timeSelectorText}>{getTimeRange()}</Text>
+            <Feather name="edit-2" size={18} color="black" />
+          </TouchableOpacity>
+        </View>
 
-          {/* Sleep Chart */}
-          <View style={styles.sleepChartContainer}>
-            <SleepChart
-              sleepRecords={sleepRecords}
-              selectedDate={selectedDate}
-            />
-          </View>
+        {/* Sleep Chart */}
+        <View style={styles.sleepChartContainer}>
+          <SleepChart sleepRecords={sleepRecords} selectedDate={selectedDate} />
+        </View>
 
-          {/* Average Sleep Hours */}
-          <View style={styles.avgSleepContainer}>
-            <Text style={styles.avgSleepText}>
-              Your average sleeping hours: {averageSleep} hours
-            </Text>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
+        {/* Average Sleep Hours */}
+        <View style={styles.avgSleepContainer}>
+          <Text style={styles.avgSleepText}>
+            Your average sleeping hours: {averageSleep} hours
+          </Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -186,7 +161,7 @@ const styles = StyleSheet.create({
   },
   timeSelector: {
     flexDirection: "row",
-    borderColor: "#224831",
+    borderColor: "224831",
     borderWidth: 1,
     borderRadius: 8,
     padding: 10,
@@ -200,9 +175,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     alignItems: "center",
     paddingHorizontal: 10,
-    textAlign: "center",
+    textAlign: "center"
   },
-  timeSelectorButton: {
+  timeSelectorButton:{
     flexDirection: "row",
     alignItems: "center",
   },
@@ -211,14 +186,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   avgSleepContainer: {
-    marginTop: 10,
+    marginTop: 20,
     paddingHorizontal: 15,
-    alignItems: "center",
-    borderColor: "#4CAF50",
-    borderRadius: 10,
-    borderWidth: 1,
-    padding: 10,
-    marginHorizontal: 30,
   },
   avgSleepText: {
     fontSize: 16,
