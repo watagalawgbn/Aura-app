@@ -17,14 +17,22 @@ const SleepChart: React.FC<SleepChartProps> = ({
   selectedDate,
   sleepRecords,
 }) => {
+  console.log("Received sleepRecords:", sleepRecords);
+  console.log("Selected date:", selectedDate);
+
   const startOfWeek = dayjs(selectedDate).startOf("week");
-  const labels = [...Array(7)].map((_, i) =>
-    startOfWeek.add(i, "day").format("ddd")
-  );
+
+  console.log("📆 Incoming sleepRecords:", sleepRecords);
+  console.log("🗓️ selectedDate:", selectedDate);
+  console.log("📅 startOfWeek:", startOfWeek.format("YYYY-MM-DD"));
 
   const data = [...Array(7)].map((_, i) => {
+    console.log("Chart data:", data);
+
     const date = startOfWeek.add(i, "day").format("YYYY-MM-DD");
     const record = sleepRecords.find((r) => r.date === date);
+    console.log(`🔍 Checking date: ${date}`, record);
+    
     return {
       value: record?.duration ?? 0,
       label: dayjs(date).format("ddd"),
@@ -52,6 +60,7 @@ const SleepChart: React.FC<SleepChartProps> = ({
         xAxisThickness={1}
         showGradient
         showLine={false}
+        // yAxisLabelTexts={['0', '3', '6', '9', '12', '15']}
       />
     </View>
   );

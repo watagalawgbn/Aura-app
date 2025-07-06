@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../components/BackButton";
 import { Feather } from "@expo/vector-icons";
 import SleepChart from "../components/SleepChart";
+import axios from "axios";
 
 // Updated SleepData type with startTime and endTime
 type SleepData = {
@@ -24,13 +25,21 @@ type SleepData = {
 };
 
 const SleepBetterScreen = () => {
-  const { sleepRecords } = useSleep();
+  const { sleepRecords, fetchSleepData } = useSleep();
+  const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState( dayjs().format("YYYY-MM-DD"));
 
-  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
+  useEffect(() => {
+    const load = async () => {
+      fetchSleepData();
+      setLoading(false);
+    };
+    load();
+  }, []);
 
   const today = dayjs();
-  const weekDates = [...Array(7)].map(
-    (_, i) => today.subtract(6 - i, "day").format("YYYY-MM-DD")
+  const weekDates = [...Array(7)].map((_, i) =>
+    today.subtract(6 - i, "day").format("YYYY-MM-DD")
   );
 
   const averageSleep = sleepRecords.length
@@ -50,63 +59,79 @@ const SleepBetterScreen = () => {
     return "Log your sleep";
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{ textAlign: "center", marginTop: 50 }}>
+          Loading sleep data...
+        </Text>
+      </SafeAreaView>
+    );
+  } else{
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
-      <BackButton title={"Sleep Better"} />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>How long did you sleep?</Text>
-        </View>
+        <BackButton title={"Sleep Better"} />
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.titleText}>How long did you sleep?</Text>
+          </View>
 
-        {/* Date Selector */}
-        <View style={styles.outerContainer}>
-          {weekDates.map((date) => {
-            const isSelected = date === selectedDate;
-            return (
-              <TouchableOpacity
-                key={date}
-                style={[styles.dateChip, isSelected && styles.selectedChip]}
-                onPress={() => setSelectedDate(date)}
-              >
-                <Text
-                  style={[styles.dayText, isSelected && styles.selectedText]}
+          {/* Date Selector */}
+          <View style={styles.outerContainer}>
+            {weekDates.map((date) => {
+              const isSelected = date === selectedDate;
+              return (
+                <TouchableOpacity
+                  key={date}
+                  style={[styles.dateChip, isSelected && styles.selectedChip]}
+                  onPress={() => setSelectedDate(date)}
                 >
-                  {dayjs(date).format("ddd")}
-                </Text>
-                <Text
-                  style={[styles.dateText, isSelected && styles.selectedText]}
-                >
-                  {dayjs(date).format("DD")}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+                  <Text
+                    style={[styles.dayText, isSelected && styles.selectedText]}
+                  >
+                    {dayjs(date).format("ddd")}
+                  </Text>
+                  <Text
+                    style={[styles.dateText, isSelected && styles.selectedText]}
+                  >
+                    {dayjs(date).format("DD")}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
-        {/* Time Selector */}
-        <View style={styles.timeSelector}>
-          <TouchableOpacity onPress={() => router.push("/(tabs)/SleepTimerScreen")} style={styles.timeSelectorButton}>
-            <Text style={styles.timeSelectorText}>{getTimeRange()}</Text>
-            <Feather name="edit-2" size={18} color="black" />
-          </TouchableOpacity>
-        </View>
+          {/* Time Selector */}
+          <View style={styles.timeSelector}>
+            <TouchableOpacity
+              onPress={() => router.push("/(tabs)/SleepTimerScreen")}
+              style={styles.timeSelectorButton}
+            >
+              <Text style={styles.timeSelectorText}>{getTimeRange()}</Text>
+              <Feather name="edit-2" size={18} color="black" />
+            </TouchableOpacity>
+          </View>
 
-        {/* Sleep Chart */}
-        <View style={styles.sleepChartContainer}>
-          <SleepChart sleepRecords={sleepRecords} selectedDate={selectedDate} />
-        </View>
+          {/* Sleep Chart */}
+          <View style={styles.sleepChartContainer}>
+            <SleepChart
+              sleepRecords={sleepRecords}
+              selectedDate={selectedDate}
+            />
+          </View>
 
-        {/* Average Sleep Hours */}
-        <View style={styles.avgSleepContainer}>
-          <Text style={styles.avgSleepText}>
-            Your average sleeping hours: {averageSleep} hours
-          </Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+          {/* Average Sleep Hours */}
+          <View style={styles.avgSleepContainer}>
+            <Text style={styles.avgSleepText}>
+              Your average sleeping hours: {averageSleep} hours
+            </Text>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
@@ -168,18 +193,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 100,
     marginTop: 20,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   timeSelectorText: {
     fontWeight: "bold",
     fontSize: 15,
     alignItems: "center",
     paddingHorizontal: 10,
-    textAlign: "center"
+    textAlign: "center",
   },
-  timeSelectorButton:{
+  timeSelectorButton: {
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
   },
   sleepChartContainer: {
     marginTop: 20,
@@ -188,12 +213,12 @@ const styles = StyleSheet.create({
   avgSleepContainer: {
     marginTop: 10,
     paddingHorizontal: 15,
-    alignItems:"center",
+    alignItems: "center",
     borderColor: "#4CAF50",
     borderRadius: 10,
     borderWidth: 1,
     padding: 10,
-    marginHorizontal: 30
+    marginHorizontal: 30,
   },
   avgSleepText: {
     fontSize: 16,

@@ -1,24 +1,30 @@
 //controllers/sleepController.js
 
 const Sleep = require('../models/Sleep');
+const mongoose = require("mongoose");
 
 //get all sleep records
-exports.getSleepData = async(req, res) => {
+exports.getSleepData = async(req, res) => {  
+    console.log("🔍 getSleepData endpoint hit!");
+    console.log("🔍 User from token:", req.user);
+
     try{
-        const userId = req.user.id;
+        console.log("🔍 getSleepData called for user:", req.user.id);
+        const userId = new mongoose.Types.ObjectId(req.user.id);
         const data = await Sleep.find({userId}).sort({date:1});
+        console.log("📊 Found sleep data:", data);
         res.json(data);
     }
     catch(err){
+        console.error("❌ Error fetching sleep data:", err);
         res.status(500).json({message: 'Error fetching sleep data'});
-        console.log("Error fetching sleep data!!!", err);
     }
 };
 
 //get all sleep data by date
 exports.getSleepByDate = async(req, res) => {
     try{
-        const userId = req.user.id;
+        const userId = mongoose.Types.ObjectId(req.user.id);
         const { date } = req.params;
         const data = await Sleep.find({userId, date});
         if(!data) res.status(404).json({message: 'No data for this date!'});
