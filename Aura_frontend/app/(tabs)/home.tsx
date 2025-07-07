@@ -18,13 +18,13 @@ import { getGreeting } from "@/utils/getGreeting";
 
 const HomeScreen = () => {
   const router = useRouter();
-  const [isMoodLogVisible, setIsMoodLogVisible] = useState(false);
+  const [isMoodLogVisible, setIsMoodLogVisible] = useState(false); //handle mood state
   const { user } = useAuth();
 
   const currentTime = new Date();
-  const greetingMessage = getGreeting(currentTime);
+  const greetingMessage = getGreeting(currentTime); //get greeting message based on the time of the day
 
-  const currentDate = currentTime.toLocaleDateString("en-GB", {
+  const formattedDate = currentTime.toLocaleDateString("en-GB", {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -35,6 +35,8 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#224831" barStyle="light-content" />
 
+
+      {/* Header section of the home screen */}
       <LinearGradient
         colors={["#224831", "#5FB21F"]}
         start={{ x: 0.5, y: 0.5 }}
@@ -49,7 +51,7 @@ const HomeScreen = () => {
             />
           </View>
           <View style={styles.greetingContainer}>
-            <Text style={styles.date}>{currentDate}</Text>
+            <Text style={styles.date}>{formattedDate}</Text>
             <Text style={styles.greeting}>{greetingMessage},</Text>
             <Text style={styles.greeting}>{user?.name ?? "User"}!</Text>
           </View>
@@ -77,6 +79,7 @@ const HomeScreen = () => {
             contentContainerStyle={styles.insightsContent}
             showsHorizontalScrollIndicator={false}
           >
+
             {/* Mental Health Assessment Card */}
             <TouchableOpacity
               style={styles.insightCard}
@@ -90,6 +93,7 @@ const HomeScreen = () => {
                 style={styles.insightCardImage}
               />
             </TouchableOpacity>
+
 
             {/* Track your mood Card */}
             <TouchableOpacity
@@ -106,7 +110,8 @@ const HomeScreen = () => {
               <MoodLog isVisible onClose={() => setIsMoodLogVisible(false)} />
             )}
 
-            {/*Sleep tracking */}
+
+            {/*Sleep tracking card*/}
             <TouchableOpacity
               style={styles.insightCard}
               onPress={() => router.push("/(tabs)/SleepBetterScreen")}
@@ -119,6 +124,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </ScrollView>
 
+          {/*Quick Access section */}
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Access</Text>
             <TouchableOpacity
@@ -128,6 +134,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
 
+          {/* Meditation card */}
           <View style={styles.quickAccessContainer}>
             <TouchableOpacity style={styles.quickAccessItem}>
               <View style={styles.imageContainer}>
@@ -155,6 +162,7 @@ const HomeScreen = () => {
               </View>
             </TouchableOpacity>
 
+            {/* Job card */}
             <TouchableOpacity style={styles.quickAccessItem}>
               <View style={styles.imageContainer}>
                 <Image
