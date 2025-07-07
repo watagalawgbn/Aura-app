@@ -7,6 +7,7 @@ import {
   ImageBackground,
   ScrollView,
   SafeAreaView,
+  Alert
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -14,26 +15,30 @@ import { Audio, AVPlaybackStatus } from "expo-av";
 import { BASE_URL } from "@/constants/Api";
 
 const PlayMeditationScreen = () => {
-  const router = useRouter();
-  const { title = "Deep Calm", filename, imageId } = useLocalSearchParams();
 
+  const router = useRouter();
+  const { title, filename, imageId } = useLocalSearchParams();//extract parameters from route
+
+  //make sure parameters are in string format(not array)
   const titleString = Array.isArray(title) ? title[0] : title;
   const imageIdString = Array.isArray(imageId) ? imageId[0] : imageId;
 
+  //manager audio and UI state
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [currentTime, setCurrentTime] = useState("0:00");
-  const [totalTime, setTotalTime] = useState("10:00");
-  const [totalDuration, setTotalDuration] = useState(600000);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
+  const [progress, setProgress] = useState(0); // tplayback progress(0-1)
+  const [currentTime, setCurrentTime] = useState("0:00"); // Elapsed playback time 
+  const [totalTime, setTotalTime] = useState("10:00"); // Total duration as string
+  const [totalDuration, setTotalDuration] = useState(600000); // Total duration in milliseconds
+  const [isLoaded, setIsLoaded] = useState(false); //track loading state for API call
+  const [imageUrl, setImageUrl] = useState(""); //url for the image 
 
   const soundRef = useRef<Audio.Sound | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // When component mounts, set image URL from imageId
   useEffect(() => {
     if (imageIdString && imageIdString.trim() !== "") {
-      const url = `${BASE_URL}/api/images/${imageIdString}`;
+      const url = `${BASE_URL}/api/images/${imageIdString}`; // set the image url
       setImageUrl(url);
       console.log("Image URL set:", url);
     } else {
@@ -42,66 +47,74 @@ const PlayMeditationScreen = () => {
     }
   }, [imageIdString]);
 
-  const waitForValidDuration = async (sound: Audio.Sound): Promise<number | null> => {
-  for (let i = 0; i < 30; i++) {
-    const status = await sound.getStatusAsync();
+  // Wait until audio duration is valid
+  const waitForValidDuration = async ( sound: Audio.Sound ): Promise<number | null> => {
+    for (let i = 0; i < 30; i++) {
+      const status = await sound.getStatusAsync();
 
-    if (status.isLoaded) {
-      if (status.durationMillis && status.durationMillis > 1000) {
-        return status.durationMillis;
+      if (status.isLoaded) {
+        if (status.durationMillis && status.durationMillis > 1000) {
+          return status.durationMillis;
+        } else {
+          console.log(
+            `[${i + 1}/30] Duration still invalid:`,
+            status.durationMillis
+          );
+        }
       } else {
-        console.log(`[${i + 1}/30] Duration still invalid:`, status.durationMillis);
+        console.log(`⚠️ Status not loaded yet (attempt ${i + 1})`);
       }
-    } else {
-      console.log(`⚠️ Status not loaded yet (attempt ${i + 1})`);
+
+      await new Promise((res) => setTimeout(res, 500));
     }
 
-    await new Promise((res) => setTimeout(res, 500));
-  }
+    console.log("Gave up waiting for valid duration.");
+    return null;
+  };
 
-  console.log("Gave up waiting for valid duration.");
-  return null;
-};
-
-
+  // Load and prepare the audio on mount
   useEffect(() => {
     const loadAudio = async () => {
-  try {
-    console.log("Starting audio load:", filename);
+      try {
+        console.log("Starting audio load:", filename);
 
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      staysActiveInBackground: true,
-      playsInSilentModeIOS: true,
-      shouldDuckAndroid: true,
-      playThroughEarpieceAndroid: false,
-    });
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          staysActiveInBackground: true,
+          playsInSilentModeIOS: true,
+          shouldDuckAndroid: true,
+          playThroughEarpieceAndroid: false,
+        });
 
-    const { sound } = await Audio.Sound.createAsync(
-      { uri: `${BASE_URL}/api/audio/${filename}` },
-      { shouldPlay: false }
-    );
+        const { sound } = await Audio.Sound.createAsync(
+          { uri: `${BASE_URL}/api/audio/${filename}` },
+          { shouldPlay: false }
+        );
 
-    soundRef.current = sound;
-    sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
-    setIsLoaded(true);
+        soundRef.current = sound;
+        sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+        setIsLoaded(true);
 
-    const actualDuration = await waitForValidDuration(sound);
-    if (actualDuration) {
-      setTotalDuration(actualDuration);
+         // Set duration and format for UI
+        const actualDuration = await waitForValidDuration(sound);
+        if (actualDuration) {
+          setTotalDuration(actualDuration);
 
-      const totalMinutes = Math.floor(actualDuration / 60000);
-      const totalSeconds = Math.floor((actualDuration % 60000) / 1000);
-      setTotalTime(`${totalMinutes}:${totalSeconds.toString().padStart(2, "0")}`);
-    }
-
-  } catch (error) {
-    console.error("Failed to load audio", error);
-  }
-};
+          const totalMinutes = Math.floor(actualDuration / 60000);
+          const totalSeconds = Math.floor((actualDuration % 60000) / 1000);
+          setTotalTime(
+            `${totalMinutes}:${totalSeconds.toString().padStart(2, "0")}`
+          );
+        }
+      } catch (error) {
+        console.error("Failed to load audio", error);
+        Alert.alert("Error", "Unable to load meditation audio. Please try again.");
+      }
+    };
 
     if (filename) loadAudio();
 
+    // Clean up audio and timer on unmount
     return () => {
       if (soundRef.current) {
         soundRef.current.unloadAsync();
@@ -112,6 +125,7 @@ const PlayMeditationScreen = () => {
     };
   }, [filename]);
 
+  // Update playback progress every second when audio is playing
   useEffect(() => {
     if (isPlaying && soundRef.current) {
       console.log("Starting interval-based progress updater");
@@ -126,10 +140,11 @@ const PlayMeditationScreen = () => {
         }
       }, 1000);
     } else if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
 
+    // Cleanup on unmount
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -138,6 +153,7 @@ const PlayMeditationScreen = () => {
     };
   }, [isPlaying]);
 
+  // Update UI based on current playback status
   const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
     if (!status.isLoaded || !("durationMillis" in status)) {
       return;
@@ -171,6 +187,7 @@ const PlayMeditationScreen = () => {
 
   const handleBack = () => router.back();
 
+  // Toggle play and pause
   const togglePlayPause = async () => {
     if (!isLoaded || !soundRef.current) return;
 
@@ -183,6 +200,7 @@ const PlayMeditationScreen = () => {
     }
   };
 
+  // Rewind 30 seconds
   const handleRewind = async () => {
     if (!isLoaded || !soundRef.current) return;
 
@@ -194,6 +212,7 @@ const PlayMeditationScreen = () => {
     }
   };
 
+  // Fast-forward 30 seconds
   const handleForward = async () => {
     if (!isLoaded || !soundRef.current) return;
 
@@ -208,6 +227,7 @@ const PlayMeditationScreen = () => {
     }
   };
 
+  // Render screen background
   const renderContent = () => {
     if (imageUrl) {
       return (
@@ -216,10 +236,7 @@ const PlayMeditationScreen = () => {
           style={styles.background}
           resizeMode="cover"
           onError={(error) => {
-            console.error(
-              "Background image error:",
-              error.nativeEvent.error
-            );
+            console.error("Background image error:", error.nativeEvent.error);
             setImageUrl("");
           }}
           onLoad={() => {

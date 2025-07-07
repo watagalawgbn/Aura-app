@@ -11,61 +11,71 @@ import {
   StatusBar,
   ActivityIndicator,
 } from "react-native";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import BackButton from "../components/BackButton";
 import { BASE_URL } from "@/constants/Api";
 
+//define types for audio item
 type Audio = {
   _id: string;
   title: string;
   filename: string;
-  image?: string | { _id: string } | null;
+  image?: string | { _id: string } | null; //optional, image associated with audio
 };
 
 const MeditationScreen = () => {
-  const [audios, setAudios] = useState<Audio[]>([]);
-  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const [audios, setAudios] = useState<Audio[]>([]); //hold the list of audios
+  const [loading, setLoading] = useState(true); //track loading state for API call
 
   useEffect(() => {
+
+    //Fetching audio files from the backend API
     const fetchMeditations = async () => {
       try {
-        const response = await fetch(`${BASE_URL}/api/meditations`);
+        const response = await fetch(`${BASE_URL}/api/meditations`); //API end point
+        //handle error if occured
         if (!response.ok) {
           throw new Error("Failed to fetch meditations");
         }
 
         const data = await response.json();
-        console.log("Raw fetched meditations count:", data.length);
 
-        // Set fetched meditations directly
+        // Store retrieved audios in state
         setAudios(data);
       } catch (err) {
         console.error("Failed to fetch meditations:", err);
       } finally {
-        setLoading(false);
+        setLoading(false); //stop loading regardless of outcome
       }
     };
 
-    fetchMeditations();
+    fetchMeditations(); //trigger fetch when component mounts
   }, []);
 
-  const getImageUrl = (imageId?: string | null, meditationTitle?: string) => {
+
+  //generate image url for a given imageId
+  const getImageUrl = (imageId?: string | null) => {
+    //if no id is provided returns null(no image)
     if (!imageId) return null;
-    const url = `${BASE_URL}/api/images/${imageId}`;
+    const url = `${BASE_URL}/api/images/${imageId}`; 
     return url;
   };
 
+
+  //extract the imageId from either a string or object
   const getImageId = (image: string | { _id: string } | null | undefined) => {
     if (!image) return "";
     if (typeof image === "string") return image;
     return image._id;
   };
 
-  // Function to render a single audio card
+  // render a single audio card with image and title
   const renderAudioCard = (audio: Audio) => {
-    const imageUrl = getImageUrl(getImageId(audio.image), audio.title);
+    const imageUrl = getImageUrl(getImageId(audio.image));
 
     return (
+      // navigate to relavant playMeditation screen by tapping the card
       <TouchableOpacity
         key={audio._id}
         onPress={() =>
@@ -82,6 +92,7 @@ const MeditationScreen = () => {
         style={styles.audioCard}
       >
         {imageUrl ? (
+          //show image if available
           <Image
             source={{ uri: imageUrl }}
             style={styles.imgs}
@@ -96,6 +107,7 @@ const MeditationScreen = () => {
             }}
           />
         ) : (
+          //  show fallback when image is not available
           <View
             style={[
               styles.imgs,
@@ -114,7 +126,7 @@ const MeditationScreen = () => {
     );
   };
 
-  // Function to create rows of 2 items each
+  // Function to create group audios into rows of 2 items
   const createRows = () => {
     const rows = [];
     for (let i = 0; i < audios.length; i += 2) {
@@ -135,6 +147,7 @@ const MeditationScreen = () => {
     return rows;
   };
 
+  // show loading spinner while data is being fetched
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -147,6 +160,20 @@ const MeditationScreen = () => {
     );
   }
 
+  // Show fallback message if no meditations are found
+  if(audios.length === 0 && !loading){
+    return(
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff"/>
+      <BackButton title="Beat Stress"/>
+      <View style={styles.loadingContainer}>
+        <Text style={styles.emptyText}>No meditations available at the moment.</Text>
+      </View>
+    </SafeAreaView>
+    );
+  }
+
+  // Main screen after data has loaded
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
@@ -187,13 +214,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
     fontWeight: "bold",
-    color: "#333",
-    textAlign: "center",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   debugText: {
     textAlign: "center",
@@ -202,6 +222,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontStyle: "italic",
   },
+  emptyText: {
+    textAlign: "center",
+    color: "#999",
+    fontSize: 16,
+    marginTop: 40,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
+
 
 export default MeditationScreen;

@@ -31,8 +31,9 @@ const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
 
   //handle mood submission
   const handleSubmitMood = async () => {
-
-    if (!selectedMood) { // if no mood selected, prevent the submission
+    
+    // if no mood selected, prevent the submission
+    if (!selectedMood) { 
       Alert.alert(
         "No Mood Selected",
         "Please select a mood before proceeding."
