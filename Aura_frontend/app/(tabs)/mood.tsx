@@ -8,15 +8,15 @@ import {
   Alert,
 } from "react-native";
 import Modal from "react-native-modal";
-import axios from "axios";
-import { BASE_URL } from "@/constants/Api";
-import * as SecureStore from "expo-secure-store";
+import { logMood } from "../services/moodService";
 
+//define the props for moodlog
 type MoodLogProps = {
-  isVisible: boolean;
-  onClose: () => void;
+  isVisible: boolean; // controls whether to show or hide the modal
+  onClose: () => void; // call this function to close the modal
 };
 
+//list of mood images to select
 const moods = [
   { label: "Happy", image: require("../../assets/images/happy.png") },
   { label: "Neutral", image: require("../../assets/images/neutral.png") },
@@ -26,32 +26,24 @@ const moods = [
 ];
 
 const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
-  const [selectedMood, setSelectedMood] = useState<string | null>(null);
 
-  const handleNoteMood = async () => {
-    if (selectedMood) {
-      Alert.alert(
-        "Mood Noted",
-        `You selected "${selectedMood}" as your mood.`,
-        [{ text: "OK", onPress: onClose }]
-      );
-    } else {
+  const [selectedMood, setSelectedMood] = useState<string | null>(null); // tracking the state of the selected mood
+
+  //handle mood submission
+  const handleSubmitMood = async () => {
+
+    if (!selectedMood) { // if no mood selected, prevent the submission
       Alert.alert(
         "No Mood Selected",
         "Please select a mood before proceeding."
       );
+      return;
     }
 
     try {
-      const token = await SecureStore.getItemAsync("authToken");
-      if (!token) throw new Error("No token found");
-
-      await axios.post(
-        `${BASE_URL}/api/moods`,
-        { mood: selectedMood },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
+      await logMood(selectedMood); //call moodService to add mood
+      
+      // show sucess message & close the modal
       Alert.alert(
         "Mood Noted",
         `You selected "${selectedMood}" as your mood.`,
@@ -59,6 +51,7 @@ const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
       );
     } catch (err) {
       console.error("Error saving mood: ", err);
+      //show error message if failes
       Alert.alert("Error", "Failed to log mood. Try again");
     }
   };
@@ -74,11 +67,20 @@ const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
       animationIn="slideInUp"
       animationOut="slideOutDown"
     >
+
+
+      {/* Mood selector pop up */}
       <View style={styles.container}>
         <View style={styles.swipeBar} />
         <Text style={styles.title}>Daily Mood Log</Text>
 
+        <Text style={styles.moodQuestion}>
+          How do you feel about your current emotions?
+        </Text>
+
+        {/* horizontal row of moods */}
         <View style={styles.moodRow}>
+
           {moods.map((mood) => (
             <TouchableOpacity
               key={mood.label}
@@ -88,17 +90,16 @@ const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
               ]}
               onPress={() => setSelectedMood(mood.label)} // Set selected mood
             >
-              <Image source={mood.image} style={styles.moodImage} />
+              <Image source={mood.image} style={styles.moodImage} /> 
               <Text style={styles.moodLabel}>{mood.label}</Text>
             </TouchableOpacity>
           ))}
+
         </View>
 
-        <Text style={styles.prompt}>
-          How do you feel about your current emotions?
-        </Text>
 
-        <TouchableOpacity style={styles.button} onPress={handleNoteMood}>
+        {/* button */}
+        <TouchableOpacity style={styles.button} onPress={handleSubmitMood}>
           <Text style={styles.buttonText}>Note Mood</Text>
         </TouchableOpacity>
       </View>
@@ -152,8 +153,9 @@ const styles = StyleSheet.create({
   moodLabel: {
     fontSize: 9,
   },
-  prompt: {
-    fontSize: 14,
+  moodQuestion: {
+    fontSize: 15,
+    fontWeight: '500',
     marginBottom: 15,
     textAlign: "center",
   },
