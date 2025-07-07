@@ -14,24 +14,14 @@ import { router } from "expo-router";
 import MoodLog from "./Mood";
 import { useAuth } from "../../context/AuthContext";
 import { LinearGradient } from "expo-linear-gradient";
+import { getGreeting } from "@/utils/getGreeting";
 
 const HomeScreen = () => {
   const [isMoodLogVisible, setIsMoodLogVisible] = useState(false);
   const { user } = useAuth();
 
   const currentTime = new Date();
-  const currentHour = currentTime.getHours();
-
-  let greetingMessage = "";
-  if (currentHour >= 5 && currentHour < 12) {
-    greetingMessage = "Good Morning";
-  } else if (currentHour >= 12 && currentHour < 17) {
-    greetingMessage = "Good Afternoon";
-  } else if (currentHour >= 17 && currentHour < 21) {
-    greetingMessage = "Good Evening";
-  } else {
-    greetingMessage = "Good to see you Again";
-  }
+  const greetingMessage = getGreeting(currentTime);
 
   const currentDate = currentTime.toLocaleDateString("en-GB", {
     weekday: "long",
@@ -60,7 +50,7 @@ const HomeScreen = () => {
           <View style={styles.greetingContainer}>
             <Text style={styles.date}>{currentDate}</Text>
             <Text style={styles.greeting}>{greetingMessage},</Text>
-            <Text style={styles.greeting}>{user?.name}!</Text>
+            <Text style={styles.greeting}>{user?.name ?? "User"}!</Text>
           </View>
           <TouchableOpacity style={styles.notificationIcon}>
             <Feather name="bell" size={24} color="black" border="1" />
@@ -120,7 +110,7 @@ const HomeScreen = () => {
               style={styles.insightCard}
               onPress={() => router.navigate("/(tabs)/SleepBetterScreen")}
             >
-              <Text style={styles.insightCardTitle}>Track you sleep</Text>
+              <Text style={styles.insightCardTitle}>Track your sleep</Text>
               <Image
                 source={require("../../assets/images/sleep.png")}
                 style={styles.insightCardImage}

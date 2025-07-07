@@ -39,7 +39,7 @@ exports.getSleepByDate = async(req, res) => {
 //add or update sleep data
 exports.postSleepData = async(req, res) => {
     try{
-        const userId = req.user.id;
+        const userId = mongoose.Types.ObjectId(req.user.id);
         const { date, hours, startTime, endTime } = req.body;
 
         if(! date || hours == null){
