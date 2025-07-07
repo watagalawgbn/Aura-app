@@ -10,13 +10,14 @@ import {
   ScrollView,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import MoodLog from "./Mood";
 import { useAuth } from "../../context/AuthContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { getGreeting } from "@/utils/getGreeting";
 
 const HomeScreen = () => {
+  const router = useRouter();
   const [isMoodLogVisible, setIsMoodLogVisible] = useState(false);
   const { user } = useAuth();
 
@@ -79,7 +80,7 @@ const HomeScreen = () => {
             {/* Mental Health Assessment Card */}
             <TouchableOpacity
               style={styles.insightCard}
-              onPress={() => router.navigate("/(tabs)/Assessment")}
+              onPress={() => router.push("/(tabs)/Assessment")}
             >
               <Text style={styles.insightCardTitle}>
                 Mental Health Assessment
@@ -108,7 +109,7 @@ const HomeScreen = () => {
             {/*Sleep tracking */}
             <TouchableOpacity
               style={styles.insightCard}
-              onPress={() => router.navigate("/(tabs)/SleepBetterScreen")}
+              onPress={() => router.push("/(tabs)/SleepBetterScreen")}
             >
               <Text style={styles.insightCardTitle}>Track your sleep</Text>
               <Image
@@ -121,7 +122,7 @@ const HomeScreen = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Access</Text>
             <TouchableOpacity
-              onPress={() => router.navigate("/(tabs)/QuickAccess")}
+              onPress={() => router.push("/(tabs)/QuickAccess")}
             >
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
@@ -140,7 +141,7 @@ const HomeScreen = () => {
                   Stress-Free Meditation
                 </Text>
                 <TouchableOpacity
-                  onPress={() => router.navigate("/(tabs)/Meditation")}
+                  onPress={() => router.push("/(tabs)/Meditation")}
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>
@@ -164,7 +165,7 @@ const HomeScreen = () => {
               <View style={styles.quickAccessContent}>
                 <Text style={styles.quickAccessTitle}>Boost Your Earnings</Text>
                 <TouchableOpacity
-                  onPress={() => router.navigate("/(tabs)/QuickAccess")}
+                  onPress={() => router.push("/(tabs)/QuickAccess")}
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>
