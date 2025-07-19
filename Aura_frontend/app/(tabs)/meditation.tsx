@@ -46,7 +46,7 @@ const MeditationScreen = () => {
       } catch (err) {
         console.error("Failed to fetch meditations:", err);
       } finally {
-        setLoading(false); //stop loading regardless of outcome
+        setLoading(false); 
       }
     };
 

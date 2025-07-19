@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const connectDB = require("./src/config/db");
 const cors = require("cors");
 const { connectGridFs, getGfs } = require("./gridfs");
-const { MongoClient, GridFSBucket } = require("mongodb");
 
 const Meditation = require("./src/models/Meditation");
 const Image = require("./src/models/Image"); 

@@ -1,6 +1,5 @@
 import { Slot } from "expo-router";
 import { AuthProvider } from "../context/AuthContext";
-import { SleepProvider } from "../context/SleepContext";
 import React, { useEffect } from "react";
 import * as Linking from 'expo-linking';
 
@@ -15,9 +14,7 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <SleepProvider>
-        <Slot />  {/* ✅ Make sure there's no stray string here */}
-      </SleepProvider>
+        <Slot />  
     </AuthProvider>
   );
 }

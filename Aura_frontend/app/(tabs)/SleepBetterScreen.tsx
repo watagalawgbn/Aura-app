@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,23 +7,23 @@ import {
   StatusBar,
   ScrollView,
 } from "react-native";
-import { useSleep } from "../../context/SleepContext";
 import dayjs from "dayjs";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BackButton from "../components/BackButton";
 import { Feather } from "@expo/vector-icons";
 import SleepChart from "../components/SleepChart";
-
-type SleepData = {
-  duration: number;
-  date: string;
-  startTime: string;
-  endTime: string;
-};
+import { fetchSleepData } from "../services/sleepService";
 
 const SleepBetterScreen = () => {
-  const { sleepRecords } = useSleep();
+  type sleepRecord = {
+    date: string;
+    duration: number;
+    startTime: string;
+    endTime: string;
+  };
+
+  const [sleepRecords, setSleepRecords] = useState<sleepRecord[]>([]);
   const [chartWeekStart, setChartWeekStart] = useState(
     dayjs().startOf("week").add(1, "day")
   );
@@ -52,6 +52,18 @@ const SleepBetterScreen = () => {
     }
     return "Log Your Sleep";
   };
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchSleepData();
+        setSleepRecords(data);
+      } catch (error) {
+        console.error("Failed to load sleep data: ", error);
+      }
+    };
+    load();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -102,16 +114,22 @@ const SleepBetterScreen = () => {
 
         {/* Sleep Chart */}
         <View style={styles.sleepChart}>
-          
           <TouchableOpacity
             onPress={() =>
               setChartWeekStart((prev) => dayjs(prev).subtract(1, "week"))
             }
           >
-            <Feather name="chevron-left" size={24} color="black" style={{paddingTop:20}} />
+            <Feather
+              name="chevron-left"
+              size={24}
+              color="black"
+              style={{ paddingTop: 20 }}
+            />
           </TouchableOpacity>
 
-          <Text style={styles.weekSelector}>Week of {chartWeekStart.format("MMM D")}</Text>
+          <Text style={styles.weekSelector}>
+            Week of {chartWeekStart.format("MMM D")}
+          </Text>
           <TouchableOpacity
             disabled={
               chartWeekStart.isSame(dayjs(), "week") ||
@@ -124,7 +142,7 @@ const SleepBetterScreen = () => {
             <Feather
               name="chevron-right"
               size={24}
-              style={{paddingTop:20}}
+              style={{ paddingTop: 20 }}
               color={
                 chartWeekStart.isSame(dayjs(), "week") ||
                 chartWeekStart.isAfter(dayjs())
@@ -155,9 +173,7 @@ const SleepBetterScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#ffffff" },
-  scrollContent: {
-    paddingBottom: 20,
-  },
+  scrollContent: { flexGrow: 1, paddingBottom: 100 },
   titleText: {
     fontSize: 18,
     fontWeight: "regular",

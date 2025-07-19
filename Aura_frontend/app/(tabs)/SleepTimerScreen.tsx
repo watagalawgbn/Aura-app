@@ -20,15 +20,13 @@ import Animated, {
   useSharedValue,
   runOnJS,
 } from "react-native-reanimated";
-import { useSleep } from "../../context/SleepContext";
 import dayjs from "dayjs";
 import BackButton from "../components/BackButton";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Circle, Text as SvgText } from "react-native-svg";
+import { postSleepRecord } from "../services/sleepService";
 
 const SleepTimerScreen = ({ navigation }: any) => {
-  const { addSleepRecord } = useSleep();
-
   // Convert time to angle (0-360 degrees)
   const timeToAngle = (hours: number, minutes: number) => {
     const totalMinutes = hours * 60 + minutes;
@@ -165,14 +163,20 @@ const SleepTimerScreen = ({ navigation }: any) => {
   };
 
   // Save sleep record
-  const handleSave = () => {
-    addSleepRecord({
+  const handleSave = async () => {
+   try{
+    const newRecord = {
       date: dayjs().format("YYYY-MM-DD"),
       startTime: formatTime(bedtimeHours, bedtimeMinutes),
       endTime: formatTime(wakeHours, wakeMinutes),
       duration: calculateSleepDuration(),
-    });
+    };
+    await postSleepRecord(newRecord);
     navigation.goBack();
+   }
+   catch(error){
+    console.error("Failed to save sleep record:", error);
+   }
   };
 
   // Generate hour marks
@@ -213,7 +217,7 @@ const SleepTimerScreen = ({ navigation }: any) => {
               <Image
                 source={require("../../assets/images/moon.png")}
                 style={{ width: 20, height: 20 }}
-              ></Image>
+              />
             </View>
             <Text style={styles.timeLabel}>Bedtime</Text>
             <Text style={styles.timeValue}>
@@ -226,7 +230,7 @@ const SleepTimerScreen = ({ navigation }: any) => {
               <Image
                 source={require("../../assets/images/sun.png")}
                 style={{ width: 20, height: 20 }}
-              ></Image>
+              />
             </View>
             <Text style={styles.timeLabel}>Wake Up</Text>
             <Text style={styles.timeValue}>
@@ -239,13 +243,10 @@ const SleepTimerScreen = ({ navigation }: any) => {
           colors={["#294C0D", "#5FB21F"]}
           style={styles.circleWrapper}
         >
-          <View style={styles.circleInner}>
-            
-          </View>
+          <View style={styles.circleInner}></View>
         </LinearGradient>
 
         {/* Circular Timer */}
-        
 
         {/* Sleep Duration */}
         <View style={styles.sleepDurationContainer}>

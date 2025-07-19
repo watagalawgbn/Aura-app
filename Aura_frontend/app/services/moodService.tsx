@@ -27,3 +27,5 @@ export const logMood = async(mood: string): Promise<void> => {
         throw new Error("Failed to log mood!");
     }
 }
+
+export default { logMood };

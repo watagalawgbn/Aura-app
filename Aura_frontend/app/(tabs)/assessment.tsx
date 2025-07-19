@@ -13,7 +13,6 @@ import { ProgressBar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { BASE_URL } from "@/constants/Api";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 
 type Option = {
@@ -75,6 +74,7 @@ export default function Assessment() {
           },
           body: JSON.stringify({ answers: formattedAnswers }),
         });
+        console.log("Authorization Header:", `Bearer ${token}`);
 
         const data = await response.json();
 

@@ -8,12 +8,10 @@ const {
 } = require("../controllers/assessmentController");
 const authenticateToken = require("../middleware/authMiddleware");
 
-router.use(authenticateToken);
-
 // Get shuffled assessment questions
 router.get("/", getAssessmentQuestions);
 
-// Submit assessment answers
-router.post("/submit", submitAssessment);
+// Submit assessment answers (only require authentication for this route)
+router.post("/submit", authenticateToken, submitAssessment);
 
 module.exports = router;
