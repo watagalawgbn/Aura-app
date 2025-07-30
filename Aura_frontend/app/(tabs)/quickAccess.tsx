@@ -90,7 +90,9 @@ const QuickAccessScreen = () => {
               style={styles.fullCardImage}
             />
             <View style={styles.playButtonContainer}>
-              <TouchableOpacity style={styles.playButton}>
+              <TouchableOpacity 
+                style={styles.playButton}
+                onPress={() => router.navigate("/(tabs)/JobScreen")}>
                 <Feather name="play" size={16} color="#52AE77" />
               </TouchableOpacity>
             </View>
@@ -103,8 +105,10 @@ const QuickAccessScreen = () => {
               style={styles.fullCardImage}
             />
             <View style={styles.playButtonContainer}>
-              <TouchableOpacity style={styles.playButton}
-              onPress={() => router.navigate("/(tabs)/PomodoroScreen")}>
+              <TouchableOpacity
+                style={styles.playButton}
+                onPress={() => router.navigate("/(tabs)/PomodoroScreen")}
+              >
                 <Feather name="play" size={16} color="#52AE77" />
               </TouchableOpacity>
             </View>

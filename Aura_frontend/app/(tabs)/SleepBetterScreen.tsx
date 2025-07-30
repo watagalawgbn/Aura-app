@@ -67,7 +67,6 @@ const SleepBetterScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
       <BackButton title={"Sleep Better"} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -172,8 +171,14 @@ const SleepBetterScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#ffffff" },
-  scrollContent: { flexGrow: 1, paddingBottom: 100 },
+  container: { 
+    flex: 1, 
+    backgroundColor: "#ffffff" 
+  },
+  scrollContent: { 
+    flexGrow: 1, 
+    paddingBottom: 100 
+  },
   titleText: {
     fontSize: 18,
     fontWeight: "regular",
