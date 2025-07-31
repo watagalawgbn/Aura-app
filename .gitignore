@@ -4,6 +4,8 @@
 
 # dependencies
 node_modules/
+Aura_frontend/node_modules/
+Aura_backend/node_modules/
 
 # Expo
 .expo/
