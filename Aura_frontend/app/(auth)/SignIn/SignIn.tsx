@@ -75,7 +75,7 @@ const SignIn: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       >
         <Image
-          source={require("../../assets/images/aura.png")}
+          source={require("../../../assets/images/aura.png")}
           style={styles.logo}
         />
         <Text style={styles.title}>Log in to your account</Text>

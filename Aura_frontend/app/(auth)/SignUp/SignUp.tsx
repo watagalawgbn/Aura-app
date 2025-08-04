@@ -68,7 +68,7 @@ const SignUp: React.FC = () => {
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Image
-          source={require("../../assets/images/aura.png")}
+          source={require("../../../assets/images/aura.png")}
           style={styles.logo}
         />
         <Text style={styles.title}>Create your account</Text>
