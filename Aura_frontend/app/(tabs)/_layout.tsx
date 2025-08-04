@@ -31,7 +31,7 @@ const TabsLayout = () => {
 
           {/* Meditation */}
           <TouchableOpacity
-            onPress={() => router.navigate("/(tabs)/Meditation")}
+            onPress={() => router.navigate("/(tabs)/Meditation/Meditation")}
             style={styles.itemsCenter}
           >
             <Image

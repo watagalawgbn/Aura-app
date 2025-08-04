@@ -42,7 +42,7 @@ const QuickAccessScreen = () => {
           />
           <View style={styles.playButtonContainer}>
             <TouchableOpacity
-              onPress={() => router.navigate("/(tabs)/Meditation")}
+              onPress={() => router.navigate("/(tabs)/Meditation/Meditation")}
               style={styles.playButton}
             >
               <Feather name="play" size={20} color="#52AE77" />
@@ -73,7 +73,7 @@ const QuickAccessScreen = () => {
             />
             <View style={styles.playButtonContainer}>
               <TouchableOpacity
-                onPress={() => router.navigate("/(tabs)/BreathingExercise")}
+                onPress={() => router.navigate("/(tabs)/BreathingExercise/BreathingExercise")}
                 style={styles.playButton}
               >
                 <Feather name="play" size={16} color="#52AE77" />

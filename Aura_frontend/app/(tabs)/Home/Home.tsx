@@ -148,7 +148,7 @@ const HomeScreen = () => {
                   Stress-Free Meditation
                 </Text>
                 <TouchableOpacity
-                  onPress={() => router.push("/(tabs)/Meditation")}
+                  onPress={() => router.push("/(tabs)/Meditation/Meditation")}
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>
