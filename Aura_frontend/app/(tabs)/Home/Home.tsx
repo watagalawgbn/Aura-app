@@ -110,7 +110,7 @@ const HomeScreen = () => {
             {/*Sleep tracking card*/}
             <TouchableOpacity
               style={styles.insightCard}
-              onPress={() => router.push("/(tabs)/SleepBetterScreen")}
+              onPress={() => router.push("/(tabs)/SleepScreen/SleepBetterScreen")}
             >
               <Text style={styles.insightCardTitle}>Track your sleep</Text>
               <Image
@@ -124,7 +124,7 @@ const HomeScreen = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Access</Text>
             <TouchableOpacity
-              onPress={() => router.push("/(tabs)/QuickAccess")}
+              onPress={() => router.push("/(tabs)/QuickAccess/QuickAccess")}
             >
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
@@ -169,7 +169,7 @@ const HomeScreen = () => {
               <View style={styles.quickAccessContent}>
                 <Text style={styles.quickAccessTitle}>Boost Your Earnings</Text>
                 <TouchableOpacity
-                  onPress={() => router.push("/(tabs)/QuickAccess")}
+                  onPress={() => router.push("/(tabs)/QuickAccess/QuickAccess")}
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>

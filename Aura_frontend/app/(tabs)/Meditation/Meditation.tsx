@@ -80,7 +80,7 @@ const MeditationScreen = () => {
         key={audio._id}
         onPress={() =>
           router.push({
-            pathname: "/(tabs)/PlayMeditation",
+            pathname: "/(tabs)/Meditation/PlayMeditation",
             params: {
               id: audio._id,
               title: audio.title,

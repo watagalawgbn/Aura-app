@@ -37,7 +37,7 @@ const QuickAccessScreen = () => {
       <ScrollView style={styles.contentContainer}>
         <View style={styles.fullCard}>
           <Image
-            source={require("../../assets/images/stress.jpg")}
+            source={require("../../../assets/images/stress.jpg")}
             style={styles.fullCardImage}
           />
           <View style={styles.playButtonContainer}>
@@ -55,7 +55,7 @@ const QuickAccessScreen = () => {
         <View style={styles.rowContainer}>
           <View style={styles.halfCard}>
             <Image
-              source={require("../../assets/images/anxiety.jpg")}
+              source={require("../../../assets/images/anxiety.jpg")}
               style={styles.fullCardImage}
             />
             <View style={styles.playButtonContainer}>
@@ -68,7 +68,7 @@ const QuickAccessScreen = () => {
 
           <View style={styles.halfCard}>
             <Image
-              source={require("../../assets/images/calm.jpeg")}
+              source={require("../../../assets/images/calm.jpeg")}
               style={styles.fullCardImage}
             />
             <View style={styles.playButtonContainer}>
@@ -86,7 +86,7 @@ const QuickAccessScreen = () => {
         <View style={styles.rowContainer}>
           <View style={styles.halfCard}>
             <Image
-              source={require("../../assets/images/earning.jpg")}
+              source={require("../../../assets/images/earning.jpg")}
               style={styles.fullCardImage}
             />
             <View style={styles.playButtonContainer}>
@@ -101,7 +101,7 @@ const QuickAccessScreen = () => {
 
           <View style={styles.halfCard}>
             <Image
-              source={require("../../assets/images/study.jpg")}
+              source={require("../../../assets/images/study.jpg")}
               style={styles.fullCardImage}
             />
             <View style={styles.playButtonContainer}>

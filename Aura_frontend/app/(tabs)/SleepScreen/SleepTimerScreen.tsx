@@ -3,12 +3,13 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   SafeAreaView,
+  StyleSheet,
   StatusBar,
   TouchableOpacity,
   Image,
 } from "react-native";
+import styles from "./SleepTimerScreen.styles";
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -21,10 +22,10 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import dayjs from "dayjs";
-import BackButton from "../components/BackButton";
+import BackButton from "../../components/BackButton";
 import { LinearGradient } from "expo-linear-gradient";
 import Svg, { Circle, Text as SvgText } from "react-native-svg";
-import { postSleepRecord } from "../services/sleepService";
+import { postSleepRecord } from "../../services/sleepService";
 import { PanGesture } from "react-native-gesture-handler/lib/typescript/handlers/gestures/panGesture";
 
 const SleepTimerScreen = ({ navigation }: any) => {
@@ -230,7 +231,7 @@ const SleepTimerScreen = ({ navigation }: any) => {
           <View style={styles.timeItem}>
             <View style={styles.timeIcon}>
               <Image
-                source={require("../../assets/images/moon.png")}
+                source={require("../../../assets/images/moon.png")}
                 style={{ width: 20, height: 20 }}
               />
             </View>
@@ -243,7 +244,7 @@ const SleepTimerScreen = ({ navigation }: any) => {
           <View style={styles.timeItem}>
             <View style={styles.timeIcon}>
               <Image
-                source={require("../../assets/images/sun.png")}
+                source={require("../../../assets/images/sun.png")}
                 style={{ width: 20, height: 20 }}
               />
             </View>
@@ -276,7 +277,7 @@ const SleepTimerScreen = ({ navigation }: any) => {
             <PanGestureHandler onGestureEvent={moonGestureHandler}>
               <Animated.View style={[styles.dragIcon, moonAnimatedStyle]}>
                 <Image
-                  source={require("../../assets/images/moon.png")}
+                  source={require("../../../assets/images/moon.png")}
                   style={{ width: 24, height: 24 }}
                 />
               </Animated.View>
@@ -286,7 +287,7 @@ const SleepTimerScreen = ({ navigation }: any) => {
             <PanGestureHandler onGestureEvent={sunGestureHandler}>
               <Animated.View style={[styles.dragIcon, sunAnimatedStyle]}>
                 <Image
-                  source={require("../../assets/images/sun.png")}
+                  source={require("../../../assets/images/sun.png")}
                   style={{ width: 24, height: 24 }}
                 />
               </Animated.View>
@@ -312,119 +313,5 @@ const SleepTimerScreen = ({ navigation }: any) => {
     </GestureHandlerRootView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  timeContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingHorizontal: 20,
-    marginTop: 20,
-  },
-  timeItem: {
-    alignItems: "center",
-  },
-  timeIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#f0f0f0",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  circleWrapper: {
-    alignSelf: "center",
-    marginTop: 20,
-    padding: 35,
-    borderRadius: 160,
-  },
-  circleInner: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  timerText: { fontSize: 36, fontWeight: "bold", color: "#294C0D" },
-  timeLabel: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4,
-  },
-  timeValue: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#000",
-  },
-  circleContainer: {
-    alignItems: "center",
-    marginTop: 40,
-    height: 300,
-  },
-  svg: {
-    position: "absolute",
-  },
-  dragIcon: {
-    position: "absolute",
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  sunIconStyle: {
-    backgroundColor: "#FFE4B5",
-  },
-  iconText: {
-    fontSize: 16,
-  },
-  sleepDurationContainer: {
-    alignItems: "center",
-    marginTop: 40,
-  },
-  sleepDurationLabel: {
-    fontSize: 16,
-    color: "black",
-    marginBottom: 10,
-    fontWeight: "bold",
-  },
-  sleepDurationBadge: {
-    paddingHorizontal: 30,
-    paddingVertical: 8,
-    borderColor: "#4CAF50",
-    borderRadius: 10,
-    borderWidth: 1,
-    // paddingHorizontal: 50,
-  },
-  sleepDurationValue: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "black",
-  },
-  saveButton: {
-    backgroundColor: "#5FB21F",
-    marginHorizontal: 20,
-    marginTop: 30,
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  saveButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-});
 
 export default SleepTimerScreen;
