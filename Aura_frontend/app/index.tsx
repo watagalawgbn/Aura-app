@@ -8,7 +8,7 @@ const Index = () => {
     const checkAuth = async () => {
       const token = await AsyncStorage.getItem("token");
       if (token) {
-        router.replace("/(tabs)/Home");
+        router.replace("/(tabs)/Home/Home");
       } else {
         router.replace("/(auth)/SignIn");
       }

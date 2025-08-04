@@ -18,7 +18,7 @@ const TabsLayout = () => {
         <View style={styles.container}>
           {/* Home */}
           <TouchableOpacity
-            onPress={() => router.navigate("/(tabs)/Home")}
+            onPress={() => router.navigate("/(tabs)/Home/Home")}
             style={styles.itemsCenter}
           >
             <Ionicons
