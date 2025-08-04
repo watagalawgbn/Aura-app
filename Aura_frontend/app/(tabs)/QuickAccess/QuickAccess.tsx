@@ -107,7 +107,7 @@ const QuickAccessScreen = () => {
             <View style={styles.playButtonContainer}>
               <TouchableOpacity
                 style={styles.playButton}
-                onPress={() => router.navigate("/(tabs)/PomodoroScreen")}
+                onPress={() => router.navigate("/(tabs)/PomodoroScreen/PomodoroScreen")}
               >
                 <Feather name="play" size={16} color="#52AE77" />
               </TouchableOpacity>
