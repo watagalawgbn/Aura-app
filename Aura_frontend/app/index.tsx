@@ -10,7 +10,7 @@ const Index = () => {
       if (token) {
         router.replace("/(tabs)/Home/Home");
       } else {
-        router.replace("/(auth)/SignIn");
+        router.replace("/(auth)/SignIn/SignIn");
       }
     };
 

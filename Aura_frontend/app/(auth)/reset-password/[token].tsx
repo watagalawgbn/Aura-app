@@ -68,7 +68,7 @@ export default function ResetPasswordScreen() {
         [
           {
             text: "OK",
-            onPress: () => router.replace("/(auth)/SignIn")
+            onPress: () => router.replace("/(auth)/SignIn/SignIn")
           }
         ]
       );

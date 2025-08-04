@@ -152,7 +152,7 @@ const SignIn: React.FC = () => {
           Don't have an account?{" "}
           <Text
             style={styles.link}
-            onPress={() => router.push("/(auth)/SignUp")}
+            onPress={() => router.push("/(auth)/SignUp/SignUp")}
           >
             Sign Up
           </Text>

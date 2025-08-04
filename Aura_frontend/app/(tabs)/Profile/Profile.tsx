@@ -111,7 +111,7 @@ export default function Profile() {
         style={styles.logoutButton}
         onPress={async () => {
           await logout();
-          router.replace("/(auth)/SignIn");
+          router.replace("/(auth)/SignIn/SignIn");
         }}
       >
         <Text style={styles.logoutText}>Logout</Text>
