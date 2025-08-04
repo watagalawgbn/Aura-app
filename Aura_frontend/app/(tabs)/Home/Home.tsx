@@ -11,7 +11,7 @@ import {
 import styles from "./Home.styles";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import MoodLog from "../Mood";
+import MoodLog from "../Mood/Mood";
 import { useAuth } from "../../../context/AuthContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { getGreeting } from "@/utils/getGreeting";
@@ -34,7 +34,6 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#224831" barStyle="light-content" />
-
 
       {/* Header section of the home screen */}
       <LinearGradient
@@ -79,7 +78,6 @@ const HomeScreen = () => {
             contentContainerStyle={styles.insightsContent}
             showsHorizontalScrollIndicator={false}
           >
-
             {/* Mental Health Assessment Card */}
             <TouchableOpacity
               style={styles.insightCard}
@@ -93,7 +91,6 @@ const HomeScreen = () => {
                 style={styles.insightCardImage}
               />
             </TouchableOpacity>
-
 
             {/* Track your mood Card */}
             <TouchableOpacity
@@ -109,7 +106,6 @@ const HomeScreen = () => {
             {isMoodLogVisible && (
               <MoodLog isVisible onClose={() => setIsMoodLogVisible(false)} />
             )}
-
 
             {/*Sleep tracking card*/}
             <TouchableOpacity
