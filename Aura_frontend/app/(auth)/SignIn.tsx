@@ -161,12 +161,6 @@ const SignIn: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   padding: 20,
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  // },
   scrollContainer: {
     padding: 20,
     flexGrow: 1,

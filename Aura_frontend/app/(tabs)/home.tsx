@@ -83,7 +83,7 @@ const HomeScreen = () => {
             {/* Mental Health Assessment Card */}
             <TouchableOpacity
               style={styles.insightCard}
-              onPress={() => router.push("/(tabs)/Assessment")}
+              onPress={() => router.push("/(tabs)/Assessment/Assessment")}
             >
               <Text style={styles.insightCardTitle}>
                 Mental Health Assessment
