@@ -48,7 +48,7 @@ const TabsLayout = () => {
 
           {/* Quick Access */}
           <TouchableOpacity
-            onPress={() => router.navigate("/(tabs)/QuickAccess")}
+            onPress={() => router.navigate("/(tabs)/QuickAccess/QuickAccess")}
             style={styles.itemsCenter}
           >
             <MaterialCommunityIcons
@@ -63,7 +63,7 @@ const TabsLayout = () => {
 
           {/* Profile */}
           <TouchableOpacity
-            onPress={() => router.navigate("/(tabs)/Profile")}
+            onPress={() => router.navigate("/(tabs)/Profile/Profile")}
             style={styles.itemsCenter}
           >
             <Ionicons
