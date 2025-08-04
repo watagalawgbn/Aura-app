@@ -4,16 +4,17 @@ import {
   View,
   TextInput,
   Text,
-  StyleSheet,
   Image,
   TouchableOpacity,
   KeyboardAvoidingView,
   ScrollView,
   Platform,
+  StatusBar,
 } from "react-native";
+import styles from "./SignIn.styles";
 import { useRouter } from "expo-router";
 import axios from "axios";
-import { SignInRequest, AuthResponse } from "../../types/auth";
+import { SignInRequest, AuthResponse } from "../../../types/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
 import { BASE_URL } from "@/constants/Api";
@@ -68,6 +69,7 @@ const SignIn: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
     >
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff"/>
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
@@ -160,73 +162,6 @@ const SignIn: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  scrollContainer: {
-    padding: 20,
-    flexGrow: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
 
-  logo: { width: 120, height: 100, marginBottom: 20 },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    marginBottom: 12,
-    width: "100%",
-  },
-  icon: { marginRight: 10 },
-  input: { flex: 1 },
-  forgotPassword: {
-    marginRight: 230,
-    marginBottom: 10,
-  },
-  forgotPasswordText: {
-    color: "#555",
-    fontWeight: "regular",
-  },
-  googleButton: {
-    backgroundColor: "#eee",
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  eyeIcon: {
-    position: "absolute",
-    right: 10,
-    padding: 5,
-  },
-  googleText: { color: "#333" },
-  mainButton: {
-    backgroundColor: "#4CAF50",
-    paddingVertical: 12,
-    borderRadius: 10,
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  googleContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  googleIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  mainButtonText: { color: "white", fontWeight: "bold", fontSize: 16 },
-  footer: { marginTop: 10 },
-  link: { color: "#4CAF50", fontWeight: "500" },
-});
 
 export default SignIn;
