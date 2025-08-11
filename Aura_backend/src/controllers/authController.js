@@ -28,7 +28,7 @@ exports.signup = async (req, res) => {
     console.log("User registered:", email);
 
     const token = generateToken(user);
-    console.log("Token generated:", token);
+    // console.log("Token generated:", token);
     res.json({ token });
   } catch (error) {
     console.error("Sign-Up Error:", error.message);
@@ -40,7 +40,7 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
   console.log("Received Sign-In request:", req.body);
   const { email, password } = req.body;
-  console.log("Sign-In Request:", { email, password });
+  // console.log("Sign-In Request:", { email, password });
   try {
     let user = await User.findOne({ email });
 
@@ -56,7 +56,7 @@ exports.signin = async (req, res) => {
     }
 
     const token = generateToken(user);
-    console.log("Token generated:", token);
+    // console.log("Token generated:", token);
     res.json({ token });
   } catch (error) {
     console.error("Sign-In Error:", error.message);

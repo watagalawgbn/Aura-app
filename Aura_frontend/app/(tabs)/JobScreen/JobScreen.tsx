@@ -11,6 +11,9 @@ import {
 import styles from "./JobScreen.styles";
 import { Ionicons, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import BackButton from "../../components/BackButton";
+import JobCard from "@/app/components/JobCard/JobCard";
+import useFetch from "@/hook/useFetch";
+import { router } from "expo-router";
 
 const JobScreen = () => {
   const [skills, setSkills] = useState("");
@@ -33,6 +36,7 @@ const JobScreen = () => {
             match your talents
           </Text>
         </View>
+
         <View style={styles.skillStyles}>
           <View style={styles.skillTitle}>
             <Ionicons name="people" size={20} color="#5FB21F" />
