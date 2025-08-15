@@ -11,7 +11,6 @@ import {
 import styles from "./JobScreen.styles";
 import { Ionicons, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import BackButton from "../../components/BackButton";
-import JobCard from "@/app/components/JobCard/JobCard";
 import useFetch from "@/hook/useFetch";
 import { router } from "expo-router";
 

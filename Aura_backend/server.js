@@ -16,6 +16,7 @@ const audioRoutes = require("./src/routes/audioRoutes");
 const meditationRoutes = require("./src/routes/meditationRoutes");
 const imageRoutes = require("./src/routes/imageRoutes");
 const sleepRoutes = require("./src/routes/sleepRoutes");
+const jobRoutes = require("./src/routes/jobRoutes");
 
 const app = express();
 connectDB();
@@ -35,6 +36,7 @@ app.use("/api/assessment", assessmentRoutes);
 app.use("/api/breathing-sessions", breathingSessionRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/sleep", sleepRoutes);
+app.use("/api/jobs", jobRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () =>
