@@ -26,6 +26,7 @@ exports.getRecommendations = async (req, res) => {
       date_posted = "all",
       page = 1,
       num_pages = 1,
+      remote = false,
     } = req.body || {};
 
     if (!skills || !Array.isArray(skills) || skills.length === 0) {
@@ -34,34 +35,42 @@ exports.getRecommendations = async (req, res) => {
         .json({ error: "Please send a non-empty 'skills' array" });
     }
     const query = buildQuery({ skills, employmentType, city });
-    const jobs = await searchJobs({
-      query,
-      country,
-      date_posted,
-      page,
-      num_pages,
-    });
-    const results = jobs.map((j) => ({
-      id: j.job_id,
-      title: j.job_title,
-      company: j.employer_name,
-      location:
-        j.jobCity && j.job_state && j.job_country
+    const apiParams = { query, country, date_posted, page, num_pages };
+    if (remote) apiParams.remote_jobs_only = true;
+    const jobs = await searchJobs(apiParams);
+    const results = jobs.map((j) => {
+      // derive a clean location string
+      const loc =
+        j.job_city && j.job_state && j.job_country
           ? `${j.job_city}, ${j.job_state}, ${j.job_country}`
-          : j.job_city || j.job_state || j.job_country | "",
-      type: j.job_employement_type || null,
-      postedAt: j.job_posted_at_datetime_utc || j.job_posted_at || null,
-      applyLink:
-        j.job_apply_link ||
-        j.job_apply_url ||
-        j?.job_apply_options?.[0]?.apply_link ||   
-        null,
-      descriptionSnippet: j.job_description
-        ? j.job_description.slice(0, 220) + "..."
-        : null,
-    }));
+          : j.job_location || j.job_city || j.job_state || j.job_country || "";
 
-    res.json({ query, count: results.length, results });
+      // compute a reliable remote flag
+      const remoteFlag =
+        (typeof j.job_is_remote === "boolean" && j.job_is_remote) ||
+        /(^|\b)(remote|work\s*from\s*home|wfh)\b/i.test(String(loc));
+
+      return {
+        id: j.job_id,
+        title: j.job_title,
+        company: j.employer_name,
+        location: loc,
+        type: j.job_employment_type_text || j.job_employment_type || null,
+        postedAt: j.job_posted_at_datetime_utc || j.job_posted_at || null,
+        applyLink:
+          j.job_apply_link ||
+          j.job_apply_url ||
+          j?.apply_options?.[0]?.apply_link ||
+          j?.job_apply_options?.[0]?.apply_link ||
+          null,
+        descriptionSnippet: j.job_description
+          ? j.job_description.slice(0, 220) + "..."
+          : null,
+        remote: !!remoteFlag, // <-- add this
+      };
+    });
+
+    res.json({ query, count: results.length, remoteApplied: !!remote, results });
   } catch (e) {
     console.log("Error: ", e);
     res.status(e?.response?.status || 500).json({
@@ -128,8 +137,8 @@ exports.getSavedJobs = async (req, res) => {
   try {
     const { userId } = req.params;
     const list = await Job.find({ userId })
-    .populate("jobRef")  
-    .sort({ createdAt: -1 });
+      .populate("jobRef")
+      .sort({ createdAt: -1 });
     res.json(list);
   } catch (e) {
     res
