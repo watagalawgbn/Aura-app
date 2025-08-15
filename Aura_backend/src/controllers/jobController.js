@@ -2,14 +2,14 @@ const { searchJobs } = require("../services/jsearchService");
 const Job = require("../models/Job");
 const JobListing = require("../models/JobListing");
 
-function buildQuery({ skills = [], employementType = "", city = "" }) {
+function buildQuery({ skills = [], employmentType = "", city = "" }) {
   const cleaned = (Array.isArray(skills) ? skills : [])
     .map(String)
     .map((s) => s.trim())
     .filter(Boolean)
     .slice(0, 5);
   const skillsPart = cleaned.length ? cleaned.join(" OR ") : "";
-  return [employementType || "", skillsPart, city || "", "jobs"]
+  return [employmentType || "", skillsPart, city || "", "jobs"]
     .filter(Boolean)
     .join(" ")
     .replace(/\s+/g, " ")
@@ -20,7 +20,7 @@ exports.getRecommendations = async (req, res) => {
   try {
     const {
       skills,
-      employementType = "",
+      employmentType = "",
       city = "",
       country = "",
       date_posted = "all",
@@ -33,7 +33,7 @@ exports.getRecommendations = async (req, res) => {
         .status(400)
         .json({ error: "Please send a non-empty 'skills' array" });
     }
-    const query = buildQuery({ skills, employementType, city });
+    const query = buildQuery({ skills, employmentType, city });
     const jobs = await searchJobs({
       query,
       country,
@@ -49,12 +49,12 @@ exports.getRecommendations = async (req, res) => {
         j.jobCity && j.job_state && j.job_country
           ? `${j.job_city}, ${j.job_state}, ${j.job_country}`
           : j.job_city || j.job_state || j.job_country | "",
-      tyep: j.job_employement_type || null,
+      type: j.job_employement_type || null,
       postedAt: j.job_posted_at_datetime_utc || j.job_posted_at || null,
       applyLink:
         j.job_apply_link ||
-        j.job_applu_url ||
-        j?.job_apply_options?.[0]?.applyLink ||
+        j.job_apply_url ||
+        j?.job_apply_options?.[0]?.apply_link ||   
         null,
       descriptionSnippet: j.job_description
         ? j.job_description.slice(0, 220) + "..."
@@ -127,7 +127,9 @@ exports.saveJob = async (req, res) => {
 exports.getSavedJobs = async (req, res) => {
   try {
     const { userId } = req.params;
-    const list = await Job.find({ userId }).sort({ createdAt: -1 });
+    const list = await Job.find({ userId })
+    .populate("jobRef")  
+    .sort({ createdAt: -1 });
     res.json(list);
   } catch (e) {
     res
