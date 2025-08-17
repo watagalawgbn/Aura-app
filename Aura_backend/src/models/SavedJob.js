@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 const SavedJobSchema = new mongoose.Schema({
-  userId:  { type: String, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   jobRef:  { type: mongoose.Schema.Types.ObjectId, ref: "JobListing", required: true },
   status:  { type: String, enum: ["saved","applied"], default: "saved" },
   notes:   { type: String, default: "" }

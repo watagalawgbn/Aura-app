@@ -140,8 +140,10 @@ exports.saveJob = async (req, res) => {
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
 
+    console.log("Job saved", saved._id);
     res.status(201).json(saved); // return the link doc
   } catch (e) {
+    console.error("Error saving jobs", e);
     res.status(500).json({ error: "Could not save job.", details: e.message });
   }
 };
@@ -152,11 +154,12 @@ exports.getSavedJobs = async (req, res) => {
     const list = await SavedJob.find({ userId })
       .populate("jobRef") // pull in the cached JobListing fields
       .sort({ createdAt: -1 }); //newest first
+    
+    console.log("Saved jobs: ", list);
     res.json(list); // send the saved list back
   } catch (e) {
-    res
-      .status(500)
-      .json({ error: "Could not load saved job.", details: e.message });
+    console.error("Couldn't get saved jobs", e);
+    res.status(500).json({ error: "Could not load saved job.", details: e.message });
   }
 };
 

@@ -1,5 +1,5 @@
 //jobLIsting model avoid storing the same exeternal job 100 times
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const JobListingSchema = new mongoose.Schema({
   jobId: { type: String, required: true, unique: true }, // JSearch job_id
