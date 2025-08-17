@@ -1,12 +1,9 @@
 require("dotenv").config({ path: '../.env' });
 const express = require("express");
-const mongoose = require("mongoose");
 const connectDB = require("./src/config/db");
 const cors = require("cors");
-const { connectGridFs, getGfs } = require("./gridfs");
+const { connectGridFs } = require("./gridfs");
 
-const Meditation = require("./src/models/Meditation");
-const Image = require("./src/models/Image"); 
 const auth = require("./src/routes/auth");
 const assessmentRoutes = require("./src/routes/assessmentRoutes");
 const moods = require("./src/routes/mood");
@@ -19,13 +16,12 @@ const sleepRoutes = require("./src/routes/sleepRoutes");
 const jobRoutes = require("./src/routes/jobRoutes");
 
 const app = express();
+const mongoURI = process.env.MONGO_URI;
 connectDB();
+connectGridFs(mongoURI);
+
 app.use(cors({ origin: "*" }));
 app.use(express.json());
-
-const mongoURI = process.env.MONGO_URI;
-connectGridFs(mongoURI);
-mongoose.connect(mongoURI);
 
 app.use("/api/audio", audioRoutes);
 app.use("/api/meditations", meditationRoutes);
