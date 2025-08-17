@@ -52,7 +52,7 @@ const SignIn: React.FC = () => {
 
       const token = res.data.token;
       await login(token);
-      // console.log("Tokennn:", token);
+      console.log("Tokennn:", token);
 
       alert("Signed in successfully");
       router.replace("/(tabs)/Home/Home");

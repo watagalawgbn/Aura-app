@@ -49,6 +49,7 @@ const SignUp: React.FC = () => {
         `${BASE_URL}/api/auth/signup`,
         payload
       );
+      console.log("Tokennn:", res.data.token);
       await login(res.data.token);
       alert("Signed up successfully");
 

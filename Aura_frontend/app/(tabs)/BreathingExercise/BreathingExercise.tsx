@@ -179,12 +179,14 @@ export default function BreathingExercise() {
   const sendSessionToBackend = async (durationInSeconds: number) => {
     try {
       const userId = await SecureStore.getItemAsync("userId"); // Dynamically loaded
+      const token = await SecureStore.getItemAsync("authToken");
       if (!userId) return console.warn("User ID not found in SecureStore");
 
       await fetch(`${BASE_URL}/api/breathing-sessions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
           userId,
@@ -290,6 +292,4 @@ export default function BreathingExercise() {
     </SafeAreaView>
   );
 }
-
-// ... (Keep imports and logic same)
 
