@@ -25,7 +25,7 @@ type Task = { _id?: string; name: string; note: string; userId?: string };
 const playAlarm = async () => {
   try {
     const { sound } = await Audio.Sound.createAsync(
-      require("../assets/audios/alarm.mp3")
+      require("../../../assets/audios/alarm.mp3")
     );
     await sound.playAsync();
 
@@ -45,7 +45,7 @@ const PomodoroScreen = () => {
   const [newTask, setNewTask] = useState<Task>({ name: "", note: "" });
   const [showGlobalOptions, setShowGlobalOptions] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(25 * 60);
+  const [secondsLeft, setSecondsLeft] = useState(1 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [taskMenuIndex, setTaskMenuIndex] = useState<number | null>(null);

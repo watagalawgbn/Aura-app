@@ -3,15 +3,15 @@ import { BASE_URL } from "@/constants/Api";
 import * as SecureStore from "expo-secure-store";
 import dayjs from "dayjs";
 
+type sleepData = {
+  date: string;
+  hours: number;
+  startTime?: string;
+  endTime?: string;
+};
+
 //fetch sleep data to chart
 export const fetchSleepData = async () => {
-  type sleepData = {
-    date: string;
-    hours: number;
-    startTime?: string;
-    endTime?: string;
-  };
-
   const token = await SecureStore.getItemAsync("authToken");
   if (!token) return [];
 
