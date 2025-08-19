@@ -11,7 +11,7 @@ type sleepData = {
 };
 
 //fetch sleep data to chart
-export const fetchSleepData = async () => {
+const fetchSleepData = async () => {
   try{
     const res = await apiClient.get<sleepData[]>("/api/sleep");
     return res.data.map((entry) => ({
@@ -27,20 +27,23 @@ export const fetchSleepData = async () => {
   }
 };
 
+
 //add sleep records
-export const postSleepRecord = async (record: {
+const postSleepRecord = async (record: {
   date: string;
   duration: number;
   startTime: string;
   endTime: string;
-}) => {
+}): Promise<sleepData> => {
   try{
-    await apiClient.post("/api/sleep",{
+    const res = await apiClient.post("/api/sleep",{
       date: record.date,
       hours: record.duration,
       startTime: record.startTime,
       endTime: record.endTime,
     });
+    console.log("Saved sleep data: ", res.data);
+    return res.data;
   }
   catch(e){
     console.error("Failed to save sleep record: ", e);

@@ -6,7 +6,7 @@ export const logMood = async(mood: string): Promise<void> => {
     // send post request to backend to add mood
     try{ 
         await apiClient.post(
-            `/api/moods`, //API end point
+            `/api/moods`, 
             { mood } //selected mood in the body
         );
     } 
