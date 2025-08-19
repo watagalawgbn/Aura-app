@@ -18,6 +18,7 @@ import axios from "axios";
 import { BASE_URL } from "@/constants/Api";
 import { useAuth } from "@/context/AuthContext";
 import { Audio } from "expo-av";
+import apiClient from "@/app/services/apiClient";
 
 type Task = { _id?: string; name: string; note: string; userId?: string };
 
@@ -272,8 +273,8 @@ const PomodoroScreen = () => {
                     onPress={async () => {
                       try {
                         const deleted = tasks[index];
-                        await axios.delete(
-                          `${BASE_URL}/api/tasks/${deleted._id}`
+                        await apiClient.delete(
+                          `/api/tasks/${deleted._id}`
                         );
                         const updatedTasks = tasks.filter(
                           (_, i) => i !== index
@@ -346,8 +347,8 @@ const PomodoroScreen = () => {
                         if (editIndex !== null) {
                           // PUT (update existing)
                           const existing = tasks[editIndex];
-                          const res = await axios.put(
-                            `${BASE_URL}/api/tasks/${existing._id}`,
+                          const res = await apiClient.put(
+                            `/api/tasks/${existing._id}`,
                             {
                               ...existing,
                               ...newTask,
@@ -358,8 +359,8 @@ const PomodoroScreen = () => {
                           setTasks(updated);
                         } else {
                           // POST (create new)
-                          const res = await axios.post(
-                            `${BASE_URL}/api/tasks`,
+                          const res = await apiClient.post(
+                            `/api/tasks`,
                             {
                               ...newTask,
                               userId: user?.id,
