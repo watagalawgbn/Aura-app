@@ -79,7 +79,7 @@ export default function Assessment() {
         const data = await response.json();
 
         router.push({
-          pathname: "/(tabs)/AssessmentResult",
+          pathname: "/(tabs)/Assessment/AssessmentResult",
           params: {
             phqScore: data.scores.PHQ.totalScore,
             phqSeverity: data.scores.PHQ.severity,
