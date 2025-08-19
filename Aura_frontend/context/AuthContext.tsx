@@ -1,9 +1,7 @@
 // context/AuthContext.tsx
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
-import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import { BASE_URL } from "@/constants/Api";
 import { jwtDecode } from "jwt-decode";
 
 type User = {
@@ -24,12 +22,14 @@ type AuthContextType = {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   login: (token: string) => Promise<void>;
   logout: () => void;
+  loading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   
   const login = async (token: string) => {
     try {
@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     await SecureStore.deleteItemAsync("authToken"); // Clear token
+    await SecureStore.deleteItemAsync("userId");
     setUser(null);
     console.log('User signed out!');
   };
@@ -56,12 +57,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const restoreUser = async () => {
       const token = await SecureStore.getItemAsync("authToken");
       if (token) await login(token); // Restore user session
+      setLoading(false);
     };
     restoreUser();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
