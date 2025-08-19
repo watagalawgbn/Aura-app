@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
     marginBottom: 6,
+    justifyContent: "space-between",
   },
   recommendationText: {
     fontSize: 14,
