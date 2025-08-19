@@ -11,7 +11,7 @@ type sleepData = {
 };
 
 //fetch sleep data to chart
-const fetchSleepData = async () => {
+export const fetchSleepData = async () => {
   try{
     const res = await apiClient.get<sleepData[]>("/api/sleep");
     return res.data.map((entry) => ({

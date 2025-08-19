@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  StatusBar,
   ScrollView,
 } from "react-native";
 import styles from "./SleepBetterScreen.styles";
@@ -19,8 +18,8 @@ const SleepBetterScreen = () => {
   type sleepRecord = {
     date: string;
     duration: number;
-    startTime: string;
-    endTime: string;
+    startTime?: string;
+    endTime?: string;
   };
 
   const [sleepRecords, setSleepRecords] = useState<sleepRecord[]>([]);
