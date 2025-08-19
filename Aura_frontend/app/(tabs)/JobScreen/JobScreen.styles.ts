@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native";
 
-
 const styles = StyleSheet.create({
   safeAreaStyles: {
     flex: 1,
@@ -100,9 +99,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
     borderRadius: 10,
     padding: 15,
-    marginBottom: 15,
+    marginBottom: 25,
     borderColor: "#D5D5D5",
     borderWidth: 1,
+    elevation: 4,
   },
   jobTitle: {
     fontWeight: "500",
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: 14,
     marginLeft: 4,
-    fontWeight: 'bold',
+    fontWeight: "500",
   },
 
   applyButton: {
@@ -180,6 +180,25 @@ const styles = StyleSheet.create({
   },
   navItem: {
     alignItems: "center",
+  },
+  skillChipsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 20,
+  },
+  skillChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+    borderColor: "#5FB21F",
+    borderRadius: 20,
+    margin: 5,
+  },
+  skillChipText: {
+    color: "black",
+    marginRight: 6,
   },
 });
 

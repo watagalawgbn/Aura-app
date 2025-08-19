@@ -9,14 +9,31 @@ import {
   TouchableOpacity,
 } from "react-native";
 import styles from "./JobScreen.styles";
-import { Ionicons, MaterialIcons, FontAwesome } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import BackButton from "../../components/BackButton";
-import useFetch from "@/hook/useFetch";
-import { router } from "expo-router";
+import axios from "axios";
+import JobCard from "@/app/components/JobCard/JobCard";
+import { BASE_URL } from "@/constants/Api";
 
 const JobScreen = () => {
   const [skills, setSkills] = useState("");
   const [skillList, setSkillList] = useState<string[]>([]);
+  const [jobs, setJobs] = useState<any[]>([]);
+
+  const fetchJobs = async () => {
+    try {
+      const res = await axios.post(`${BASE_URL}/api/jobs/recommendations`, {
+        skills: skillList,
+        employmentType: "",
+        city: "",
+      });
+      console.log("✅ jobs: ", res.data);
+      setJobs(res.data.results);
+    } catch (e) {
+      console.error("Failed to fetch jobs:  ", e);
+      throw new Error("Failed to fetch jobs!");
+    }
+  };
 
   const handleAddSkill = () => {
     if (skills.trim() !== "") {
@@ -24,6 +41,7 @@ const JobScreen = () => {
       setSkills("");
     }
   };
+
   return (
     <SafeAreaView style={styles.safeAreaStyles}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
@@ -52,7 +70,21 @@ const JobScreen = () => {
               <Text style={{ fontSize: 18, fontWeight: "bold" }}>+</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.findJobsBtn}>
+
+          <View>
+            {skillList.map((skills, index) => (
+              <View key={index} style={styles.skillChip}>
+                <Text style={styles.skillChipText}>{skills}</Text>
+                <TouchableOpacity onPress={() => {
+                  setSkillList((prev) => prev.filter((_, i) => i !== index))
+                }}>
+                  <Ionicons name="close-circle" size={16} color="white"/>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+
+          <TouchableOpacity style={styles.findJobsBtn} onPress={fetchJobs}>
             <Text style={styles.findJobsText}>Find Jobs</Text>
           </TouchableOpacity>
         </View>
@@ -60,7 +92,7 @@ const JobScreen = () => {
         <View style={styles.infoBoxes}>
           <View style={styles.infoBox}>
             <MaterialIcons name="work" size={20} color="white" />
-            <Text style={styles.infoText}>6</Text>
+            <Text style={styles.infoText}>{jobs.length}</Text>
             <Text style={styles.infoLabel}>Available Jobs</Text>
           </View>
           <View style={[styles.infoBox, { backgroundColor: "#224831" }]}>
@@ -71,68 +103,13 @@ const JobScreen = () => {
         </View>
 
         {/* Job Cards */}
-        <View style={styles.jobCard}>
-          <Text style={styles.jobTitle}>UI/UX Designer</Text>
-          <Text style={styles.companyName}>Creative Studio Inc</Text>
-          <View style={styles.jobTags}>
-            <View style={styles.tagWithIcon}>
-              <Ionicons name="location" size={14} color="black" />
-              <Text style={styles.tagText}>Remote</Text>
-            </View>
-            <View style={styles.tagWithIcon}>
-              <MaterialIcons name="schedule" size={14} color="black" />
-              <Text style={styles.tagText}>Part-Time</Text>
-            </View>
-            <View style={styles.tagWithIcon}>
-              <FontAwesome name="dollar" size={14} color="black" />
-              <Text style={styles.tagText}>$25-35/hr</Text>
-            </View>
-          </View>
-          <Text style={styles.jobDesc}>
-            We're looking for a creative UI/UX designer to help create beautiful
-            and intuitive user interfaces...
-          </Text>
-          <TouchableOpacity style={styles.applyButton}>
-            <View style={styles.applyBtnFlex}>
-              <Text style={styles.applyButtonText}>Apply Now</Text>
-              <Ionicons name="arrow-forward-circle" size={20} color="white" />
-            </View>
-          </TouchableOpacity>
-        </View>
+        {jobs.map((job) => (
+          <JobCard key={job.id} job={job}/>
+        ))}
 
-        <View style={styles.jobCard}>
-          <Text style={styles.jobTitle}>Fashion Design Assistant</Text>
-          <Text style={styles.companyName}>Trendy Fashion House</Text>
-          <View style={styles.jobTags}>
-            <View style={styles.tagWithIcon}>
-              <Ionicons name="location" size={14} color="black" />
-              <Text style={styles.tagText}>Colombo</Text>
-            </View>
-            <View style={styles.tagWithIcon}>
-              <MaterialIcons name="schedule" size={14} color="black" />
-              <Text style={styles.tagText}>Part-Time</Text>
-            </View>
-            <View style={styles.tagWithIcon}>
-              <FontAwesome name="dollar" size={14} color="black" />
-              <Text style={styles.tagText}>$20–28/hr</Text>
-            </View>
-          </View>
-
-          <Text style={styles.jobDesc}>
-            Join our fashion team as a design assistant. Help create stunning
-            fashion pieces and...
-          </Text>
-          <TouchableOpacity style={styles.applyButton}>
-            <View style={styles.applyBtnFlex}>
-              <Text style={styles.applyButtonText}>Apply Now</Text>
-              <Ionicons name="arrow-forward-circle" size={20} color="white" />
-            </View>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
-
 
 export default JobScreen;
