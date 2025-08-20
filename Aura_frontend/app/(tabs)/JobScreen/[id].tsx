@@ -16,6 +16,16 @@ export default function JobDetails() {
   const jobData = JSON.parse(job as string);
   console.log("📝 jobData in details screen: ", jobData);
 
+  const formatDate = (dateTime: string) => {
+    if(!dateTime) return "Not Available";
+    const date = new Date(dateTime);
+    return date.toLocaleDateString("en-US",{
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+  };
+
   return (
     <>
       <BackButton title={"Job Details"} />
@@ -58,7 +68,7 @@ export default function JobDetails() {
             />
             <View>
               <Text style={styles.infoLabel2}>Posted Date</Text>
-              <Text>{jobData.postedAt || "Not Available"}</Text>
+              <Text>{formatDate(jobData.postedAt) || "Not Available"}</Text>
             </View>
           </View>
 

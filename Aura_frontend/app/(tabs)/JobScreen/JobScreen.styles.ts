@@ -251,21 +251,26 @@ const styles = StyleSheet.create({
   skillChipsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: 20,
+    marginTop: 12,
   },
   skillChip: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "white",
-    paddingHorizontal: 5,
-    paddingVertical: 5,
+    padding: 5,
     borderColor: "#5FB21F",
-    borderRadius: 20,
-    margin: 5,
+    borderWidth: 1.5,
+    borderRadius: 999, 
+    marginRight: 8,
+    marginBottom: 8,
   },
   skillChipText: {
     color: "black",
     marginRight: 6,
+    fontSize: 13,
+  },
+  chipCloseBtn: {
+    marginLeft: 2,
   },
 
   infoRow: {

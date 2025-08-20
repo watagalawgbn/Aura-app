@@ -90,16 +90,20 @@ const JobScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <View>
-            {skillList.map((skills, index) => (
-              <View key={index} style={styles.skillChip}>
-                <Text style={styles.skillChipText}>{skills}</Text>
+          <View style={styles.skillChipsContainer}>
+            {skillList.map((skill, index) => (
+              <View key={`${skill}-${index}`} style={styles.skillChip}>
+                <Text style={styles.skillChipText}>{skill}</Text>
                 <TouchableOpacity
-                  onPress={() => {
-                    setSkillList((prev) => prev.filter((_, i) => i !== index));
-                  }}
+                  onPress={() =>
+                    setSkillList((prev) => prev.filter((_, i) => i !== index))
+                  }
+                  style={styles.chipCloseBtn}
+                  hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Remove ${skill}`}
                 >
-                  <Ionicons name="close-circle" size={16} color="white" />
+                  <Ionicons name="close" size={16} color="#5FB21F" />
                 </TouchableOpacity>
               </View>
             ))}
