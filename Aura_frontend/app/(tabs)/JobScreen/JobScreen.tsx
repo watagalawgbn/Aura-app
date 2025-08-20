@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import BackButton from "../../components/BackButton";
 import axios from "axios";
 import JobCard from "@/app/components/JobCard/JobCard";
 import { BASE_URL } from "@/constants/Api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const JobScreen = () => {
   const [skills, setSkills] = useState("");
@@ -29,11 +30,23 @@ const JobScreen = () => {
       });
       console.log("✅ jobs: ", res.data);
       setJobs(res.data.results);
+      await AsyncStorage.setItem("jobs", JSON.stringify(res.data.results));
     } catch (e) {
       console.error("Failed to fetch jobs:  ", e);
       throw new Error("Failed to fetch jobs!");
     }
   };
+
+  useEffect(() => {
+    const loadJobs = async () => {
+      const saved = await AsyncStorage.getItem("jobs");
+      console.log("✔️ Saved: ", saved);
+      if (saved) {
+        setJobs(JSON.parse(saved));
+      }
+    };
+    loadJobs();
+  }, []);
 
   const handleAddSkill = () => {
     if (skills.trim() !== "") {
@@ -75,10 +88,12 @@ const JobScreen = () => {
             {skillList.map((skills, index) => (
               <View key={index} style={styles.skillChip}>
                 <Text style={styles.skillChipText}>{skills}</Text>
-                <TouchableOpacity onPress={() => {
-                  setSkillList((prev) => prev.filter((_, i) => i !== index))
-                }}>
-                  <Ionicons name="close-circle" size={16} color="white"/>
+                <TouchableOpacity
+                  onPress={() => {
+                    setSkillList((prev) => prev.filter((_, i) => i !== index));
+                  }}
+                >
+                  <Ionicons name="close-circle" size={16} color="white" />
                 </TouchableOpacity>
               </View>
             ))}
@@ -104,9 +119,8 @@ const JobScreen = () => {
 
         {/* Job Cards */}
         {jobs.map((job) => (
-          <JobCard key={job.id} job={job}/>
+          <JobCard key={job.id} job={job} />
         ))}
-
       </ScrollView>
     </SafeAreaView>
   );

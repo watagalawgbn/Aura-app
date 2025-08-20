@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   },
   jobDesc: {
     fontSize: 13,
-    color: "#333",
+    color: "black",
     marginBottom: 10,
   },
   tagWithIcon: {
@@ -136,15 +136,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 12,
     paddingHorizontal: 8,
-    paddingVertical: 4,
-    marginRight: 5,
+    // paddingVertical: 4,
+    marginRight: 8,
     marginBottom: 5,
   },
 
   tagText: {
     fontSize: 14,
     marginLeft: 4,
-    fontWeight: "500",
+    // fontWeight: "400",
+    color: "#224831",
   },
 
   applyButton: {
@@ -155,14 +156,34 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginTop: 10,
   },
+  applyButton2: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+    alignSelf: "flex-end",
+    marginTop: 10,
+    borderColor: "#5FB21F",
+    borderWidth: 1,
+  },
   applyBtnFlex: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
   },
+  applyBtnFlex2: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    
+  },
   applyButtonText: {
     color: "white",
+    fontWeight: "bold",
+  },
+  applyButtonText2: {
+    color: "black",
     fontWeight: "bold",
   },
   bottomNav: {

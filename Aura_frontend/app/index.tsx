@@ -1,9 +1,8 @@
 // app/index.tsx
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { router } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 import { View, ActivityIndicator } from "react-native";
-import React from "react";
 
 const Index = () => {
   const { user, loading } = useAuth();
