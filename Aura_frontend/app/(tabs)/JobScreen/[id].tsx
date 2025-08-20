@@ -21,7 +21,7 @@ export default function JobDetails() {
       <BackButton title={"Job Details"} />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
-        style={{ padding: 16 }}
+        style={{ padding: 10 }}
       >
         <View style={styles.jobCardwithId}>
           <Text style={styles.jobTitlewithId}>{jobData.title}</Text>

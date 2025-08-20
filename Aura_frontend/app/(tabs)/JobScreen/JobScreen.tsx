@@ -15,33 +15,36 @@ import axios from "axios";
 import JobCard from "@/app/components/JobCard/JobCard";
 import { BASE_URL } from "@/constants/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ActivityIndicator } from "react-native-paper";
 
 const JobScreen = () => {
   const [skills, setSkills] = useState("");
   const [skillList, setSkillList] = useState<string[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
-  
+  const [loading, setLoading] = useState(false);
 
   const fetchJobs = async () => {
     try {
+      setLoading(true);
       const res = await axios.post(`${BASE_URL}/api/jobs/recommendations`, {
         skills: skillList,
         employmentType: "",
         city: "",
       });
       console.log("✅ jobs: ", res.data);
-      console.log("🐈‍⬛ descriptionnn: ", res.data.description);
       setJobs(res.data.results);
       await AsyncStorage.setItem("jobs", JSON.stringify(res.data.results));
     } catch (e) {
       console.error("Failed to fetch jobs:  ", e);
       throw new Error("Failed to fetch jobs!");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     const loadJobs = async () => {
-      await AsyncStorage.removeItem("jobs"); // clear old cache
+      // await AsyncStorage.removeItem("jobs"); // clear old cache
       const saved = await AsyncStorage.getItem("jobs");
       console.log("✔️ Saved: ", saved);
       if (saved) {
@@ -121,9 +124,17 @@ const JobScreen = () => {
         </View>
 
         {/* Job Cards */}
-        {jobs.map((job) => (
-          <JobCard key={job.id} job={job} />
-        ))}
+        {loading ? (
+          <View style={{ marginTop: 20, alignItems: "center" }}>
+            <ActivityIndicator size="large" color="#5FB21F" />
+          </View>
+        ) : jobs.length === 0 ? (
+          <Text style={{ marginTop: 20, textAlign: "center", color: "#888" }}>
+            No jobs Found.Try adding skills above.
+          </Text>
+        ) : (
+          jobs.map((job) => <JobCard key={job.id} job={job} />)
+        )}
       </ScrollView>
     </SafeAreaView>
   );
