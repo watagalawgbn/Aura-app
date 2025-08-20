@@ -25,6 +25,11 @@ const JobScreen = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const fetchJobs = async () => {
+    if (skillList.length === 0) {
+      console.warn("⚠️ Cannot fetch jobs without skills");
+      alert("⚠️ Cannot fetch jobs without skills");
+      return;
+    }
     try {
       setLoading(true);
       const res = await axios.post(`${BASE_URL}/api/jobs/recommendations`, {
@@ -37,15 +42,14 @@ const JobScreen = () => {
       setJobs((prev) => {
         const newJobs = [...prev, ...res.data.results];
         const uniqueJobs = newJobs.filter(
-          (job, index, self) => 
-            index === self.findIndex((j) => j.id === job.id) // keep only first one
+          (job, index, self) => index === self.findIndex((j) => j.id === job.id) // keep only first one
+        );
+        AsyncStorage.setItem(
+          "jobs",
+          JSON.stringify({ jobs: uniqueJobs, skills: skillList })
         );
         return uniqueJobs;
       });
-      await AsyncStorage.setItem(
-        "jobs",
-        JSON.stringify([...jobs, ...res.data.results])
-      );
     } catch (e) {
       console.error("Failed to fetch jobs:  ", e);
       throw new Error("Failed to fetch jobs!");
@@ -55,23 +59,39 @@ const JobScreen = () => {
   };
 
   useEffect(() => {
-    const loadJobs = async () => {
-      await AsyncStorage.removeItem("jobs"); // clear old cache
-      const saved = await AsyncStorage.getItem("jobs");
-      console.log("✔️ Saved: ", saved);
-      if (saved) {
-        setJobs(JSON.parse(saved));
+    const loadData = async () => {
+      try {
+        const saved = await AsyncStorage.getItem("jobData");
+        if (saved) {
+          const { jobs: savedJobs, skills: savedSkills } = JSON.parse(saved);
+          setJobs(savedJobs || []);
+          setSkillList(savedSkills || []);
+        }
+      } catch (err) {
+        console.error("Error loading jobs from storage: ", err);
       }
     };
-    loadJobs();
+    loadData();
   }, []);
 
-  const handleAddSkill = () => {
+  const handleAddSkill = async () => {
     if (skills.trim() !== "") {
-      setSkillList([...skillList, skills.trim()]);
+      const updatedSkills = [...skillList, skills.trim()];
+      setSkillList(updatedSkills);
       setSkills("");
+
+      await AsyncStorage.setItem(
+        "jobData",
+        JSON.stringify({ jobs, skills: updatedSkills })
+      );
     }
   };
+
+  useEffect(() => {
+    if (currentPage > 1) {
+      fetchJobs();
+    }
+  }, [currentPage]);
 
   return (
     <SafeAreaView style={styles.safeAreaStyles}>
@@ -157,10 +177,7 @@ const JobScreen = () => {
             {/* Load More button only if jobs exist */}
             <TouchableOpacity
               style={styles.findJobsBtn}
-              onPress={() => {
-                setCurrentPage((prev) => prev + 1);
-                fetchJobs();
-              }}
+              onPress={() => setCurrentPage((prev) => prev + 1)}
             >
               <Text style={styles.findJobsText}>Load More</Text>
             </TouchableOpacity>
