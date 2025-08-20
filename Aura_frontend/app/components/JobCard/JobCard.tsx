@@ -42,8 +42,8 @@ const JobCard = ({ job }: JobCardProps) => {
           </View>
         )}
       </View>
-      <Text style={styles.jobDesc}>
-        {job.descriptionSnippet || "No description available."}
+      <Text numberOfLines={3} style={styles.jobDesc}>
+        {job.descriptionSnippet || "No description available."}...
       </Text>
       {/* <TouchableOpacity
         style={styles.applyButton}
@@ -59,7 +59,7 @@ const JobCard = ({ job }: JobCardProps) => {
         onPress={() =>
           router.push({
             pathname: "/(tabs)/JobScreen/[id]",
-            params: { id:job.id ,job: JSON.stringify(job) },
+            params: { id: job.id, job: JSON.stringify(job) },
           })
         }
       >

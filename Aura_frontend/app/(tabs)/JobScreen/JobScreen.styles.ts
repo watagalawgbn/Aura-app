@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     borderColor: "#D5D5D5",
     borderWidth: 1,
     elevation: 4,
+    // height: 250
   },
   jobTitle: {
     fontWeight: "500",
@@ -130,6 +131,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: "black",
     marginBottom: 10,
+    height: 60,
+    overflow: 'hidden'
   },
   tagWithIcon: {
     flexDirection: "row",
