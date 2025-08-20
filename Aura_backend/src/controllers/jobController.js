@@ -28,10 +28,10 @@ exports.getRecommendations = async (req, res) => {
       city = "",
       country = "",
       date_posted = "all", // "today" | "3days" | "week" | "month" | "all"
-      page = 2, //JSearch page index(1 based)
-      num_pages = 1, //JSearch returns ~10 results per page; 1 page ≈ 10 results
+      page = 1, //JSearch page index(1 based)
+      num_pages = 5, //JSearch returns ~10 results per page; 1 page ≈ 10 results
       remote = false, // when true → adds remote filter (remote_jobs_only)
-    } = req.body || {};
+    } = req.body || {}; 
 
     //validate: skills must exists & not be empty
     if (!skills || !Array.isArray(skills) || skills.length === 0) {

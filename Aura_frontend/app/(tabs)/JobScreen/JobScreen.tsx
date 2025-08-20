@@ -22,6 +22,7 @@ const JobScreen = () => {
   const [skillList, setSkillList] = useState<string[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchJobs = async () => {
     try {
@@ -30,10 +31,21 @@ const JobScreen = () => {
         skills: skillList,
         employmentType: "",
         city: "",
+        page: currentPage,
       });
       console.log("✅ jobs: ", res.data);
-      setJobs(res.data.results);
-      await AsyncStorage.setItem("jobs", JSON.stringify(res.data.results));
+      setJobs((prev) => {
+        const newJobs = [...prev, ...res.data.results];
+        const uniqueJobs = newJobs.filter(
+          (job, index, self) => 
+            index === self.findIndex((j) => j.id === job.id) // keep only first one
+        );
+        return uniqueJobs;
+      });
+      await AsyncStorage.setItem(
+        "jobs",
+        JSON.stringify([...jobs, ...res.data.results])
+      );
     } catch (e) {
       console.error("Failed to fetch jobs:  ", e);
       throw new Error("Failed to fetch jobs!");
@@ -44,7 +56,7 @@ const JobScreen = () => {
 
   useEffect(() => {
     const loadJobs = async () => {
-      // await AsyncStorage.removeItem("jobs"); // clear old cache
+      await AsyncStorage.removeItem("jobs"); // clear old cache
       const saved = await AsyncStorage.getItem("jobs");
       console.log("✔️ Saved: ", saved);
       if (saved) {
@@ -134,10 +146,25 @@ const JobScreen = () => {
           </View>
         ) : jobs.length === 0 ? (
           <Text style={{ marginTop: 20, textAlign: "center", color: "#888" }}>
-            No jobs Found.Try adding skills above.
+            No jobs Found. Try adding skills above.
           </Text>
         ) : (
-          jobs.map((job) => <JobCard key={job.id} job={job} />)
+          <>
+            {jobs.map((job) => (
+              <JobCard key={job.id} job={job} />
+            ))}
+
+            {/* Load More button only if jobs exist */}
+            <TouchableOpacity
+              style={styles.findJobsBtn}
+              onPress={() => {
+                setCurrentPage((prev) => prev + 1);
+                fetchJobs();
+              }}
+            >
+              <Text style={styles.findJobsText}>Load More</Text>
+            </TouchableOpacity>
+          </>
         )}
       </ScrollView>
     </SafeAreaView>
