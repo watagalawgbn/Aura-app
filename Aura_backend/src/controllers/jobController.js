@@ -75,6 +75,7 @@ exports.getRecommendations = async (req, res) => {
           j?.apply_options?.[0]?.apply_link ||
           j?.job_apply_options?.[0]?.apply_link ||
           null,
+        description: j.job_description || "",
         descriptionSnippet: j.job_description
           ? j.job_description.slice(0, 220) + "..."
           : null,

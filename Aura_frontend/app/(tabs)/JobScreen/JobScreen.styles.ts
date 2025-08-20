@@ -103,13 +103,31 @@ const styles = StyleSheet.create({
     borderColor: "#D5D5D5",
     borderWidth: 1,
     elevation: 4,
-    // height: 250
+  },
+  jobCardwithId: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 25,
+    borderColor: "#edededff",
+    borderWidth: 1,
   },
   jobTitle: {
     fontWeight: "500",
     fontSize: 16,
   },
+  jobTitlewithId: {
+    fontWeight: "500",
+    fontSize: 20,
+  },
   companyName: {
+    color: "#224831",
+    fontWeight: "bold",
+    marginBottom: 5,
+    // paddingHorizontal: 8
+  },
+  companyNamewithId: {
+    fontSize: 18,
     color: "#224831",
     fontWeight: "bold",
     marginBottom: 5,
@@ -132,19 +150,45 @@ const styles = StyleSheet.create({
     color: "black",
     marginBottom: 10,
     height: 60,
-    overflow: 'hidden'
+    overflow: "hidden",
+  },
+  jobDescriptionwithId: {
+    fontWeight: "500",
+    fontSize: 18,
+  },
+  jobInforStyles: {
+    flexDirection: "row",
+    paddingHorizontal: 10,
+  },
+  jobInforTextStyles: {
+    paddingRight: 10,
   },
   tagWithIcon: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 12,
     paddingHorizontal: 8,
-    // paddingVertical: 4,
     marginRight: 8,
     marginBottom: 5,
   },
-
+  tagwithIconwithIt: {
+    paddingHorizontal: 8,
+    marginRight: 8,
+    marginBottom: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    borderColor: "#224831",
+    borderRadius: 5,
+    borderWidth: 1,
+    padding: 5,
+  },
   tagText: {
+    fontSize: 14,
+    marginLeft: 4,
+    // fontWeight: "400",
+    color: "#224831",
+  },
+  tagTextwithId: {
     fontSize: 14,
     marginLeft: 4,
     // fontWeight: "400",
@@ -179,7 +223,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-    
   },
   applyButtonText: {
     color: "white",
@@ -223,6 +266,22 @@ const styles = StyleSheet.create({
   skillChipText: {
     color: "black",
     marginRight: 6,
+  },
+
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+
+  infoIcon: {
+    marginRight: 10,
+  },
+
+  infoLabel2: {
+    fontWeight: "bold",
+    color: "#224831",
+    marginBottom: 2,
   },
 });
 

@@ -20,6 +20,7 @@ const JobScreen = () => {
   const [skills, setSkills] = useState("");
   const [skillList, setSkillList] = useState<string[]>([]);
   const [jobs, setJobs] = useState<any[]>([]);
+  
 
   const fetchJobs = async () => {
     try {
@@ -29,6 +30,7 @@ const JobScreen = () => {
         city: "",
       });
       console.log("✅ jobs: ", res.data);
+      console.log("🐈‍⬛ descriptionnn: ", res.data.description);
       setJobs(res.data.results);
       await AsyncStorage.setItem("jobs", JSON.stringify(res.data.results));
     } catch (e) {
@@ -39,6 +41,7 @@ const JobScreen = () => {
 
   useEffect(() => {
     const loadJobs = async () => {
+      await AsyncStorage.removeItem("jobs"); // clear old cache
       const saved = await AsyncStorage.getItem("jobs");
       console.log("✔️ Saved: ", saved);
       if (saved) {

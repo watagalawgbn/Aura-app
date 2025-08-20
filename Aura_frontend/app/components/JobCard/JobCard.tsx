@@ -12,7 +12,8 @@ type Job = {
   type: string | null;
   postedAt: string;
   applyLink: string;
-  descriptionSnippet: string;
+  description: string;           
+  descriptionSnippet: string; 
   remote: boolean;
 };
 
@@ -43,17 +44,8 @@ const JobCard = ({ job }: JobCardProps) => {
         )}
       </View>
       <Text numberOfLines={3} style={styles.jobDesc}>
-        {job.descriptionSnippet || "No description available."}...
+        {job.description || job.descriptionSnippet || "No description available."}...
       </Text>
-      {/* <TouchableOpacity
-        style={styles.applyButton}
-        onPress={() => Linking.openURL(job.applyLink)}
-      >
-        <View style={styles.applyBtnFlex}>
-          <Text style={styles.applyButtonText}>Apply Now</Text>
-          <Ionicons name="arrow-forward-circle" size={20} color="white" />
-        </View>
-      </TouchableOpacity> */}
       <TouchableOpacity
         style={styles.applyButton2}
         onPress={() =>
