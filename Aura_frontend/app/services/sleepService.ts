@@ -29,7 +29,7 @@ export const fetchSleepData = async () => {
 
 
 //add sleep records
-const postSleepRecord = async (record: {
+export const postSleepRecord = async (record: {
   date: string;
   duration: number;
   startTime: string;

@@ -1,316 +1,205 @@
 // src/screens/SleepTimerScreen.tsx
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   Text,
   SafeAreaView,
-  StyleSheet,
   StatusBar,
   TouchableOpacity,
-  Image,
 } from "react-native";
-import styles from "./SleepTimerScreen.styles";
-import {
-  PanGestureHandler,
-  PanGestureHandlerGestureEvent,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
-import Animated, {
-  useAnimatedGestureHandler,
-  useAnimatedStyle,
-  useSharedValue,
-  runOnJS,
-} from "react-native-reanimated";
+import Slider from "@react-native-community/slider";
 import dayjs from "dayjs";
 import BackButton from "../../components/BackButton";
-import { LinearGradient } from "expo-linear-gradient";
-import Svg, { Circle, Text as SvgText } from "react-native-svg";
-import { postSleepRecord } from "../../services/sleepService";
-import { PanGesture } from "react-native-gesture-handler/lib/typescript/handlers/gestures/panGesture";
+import styles from "./SleepTimerScreen.styles";
+import { postSleepRecord } from "@/app/services/sleepService";
+import { useRouter } from "expo-router";
 
-const SleepTimerScreen = ({ navigation }: any) => {
-  // Convert time to angle (0-360 degrees)
-  const timeToAngle = (hours: number, minutes: number) => {
-    const totalMinutes = hours * 60 + minutes;
-    return (totalMinutes / (12 * 60)) * 360 - 90; // -90 to start from top
+const STEP_MINUTES = 15;
+
+// slider ranges (in minutes from midnight)
+const BED_MIN = 20 * 60; // 8:00 PM
+const BED_MAX = 24 * 60; // 12:00 AM (midnight)
+const WAKE_MIN = 5 * 60; // 5:00 AM
+const WAKE_MAX = 11 * 60; // 11:00 AM
+
+const toDisplay = (mins: number) => {
+  const m = ((mins % 1440) + 1440) % 1440; // wrap
+  const h24 = Math.floor(m / 60);
+  const min = m % 60;
+  const ampm = h24 >= 12 ? "PM" : "AM";
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  const mm = min.toString().padStart(2, "0");
+  return `${h12}:${mm}${ampm}`;
+};
+
+// midnight should live at the end of the bedtime slider (value = 1440),
+// but logically it's 0 minutes. These helpers keep UX + math happy.
+const bedToSlider = (bed: number) => (bed === 0 ? 1440 : bed);
+const sliderToBed = (v: number) => (v === 1440 ? 0 : v);
+
+const SleepTimerScreen = () => {
+  const router = useRouter();
+
+  // initial values like screenshot: Bed 12:00 AM, Wake 8:00 AM
+  const [bedtime, setBedtime] = useState<number>(0); // 12:00 AM
+  const [wakeTime, setWakeTime] = useState<number>(8 * 60); // 8:00 AM
+
+  const sleepDuration = useMemo(() => {
+    // duration across midnight
+    const start = bedtime;
+    const end = wakeTime;
+    const diff = (end - start + 1440) % 1440;
+    const h = Math.floor(diff / 60);
+    const m = diff % 60;
+    return { h, m, label: `${h}h ${m}m` };
+  }, [bedtime, wakeTime]);
+
+  const applyPreset = (bed: number, wake: number) => {
+    setBedtime(bed);
+    setWakeTime(wake);
   };
 
-  // Convert angle to time
-  const angleToTime = (angle: number) => {
-    const normalizedAngle = (angle + 90 + 360) % 360;
-    const totalMinutes = (normalizedAngle / 360) * (12 * 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = Math.floor(totalMinutes % 60);
-    return { hours: hours === 0 ? 12 : hours, minutes };
-  };
-
-  // Calculate angle from center point
-  const calculateAngle = (
-    x: number,
-    y: number,
-    centerX: number,
-    centerY: number
-  ) => {
-    "worklet";
-    const dx = x - centerX;
-    const dy = y - centerY;
-    return Math.atan2(dy, dx) * (180 / Math.PI);
-  };
-
-  // Default times
-  const [bedtimeHours, setBedtimeHours] = useState(10);
-  const [bedtimeMinutes, setBedtimeMinutes] = useState(0);
-  const [wakeHours, setWakeHours] = useState(5);
-  const [wakeMinutes, setWakeMinutes] = useState(0);
-  const [layout, setLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
-
-  // Animated values for dragging
-  const moonAngle = useSharedValue(timeToAngle(bedtimeHours, bedtimeMinutes));
-  const sunAngle = useSharedValue(timeToAngle(wakeHours, wakeMinutes));
-
-  const circleRadius = 130;
-  const centerX = layout.width / 2;
-  const centerY = layout.height / 2;
-  const iconRadius = 95;
-
-  // Calculate position from angle
-  const getPositionFromAngle = (angle: number) => {
-    "worklet";
-    const radians = (angle * Math.PI) / 180;
-    return {
-      x: centerX + circleRadius * Math.cos(radians) - iconRadius,
-      y: centerY + circleRadius * Math.sin(radians) - iconRadius,
-    };
-  };
-
-  // Calculate sleep duration
-  const calculateSleepDuration = () => {
-    const bedtimeTotalMinutes = bedtimeHours * 60 + bedtimeMinutes;
-    const wakeTotalMinutes =
-      (wakeHours + (wakeHours < bedtimeHours ? 24 : 0)) * 60 + wakeMinutes;
-    const diffMinutes = wakeTotalMinutes - bedtimeTotalMinutes;
-    return Math.round((diffMinutes / 60) * 10) / 10; // Round to 1 decimal place
-  };
-
-  // Update bedtime from angle
-  const updateBedtime = (angle: number) => {
-    const time = angleToTime(angle);
-    setBedtimeHours(time.hours);
-    setBedtimeMinutes(time.minutes);
-  };
-
-  // Update wake time from angle
-  const updateWakeTime = (angle: number) => {
-    const time = angleToTime(angle);
-    setWakeHours(time.hours);
-    setWakeMinutes(time.minutes);
-  };
-
-  // Moon drag handler
-  const moonGestureHandler =
-    useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
-      onStart: (_, context) => {
-        context.startAngle = moonAngle.value;
-      },
-      onActive: (event, context) => {
-        const angle = calculateAngle(
-          event.absoluteX,
-          event.absoluteY,
-          centerX,
-          centerY
-        );
-        moonAngle.value = angle;
-        runOnJS(updateBedtime)(angle);
-      },
-    });
-
-  // Sun drag handler
-  const sunGestureHandler =
-    useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
-      onStart: (_, context) => {
-        context.startAngle = sunAngle.value;
-      },
-      onActive: (event, context) => {
-        const angle = calculateAngle(
-          event.absoluteX,
-          event.absoluteY,
-          centerX,
-          centerY
-        );
-        sunAngle.value = angle;
-        runOnJS(updateWakeTime)(angle);
-      },
-    });
-
-  // Animated styles
-  const moonAnimatedStyle = useAnimatedStyle(() => {
-    const position = getPositionFromAngle(moonAngle.value);
-    return {
-      transform: [{ translateX: position.x }, { translateY: position.y }],
-    };
-  });
-
-  const sunAnimatedStyle = useAnimatedStyle(() => {
-    const position = getPositionFromAngle(sunAngle.value);
-    return {
-      transform: [{ translateX: position.x }, { translateY: position.y }],
-    };
-  });
-
-  // Format time display
-  const formatTime = (
-    hours: number,
-    minutes: number,
-    isBedtime: boolean
-  ): string => {
-    const displayHours = hours % 12 === 0 ? 12 : hours % 12;
-    const displayMinutes = minutes.toString().padStart(2, "0");
-
-    let ampm;
-
-    if (isBedtime && hours >= 6 && hours < 12) {
-      ampm = "PM";
-    } else if (!isBedtime && (hours === 12 || hours < 12)) {
-      ampm = "AM";
-    } else if (!isBedtime) {
-      ampm = "PM";
-    }
-
-    return `${displayHours}:${displayMinutes}${ampm}`;
-  };
-
-  // Save sleep record
-  const handleSave = async () => {
+  const onSave = async () => {
     try {
-      const newRecord = {
-        date: dayjs().format("YYYY-MM-DD"),
-        startTime: formatTime(bedtimeHours, bedtimeMinutes, true),
-        endTime: formatTime(wakeHours, wakeMinutes, false),
-        duration: calculateSleepDuration(),
-      };
-      await postSleepRecord(newRecord);
-      navigation.goBack();
-    } catch (error) {
-      console.error("Failed to save sleep record:", error);
-    }
-  };
+      const date = dayjs().format("YYYY-MM-DD");
 
-  // Generate hour marks
-  const generateHourMarks = () => {
-    const marks = [];
-    for (let i = 1; i <= 12; i++) {
-      const angle = (i * 30 - 90) * (Math.PI / 180); // 30 degrees per hour
-      const x = centerX + circleRadius * Math.cos(angle);
-      const y = centerY + circleRadius * Math.sin(angle);
+      const startTime = dayjs(date)
+        .startOf("day")
+        .add(bedtime, "minute")
+        .toISOString();
+      const endTime = dayjs(date)
+        .startOf("day")
+        .add(wakeTime, "minute")
+        .toISOString();
 
-      marks.push(
-        <SvgText
-          key={i}
-          x={x + 55}
-          y={y + 55}
-          textAnchor="middle"
-          fontSize="20"
-          fill="#666"
-          fontWeight="500"
-        >
-          {i}
-        </SvgText>
+      // send hours as whole number with decimal precision
+      const hours = parseFloat(
+        (sleepDuration.h + sleepDuration.m / 60).toFixed(2)
       );
+
+      await postSleepRecord({ date, duration: hours, startTime, endTime });
+
+      router.back();
+    } catch (e) {
+      console.error("Failed to save sleep record:", e);
     }
-    return marks;
   };
 
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-        <BackButton title="Sleep Timer" />
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <BackButton title="Sleep Timer" />
 
-        {/* Time Display */}
-        <View style={styles.timeContainer}>
-          <View style={styles.timeItem}>
-            <View style={styles.timeIcon}>
-              <Image
-                source={require("../../../assets/images/moon.png")}
-                style={{ width: 20, height: 20 }}
-              />
-            </View>
+      {/* BEDTIME ROW */}
+      <View style={styles.headerRow}>
+        <View style={styles.leftHeader}>
+          <View style={[styles.timeIcon, styles.moonIconStyle]}>
+            <Text style={styles.iconText}>🌙</Text>
+          </View>
+          <View>
             <Text style={styles.timeLabel}>Bedtime</Text>
-            <Text style={styles.timeValue}>
-              {formatTime(bedtimeHours, bedtimeMinutes, true)}
-            </Text>
+            <Text style={styles.subtle}>When you sleep</Text>
           </View>
+        </View>
+        <Text style={styles.bigTime}>{toDisplay(bedtime)}</Text>
+      </View>
 
-          <View style={styles.timeItem}>
-            <View style={styles.timeIcon}>
-              <Image
-                source={require("../../../assets/images/sun.png")}
-                style={{ width: 20, height: 20 }}
-              />
-            </View>
+      <View style={styles.sliderBlock}>
+        <Slider
+          value={bedToSlider(bedtime)}
+          onValueChange={(v) =>
+            setBedtime(sliderToBed(Math.round(v / STEP_MINUTES) * STEP_MINUTES))
+          }
+          minimumValue={BED_MIN}
+          maximumValue={BED_MAX}
+          step={STEP_MINUTES}
+          minimumTrackTintColor="#2E5A14"
+          maximumTrackTintColor="#EAEFCF"
+          thumbTintColor="#2E5A14"
+        />
+        <View style={styles.sliderTicks}>
+          <Text style={styles.tickText}>8:00 PM</Text>
+          <Text style={styles.tickText}>11:30 PM</Text>
+        </View>
+      </View>
+
+      {/* WAKE ROW */}
+      <View style={[styles.headerRow, { marginTop: 24 }]}>
+        <View style={styles.leftHeader}>
+          <View style={[styles.timeIcon, styles.sunIconStyle]}>
+            <Text style={styles.iconText}>☀️</Text>
+          </View>
+          <View>
             <Text style={styles.timeLabel}>Wake Up</Text>
-            <Text style={styles.timeValue}>
-              {formatTime(wakeHours, wakeMinutes, false)}
-            </Text>
+            <Text style={styles.subtle}>When you rise</Text>
           </View>
         </View>
+        <Text style={styles.bigTime}>{toDisplay(wakeTime)}</Text>
+      </View>
 
-        <LinearGradient
-          colors={["#294C0D", "#5FB21F"]}
-          style={styles.circleWrapper}
-        >
-          <View
-            style={styles.circleInner}
-            onLayout={(e) => setLayout(e.nativeEvent.layout)}
+      <View style={styles.sliderBlock}>
+        <Slider
+          value={wakeTime}
+          onValueChange={(v) =>
+            setWakeTime(Math.round(v / STEP_MINUTES) * STEP_MINUTES)
+          }
+          minimumValue={WAKE_MIN}
+          maximumValue={WAKE_MAX}
+          step={STEP_MINUTES}
+          minimumTrackTintColor="#2E5A14"
+          maximumTrackTintColor="#F3EBC7"
+          thumbTintColor="#2E5A14"
+        />
+        <View style={styles.sliderTicks}>
+          <Text style={styles.tickText}>5:00 AM</Text>
+          <Text style={styles.tickText}>11:00 AM</Text>
+        </View>
+      </View>
+
+      {/* QUICK SETUP */}
+      <View
+        style={{ marginTop: 24, paddingHorizontal: 20, alignItems: "center" }}
+      >
+        <Text style={styles.quickTitle}>Quick Setup</Text>
+        <View style={styles.chipsRow}>
+          <TouchableOpacity
+            style={styles.chip}
+            onPress={() => applyPreset(22 * 60, 6 * 60)}
           >
-            <Svg
-              height="100%"
-              width="100%"
-              style={StyleSheet.absoluteFill}
-              viewBox="0 0 300 300"
-            >
-              {/* hour marks */}
-              {generateHourMarks()}
-            </Svg>
+            <Text style={styles.chipText}>Early Bird</Text>
+            <Text style={styles.chipSub}>10PM–6AM</Text>
+          </TouchableOpacity>
 
-            {/* Moon icon */}
-            <PanGestureHandler onGestureEvent={moonGestureHandler}>
-              <Animated.View style={[styles.dragIcon, moonAnimatedStyle]}>
-                <Image
-                  source={require("../../../assets/images/moon.png")}
-                  style={{ width: 24, height: 24 }}
-                />
-              </Animated.View>
-            </PanGestureHandler>
+          <TouchableOpacity
+            style={styles.chip}
+            onPress={() => applyPreset(23 * 60, 7 * 60)}
+          >
+            <Text style={styles.chipText}>Standard</Text>
+            <Text style={styles.chipSub}>11PM–7AM</Text>
+          </TouchableOpacity>
 
-            {/* Sun icon */}
-            <PanGestureHandler onGestureEvent={sunGestureHandler}>
-              <Animated.View style={[styles.dragIcon, sunAnimatedStyle]}>
-                <Image
-                  source={require("../../../assets/images/sun.png")}
-                  style={{ width: 24, height: 24 }}
-                />
-              </Animated.View>
-            </PanGestureHandler>
-          </View>
-        </LinearGradient>
-
-        {/* Save Button */}
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>Save Sleep Record</Text>
-        </TouchableOpacity>
-
-        {/* Sleep Duration */}
-        <View style={styles.sleepDurationContainer}>
-          <Text style={styles.sleepDurationLabel}>Total Sleep</Text>
-          <View style={styles.sleepDurationBadge}>
-            <Text style={styles.sleepDurationValue}>
-              {calculateSleepDuration()} hrs
-            </Text>
-          </View>
+          <TouchableOpacity
+            style={styles.chip}
+            onPress={() => applyPreset(0, 8 * 60)}
+          >
+            <Text style={styles.chipText}>Night Owl</Text>
+            <Text style={styles.chipSub}>12AM–8AM</Text>
+          </TouchableOpacity>
         </View>
-      </SafeAreaView>
-    </GestureHandlerRootView>
+      </View>
+
+      {/* DURATION + CTA */}
+      <View style={styles.sleepDurationContainer}>
+        <Text style={styles.sleepDurationLabel}>Sleep Duration</Text>
+        <View style={styles.sleepDurationBadge}>
+          <Text style={styles.sleepDurationValue}>{sleepDuration.label}</Text>
+        </View>
+      </View>
+
+      <TouchableOpacity style={styles.saveButton} onPress={onSave}>
+        <Text style={styles.saveButtonText}>Log Sleep Hours</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 };
 
