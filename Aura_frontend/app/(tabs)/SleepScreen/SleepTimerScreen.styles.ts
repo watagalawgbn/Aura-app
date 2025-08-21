@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
   },
   moonIconStyle: { backgroundColor: "#E8F1E0" },
-  sunIconStyle: { backgroundColor: "#FFEAC6" },
+  sunIconStyle: { backgroundColor: "#E8F1E0" },
   iconText: { fontSize: 16 },
 
   timeLabel: { fontSize: 16, fontWeight: "600", color: "#0B1F02" },

@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import styles from "./SleepBetterScreen.styles";
 import dayjs from "dayjs";
 import { router } from "expo-router";
@@ -66,7 +61,6 @@ const SleepBetterScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-
       <BackButton title={"Sleep Better"} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.titleContainer}>
@@ -102,7 +96,12 @@ const SleepBetterScreen = () => {
         {/* Time Selector */}
         <View style={styles.timeSelector}>
           <TouchableOpacity
-            onPress={() => router.push("/(tabs)/SleepScreen/SleepTimerScreen")}
+            onPress={() =>
+              router.push({
+                pathname: "/(tabs)/SleepScreen/SleepTimerScreen",
+                params: { date: selectedDate }, // ✅ pass selected date
+              })
+            }
             style={styles.timeSelectorButton}
           >
             <Text style={styles.timeSelectorText}>{getTimeRange()}</Text>
@@ -168,6 +167,5 @@ const SleepBetterScreen = () => {
     </SafeAreaView>
   );
 };
-
 
 export default SleepBetterScreen;

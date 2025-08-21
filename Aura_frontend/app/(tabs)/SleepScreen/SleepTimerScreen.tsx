@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import {
   View,
   Text,
+  Image,
   SafeAreaView,
   StatusBar,
   TouchableOpacity,
@@ -12,7 +13,7 @@ import dayjs from "dayjs";
 import BackButton from "../../components/BackButton";
 import styles from "./SleepTimerScreen.styles";
 import { postSleepRecord } from "@/app/services/sleepService";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 const STEP_MINUTES = 15;
 
@@ -39,6 +40,10 @@ const sliderToBed = (v: number) => (v === 1440 ? 0 : v);
 
 const SleepTimerScreen = () => {
   const router = useRouter();
+  const { date } = useLocalSearchParams<{ date: string }>();
+
+  // default to today if not provided
+  const targetDate = date || dayjs().format("YYYY-MM-DD");
 
   // initial values like screenshot: Bed 12:00 AM, Wake 8:00 AM
   const [bedtime, setBedtime] = useState<number>(0); // 12:00 AM
@@ -77,7 +82,12 @@ const SleepTimerScreen = () => {
         (sleepDuration.h + sleepDuration.m / 60).toFixed(2)
       );
 
-      await postSleepRecord({ date, duration: hours, startTime, endTime });
+      await postSleepRecord({
+        date: targetDate,
+        duration: hours,
+        startTime,
+        endTime,
+      });
 
       router.back();
     } catch (e) {
@@ -94,7 +104,11 @@ const SleepTimerScreen = () => {
       <View style={styles.headerRow}>
         <View style={styles.leftHeader}>
           <View style={[styles.timeIcon, styles.moonIconStyle]}>
-            <Text style={styles.iconText}>🌙</Text>
+            <Image
+              source={require("../../../assets/images/moon.png")}
+              style={{ width: 22, height: 22 }}
+              resizeMode="contain"
+            />
           </View>
           <View>
             <Text style={styles.timeLabel}>Bedtime</Text>
@@ -127,7 +141,11 @@ const SleepTimerScreen = () => {
       <View style={[styles.headerRow, { marginTop: 24 }]}>
         <View style={styles.leftHeader}>
           <View style={[styles.timeIcon, styles.sunIconStyle]}>
-            <Text style={styles.iconText}>☀️</Text>
+            <Image
+              source={require("../../../assets/images/sun.png")}
+              style={{ width: 22, height: 22 }}
+              resizeMode="contain"
+            />
           </View>
           <View>
             <Text style={styles.timeLabel}>Wake Up</Text>
