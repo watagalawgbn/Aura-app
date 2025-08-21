@@ -18,10 +18,10 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 const STEP_MINUTES = 15;
 
 // slider ranges (in minutes from midnight)
-const BED_MIN = 20 * 60; // 8:00 PM
-const BED_MAX = 24 * 60; // 12:00 AM (midnight)
-const WAKE_MIN = 5 * 60; // 5:00 AM
-const WAKE_MAX = 11 * 60; // 11:00 AM
+const BED_MIN = 0; // midnight
+const BED_MAX = 24 * 60; // full day
+const WAKE_MIN = 0;
+const WAKE_MAX = 24 * 60;
 
 const toDisplay = (mins: number) => {
   const m = ((mins % 1440) + 1440) % 1440; // wrap
@@ -132,8 +132,8 @@ const SleepTimerScreen = () => {
           thumbTintColor="#2E5A14"
         />
         <View style={styles.sliderTicks}>
-          <Text style={styles.tickText}>8:00 PM</Text>
-          <Text style={styles.tickText}>11:30 PM</Text>
+          <Text style={styles.tickText}>12:00 AM</Text>
+          <Text style={styles.tickText}>11:59 PM</Text>
         </View>
       </View>
 
@@ -169,8 +169,8 @@ const SleepTimerScreen = () => {
           thumbTintColor="#2E5A14"
         />
         <View style={styles.sliderTicks}>
-          <Text style={styles.tickText}>5:00 AM</Text>
-          <Text style={styles.tickText}>11:00 AM</Text>
+          <Text style={styles.tickText}>12:00 AM</Text>
+          <Text style={styles.tickText}>11:59 PM</Text>
         </View>
       </View>
 
