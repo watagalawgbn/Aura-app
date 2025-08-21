@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -16,11 +16,14 @@ import JobCard from "@/app/components/JobCard/JobCard";
 import { BASE_URL } from "@/constants/Api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator } from "react-native-paper";
+import { useFocusEffect } from "@react-navigation/native";
+import type { Job } from "@/app/components/JobCard/JobCard";
+
 
 const JobScreen = () => {
   const [skills, setSkills] = useState("");
   const [skillList, setSkillList] = useState<string[]>([]);
-  const [jobs, setJobs] = useState<any[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -38,16 +41,37 @@ const JobScreen = () => {
         city: "",
         page: currentPage,
       });
+
+      const results: Job[] = res.data.results || [];
+
+      // remove duplicates inside the results themselves
+      const uniqueResults = results.filter(
+        (job: Job, index: number, self: Job[]) =>
+          index === self.findIndex((j: Job) => j.id === job.id)
+      );
+
       console.log("✅ jobs: ", res.data);
+
       setJobs((prev) => {
-        const newJobs = [...prev, ...res.data.results];
+        if (currentPage === 1) {
+          AsyncStorage.setItem(
+            "jobData",
+            JSON.stringify({ jobs: uniqueResults, skills: skillList })
+          );
+          return uniqueResults; // ✅ overwrite jobs on first page
+        }
+
+        const newJobs = [...prev, ...uniqueResults];
         const uniqueJobs = newJobs.filter(
-          (job, index, self) => index === self.findIndex((j) => j.id === job.id) // keep only first one
+          (job: Job, index: number, self: Job[]) =>
+            index === self.findIndex((j: Job) => j.id === job.id)
         );
+
         AsyncStorage.setItem(
-          "jobs",
+          "jobData",
           JSON.stringify({ jobs: uniqueJobs, skills: skillList })
         );
+
         return uniqueJobs;
       });
     } catch (e) {
@@ -74,10 +98,25 @@ const JobScreen = () => {
     loadData();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      // screen focused → keep state
+      return () => {
+        // screen unfocused → clear jobs + skills
+        setJobs([]);
+        setSkillList([]);
+        setSkills("");
+        setCurrentPage(1);
+      };
+    }, [])
+  );
+
   const handleAddSkill = async () => {
     if (skills.trim() !== "") {
       const updatedSkills = [...skillList, skills.trim()];
       setSkillList(updatedSkills);
+      setJobs([]);
+      setCurrentPage(1);
       setSkills("");
 
       await AsyncStorage.setItem(
@@ -127,9 +166,18 @@ const JobScreen = () => {
               <View key={`${skill}-${index}`} style={styles.skillChip}>
                 <Text style={styles.skillChipText}>{skill}</Text>
                 <TouchableOpacity
-                  onPress={() =>
-                    setSkillList((prev) => prev.filter((_, i) => i !== index))
-                  }
+                  onPress={async () => {
+                    setSkillList((prev) => {
+                      const updated = prev.filter((_, i) => i !== index);
+                      setJobs([]); // ✅ clear old jobs
+                      setCurrentPage(1);
+                      AsyncStorage.setItem(
+                        "jobData",
+                        JSON.stringify({ jobs: [], skills: updated })
+                      );
+                      return updated;
+                    });
+                  }}
                   style={styles.chipCloseBtn}
                   hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
                   accessibilityRole="button"
@@ -160,21 +208,24 @@ const JobScreen = () => {
         </View>
 
         {/* Job Cards */}
-        {loading ? (
+        {loading && (
           <View style={{ marginTop: 20, alignItems: "center" }}>
             <ActivityIndicator size="large" color="#5FB21F" />
           </View>
-        ) : jobs.length === 0 ? (
+        )}
+
+        {!loading && jobs.length === 0 && (
           <Text style={{ marginTop: 20, textAlign: "center", color: "#888" }}>
             No jobs Found. Try adding skills above.
           </Text>
-        ) : (
+        )}
+
+        {!loading && jobs.length > 0 && (
           <>
-            {jobs.map((job) => (
-              <JobCard key={job.id} job={job} />
+            {jobs.map((job, index) => (
+              <JobCard key={job.id || `job-${index}`} job={job} />
             ))}
 
-            {/* Load More button only if jobs exist */}
             <TouchableOpacity
               style={styles.findJobsBtn}
               onPress={() => setCurrentPage((prev) => prev + 1)}

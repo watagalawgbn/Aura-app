@@ -4,7 +4,7 @@ import styles from "../../(tabs)/JobScreen/JobScreen.styles";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
-type Job = {
+export type Job = {
   id: string;
   title: string;
   company: string;

@@ -26,6 +26,7 @@ export default function JobDetails() {
     });
   };
 
+
   return (
     <>
       <BackButton title={"Job Details"} />
@@ -54,7 +55,7 @@ export default function JobDetails() {
             />
             <View>
               <Text style={styles.infoLabel2}>Location</Text>
-              <Text>{jobData.location}</Text>
+              <Text>{jobData.location || "Not Available"}</Text>
             </View>
           </View>
 
