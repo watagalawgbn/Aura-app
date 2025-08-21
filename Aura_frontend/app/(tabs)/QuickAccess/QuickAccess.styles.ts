@@ -1,30 +1,11 @@
 import { StyleSheet } from "react-native";
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
   },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    marginBottom: 20,
-    borderColor: "#52AE77",
-    borderWidth: 1,
-    // alignSelf: "stretch",
-    marginHorizontal: 20,
-  },
-  searchInput: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#333",
-  },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -32,16 +13,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 15,
   },
-  circle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "#52AE77",
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
   backButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -54,48 +26,94 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
   },
+
   titleWrapper: {
     marginTop: 65,
   },
-  searchText: {
-    flex: 1,
-    marginLeft: 10,
-    color: "#52AE77",
-  },
+
   contentContainer: {
     flex: 1,
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
   },
-  fullCard: {
-    marginBottom: 15,
-    borderRadius: 15,
-    overflow: "hidden",
-  },
-  fullCardImage: {
-    width: "100%",
-    height: 180,
-    borderRadius: 15,
-  },
+
+  /* ---- Grid ---- */
   rowContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 15,
+    marginBottom: 18,
   },
+
+  /* Each card occupies roughly half width; height is fixed */
   halfCard: {
     width: "48%",
-    borderRadius: 15,
+    height: 230,
+    borderRadius: 18,
     overflow: "hidden",
+    position: "relative",
+    backgroundColor: "#000",
   },
-  halfCardImage: {
+  cardPressed: {
+    transform: [{ scale: 0.98 }],
+  },
+
+  /* Image fills the card */
+  cardImage: {
     width: "100%",
-    height: 120,
-    borderRadius: 15,
+    height: "100%",
   },
-  playButtonContainer: {
+
+  /* Title + phrase */
+  textWrap: {
     position: "absolute",
-    bottom: 10,
-    right: 10,
+    left: 14,
+    right: 14,
+    bottom: 14,
   },
+  cardTitleBig: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 6,
+    marginBottom: 2,
+  },
+  cardSubtitle: {
+    color: "#fff",
+    fontSize: 12,
+    lineHeight: 16,
+    opacity: 0.95,
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 6,
+  },
+
+  /* Dim & centered play icon shown on hover/press */
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.25)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  playPill: {
+    backgroundColor: "#fff",
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+  },
+
+  /* Legacy styles kept (unused here) in case other screens reference them */
+  fullCard: { marginBottom: 15, borderRadius: 15, overflow: "hidden" },
+  fullCardImage: { width: "100%", height: 180, borderRadius: 15 },
+  halfCardImage: { width: "100%", height: 120, borderRadius: 15 },
+  playButtonContainer: { position: "absolute", bottom: 10, right: 10 },
   playButton: {
     backgroundColor: "rgba(0, 0, 0, 0.4)",
     width: 36,
