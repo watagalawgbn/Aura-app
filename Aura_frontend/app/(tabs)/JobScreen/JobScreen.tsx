@@ -21,13 +21,13 @@ import type { Job } from "@/app/components/JobCard/JobCard";
 
 
 const JobScreen = () => {
-  const [skills, setSkills] = useState("");
-  const [skillList, setSkillList] = useState<string[]>([]);
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [skills, setSkills] = useState(""); // form input for a new skill
+  const [skillList, setSkillList] = useState<string[]>([]); // list of all skills user has added
+  const [jobs, setJobs] = useState<Job[]>([]); //job results coming back from the API
+  const [loading, setLoading] = useState(false); 
+  const [currentPage, setCurrentPage] = useState(1); //page number for pagination
 
-  const fetchJobs = async () => {
+  const fetchJobs = async () => { // fetch jobs from the backend API
     if (skillList.length === 0) {
       console.warn("⚠️ Cannot fetch jobs without skills");
       alert("⚠️ Cannot fetch jobs without skills");
@@ -44,7 +44,7 @@ const JobScreen = () => {
 
       const results: Job[] = res.data.results || [];
 
-      // remove duplicates inside the results themselves
+      // remove duplicates if API returns the same job multiple times
       const uniqueResults = results.filter(
         (job: Job, index: number, self: Job[]) =>
           index === self.findIndex((j: Job) => j.id === job.id)
@@ -53,14 +53,16 @@ const JobScreen = () => {
       console.log("✅ jobs: ", res.data);
 
       setJobs((prev) => {
+        // first page - replace old jobs completely
         if (currentPage === 1) {
           AsyncStorage.setItem(
             "jobData",
             JSON.stringify({ jobs: uniqueResults, skills: skillList })
           );
-          return uniqueResults; // ✅ overwrite jobs on first page
+          return uniqueResults; // replace the old jobs if we are on first page
         }
 
+        //later pages - append but keep only unique ids
         const newJobs = [...prev, ...uniqueResults];
         const uniqueJobs = newJobs.filter(
           (job: Job, index: number, self: Job[]) =>
@@ -82,6 +84,7 @@ const JobScreen = () => {
     }
   };
 
+  //load cached data on first mount
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -98,6 +101,7 @@ const JobScreen = () => {
     loadData();
   }, []);
 
+  //clear state when leaving the screen
   useFocusEffect(
     useCallback(() => {
       // screen focused → keep state
@@ -111,11 +115,12 @@ const JobScreen = () => {
     }, [])
   );
 
+  //add a new skill to the list
   const handleAddSkill = async () => {
     if (skills.trim() !== "") {
       const updatedSkills = [...skillList, skills.trim()];
       setSkillList(updatedSkills);
-      setJobs([]);
+      setJobs([]); //clear jobs so we only fresh results
       setCurrentPage(1);
       setSkills("");
 
@@ -126,6 +131,7 @@ const JobScreen = () => {
     }
   };
 
+  //auto fetch when page changes(for pagination)
   useEffect(() => {
     if (currentPage > 1) {
       fetchJobs();
