@@ -1,0 +1,694 @@
+[
+    {
+      "id": "DASS-1",
+      "scale": "DASS",
+      "subscale": "Stress",
+      "question": "I found it hard to wind down",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-2",
+      "scale": "DASS",
+      "subscale": "Anxiety",
+      "question": "I was aware of dryness of my mouth",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-3",
+      "scale": "DASS",
+      "subscale": "Depression",
+      "question": "I couldn't seem to experience any positive feeling at all",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-4",
+      "scale": "DASS",
+      "subscale": "Anxiety",
+      "question": "I experienced breathing difficulty",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-5",
+      "scale": "DASS",
+      "subscale": "Depression",
+      "question": "I found it difficult to work up the initiative to do things",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-6",
+      "scale": "DASS",
+      "subscale": "Stress",
+      "question": "I tended to over-react to situations",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-7",
+      "scale": "DASS",
+      "subscale": "Anxiety",
+      "question": "I experienced trembling",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-8",
+      "scale": "DASS",
+      "subscale": "Stress",
+      "question": "I felt that I was using a lot of nervous energy",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-9",
+      "scale": "DASS",
+      "subscale": "Anxiety",
+      "question": "I was worried about situations in which I might panic and make a fool of myself",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-10",
+      "scale": "DASS",
+      "subscale": "Depression",
+      "question": "I felt that I had nothing to look forward to",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-11",
+      "scale": "DASS",
+      "subscale": "Stress",
+      "question": "I found myself getting agitated",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-12",
+      "scale": "DASS",
+      "subscale": "Stress",
+      "question": "I found it difficult to relax",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-13",
+      "scale": "DASS",
+      "subscale": "Depression",
+      "question": "I felt down-hearted and blue",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-14",
+      "scale": "DASS",
+      "subscale": "Stress",
+      "question": "I was intolerant of anything that kept me from getting on with what I was doing",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-15",
+      "scale": "DASS",
+      "subscale": "Anxiety",
+      "question": "I felt I was close to panic",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-16",
+      "scale": "DASS",
+      "subscale": "Depression",
+      "question": "I was unable to become enthusiastic about anything",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-17",
+      "scale": "DASS",
+      "subscale": "Depression",
+      "question": "I felt I wasn't worth much as a person",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-18",
+      "scale": "DASS",
+      "subscale": "Stress",
+      "question": "I felt that I was rather touchy",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },  
+    {
+      "id": "DASS-19",
+      "scale": "DASS",
+      "subscale": "Anxiety",
+      "question": "I was aware of the action of my heart in the absence of physical exertion",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-20",
+      "scale": "DASS",
+      "subscale": "Anxiety",
+      "question": "I felt scared without any good reason",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "DASS-21",
+      "scale": "DASS",
+      "subscale": "Depression",
+      "question": "I felt that life was meaningless",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Did not apply to me at all",
+        "1": "Applied to me to some degree, or some of the time",
+        "2": "Applied to me to a considerable degree or a good part of the time",
+        "3": "Applied to me very much or most of the time"
+      }
+    },
+    {
+      "id": "PHQ-1",
+      "scale": "PHQ-9",
+      "question": "Little interest or pleasure in doing things",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Not at all",
+        "1": "Several days",
+        "2": "More than half the days",
+        "3": "Nearly every day"
+      }
+    },
+    {
+      "id": "PHQ-2",
+      "scale": "PHQ-9",
+      "question": "Feeling down, depressed, or hopeless",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Not at all",
+        "1": "Several days",
+        "2": "More than half the days",
+        "3": "Nearly every day"
+      }
+    },
+    {
+      "id": "PHQ-3",
+      "scale": "PHQ-9",
+      "question": "Trouble falling or staying asleep, or sleeping too much",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Not at all",
+        "1": "Several days",
+        "2": "More than half the days",
+        "3": "Nearly every day"
+      }
+    },
+    {
+      "id": "PHQ-4",
+      "scale": "PHQ-9",
+      "question": "Feeling tired or having little energy",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Not at all",
+        "1": "Several days",
+        "2": "More than half the days",
+        "3": "Nearly every day"
+      }
+    },
+    {
+      "id": "PHQ-5",
+      "scale": "PHQ-9",
+      "question": "Poor appetite or overeating",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Not at all",
+        "1": "Several days",
+        "2": "More than half the days",
+        "3": "Nearly every day"
+      }
+    },
+    {
+      "id": "PHQ-6",
+      "scale": "PHQ-9",
+      "question": "Feeling bad about yourself \u2014 or that you are a failure or have let yourself or your family down",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Not at all",
+        "1": "Several days",
+        "2": "More than half the days",
+        "3": "Nearly every day"
+      }
+    },
+    {
+      "id": "PHQ-7",
+      "scale": "PHQ-9",
+      "question": "Trouble concentrating on things, such as reading the newspaper or watching television",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Not at all",
+        "1": "Several days",
+        "2": "More than half the days",
+        "3": "Nearly every day"
+      }
+    },
+    {
+      "id": "PHQ-8",
+      "scale": "PHQ-9",
+      "question": "Moving or speaking so slowly that other people could have noticed? Or the opposite \u2014 being so fidgety or restless that you have been moving around a lot more than usual",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Not at all",
+        "1": "Several days",
+        "2": "More than half the days",
+        "3": "Nearly every day"
+      }
+    },
+    {
+      "id": "PHQ-9",
+      "scale": "PHQ-9",
+      "question": "Thoughts that you would be better off dead, or thoughts of hurting yourself in some way",
+      "options": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "labels": {
+        "0": "Not at all",
+        "1": "Several days",
+        "2": "More than half the days",
+        "3": "Nearly every day"
+      }
+    },
+    {
+      "id": "gad-1",
+      "question": "Feeling nervous, anxious, or on edge",
+      "type": "GAD",
+      "options": [
+        {
+          "text": "Not at all",
+          "score": 0
+        },
+        {
+          "text": "Several days",
+          "score": 1
+        },
+        {
+          "text": "More than half the days",
+          "score": 2
+        },
+        {
+          "text": "Nearly every day",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "gad-2",
+      "question": "Not being able to stop or control worrying",
+      "type": "GAD",
+      "options": [
+        {
+          "text": "Not at all",
+          "score": 0
+        },
+        {
+          "text": "Several days",
+          "score": 1
+        },
+        {
+          "text": "More than half the days",
+          "score": 2
+        },
+        {
+          "text": "Nearly every day",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "gad-3",
+      "question": "Worrying too much about different things",
+      "type": "GAD",
+      "options": [
+        {
+          "text": "Not at all",
+          "score": 0
+        },
+        {
+          "text": "Several days",
+          "score": 1
+        },
+        {
+          "text": "More than half the days",
+          "score": 2
+        },
+        {
+          "text": "Nearly every day",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "gad-4",
+      "question": "Trouble relaxing",
+      "type": "GAD",
+      "options": [
+        {
+          "text": "Not at all",
+          "score": 0
+        },
+        {
+          "text": "Several days",
+          "score": 1
+        },
+        {
+          "text": "More than half the days",
+          "score": 2
+        },
+        {
+          "text": "Nearly every day",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "gad-5",
+      "question": "Being so restless that it is hard to sit still",
+      "type": "GAD",
+      "options": [
+        {
+          "text": "Not at all",
+          "score": 0
+        },
+        {
+          "text": "Several days",
+          "score": 1
+        },
+        {
+          "text": "More than half the days",
+          "score": 2
+        },
+        {
+          "text": "Nearly every day",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "gad-6",
+      "question": "Becoming easily annoyed or irritable",
+      "type": "GAD",
+      "options": [
+        {
+          "text": "Not at all",
+          "score": 0
+        },
+        {
+          "text": "Several days",
+          "score": 1
+        },
+        {
+          "text": "More than half the days",
+          "score": 2
+        },
+        {
+          "text": "Nearly every day",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "gad-7",
+      "question": "Feeling afraid as if something awful might happen",
+      "type": "GAD",
+      "options": [
+        {
+          "text": "Not at all",
+          "score": 0
+        },
+        {
+          "text": "Several days",
+          "score": 1
+        },
+        {
+          "text": "More than half the days",
+          "score": 2
+        },
+        {
+          "text": "Nearly every day",
+          "score": 3
+        }
+      ]
+    }
+  ]
