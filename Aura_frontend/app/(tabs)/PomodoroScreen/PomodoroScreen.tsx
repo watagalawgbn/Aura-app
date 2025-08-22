@@ -18,7 +18,6 @@ import axios from "axios";
 import { BASE_URL } from "@/constants/Api";
 import { useAuth } from "@/context/AuthContext";
 import { Audio } from "expo-av";
-import apiClient from "@/app/services/apiClient";
 import { addTask, deleteTask, updateTask } from "@/app/services/taskService";
 
 type Task = { _id?: string; name: string; note: string; userId?: string };
@@ -46,7 +45,7 @@ const PomodoroScreen = () => {
   const [newTask, setNewTask] = useState<Task>({ name: "", note: "" });
   const [showGlobalOptions, setShowGlobalOptions] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(25 * 60);
+  const [secondsLeft, setSecondsLeft] = useState(1 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [taskMenuIndex, setTaskMenuIndex] = useState<number | null>(null);
