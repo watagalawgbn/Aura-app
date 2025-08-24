@@ -8,22 +8,45 @@ exports.addTask = async (req, res) => {
   try {
     const { name, note, userId, override } = req.body;
 
-    const latestSleep = await Sleep.findOne({ userId }).sort({ date: -1 });
-    console.log("latest sleep: ",latestSleep);
-    let allowedMinutes = 300; // default max
-    if (latestSleep) {
-      allowedMinutes = getMaxWorkLoad(latestSleep.hours);
-      console.log("Allowed Minutes: ",allowedMinutes);
-    } 
+    const today = new Date().toISOString().split("T")[0];//today range
+    //check for today's sleep record
+    let sleepRecord = await Sleep.findOne({ userId, date: today });
+    //if no today record, fallback to latest
+    if (!sleepRecord) {
+      sleepRecord = await Sleep.findOne({ userId }).sort({ date: -1 });
+    }
+    //if still no record, ask frontend to request sleep input
+    if (!sleepRecord) {
+      return res
+        .status(409)
+        .json({
+          message:
+            "No sleep record found.please log your sleep hours before adding tasks.",
+        });
+    }
+    //calculate workload
+    const allowedMinutes = getMaxWorkLoad(sleepRecord.hours);
+    console.log("Allowed Minutes: ", allowedMinutes);
 
-    const existingTasks = await Task.find({ userId });
-    console.log("existing Tasks: ",existingTasks);
+    //only count today's tasks
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const existingTasks = await Task.find({
+      userId,
+      createdAt: { $gte: startOfDay, $lte: endOfDay },
+    });
+    console.log("existing Tasks: ", existingTasks);
+
     const usedMinutes = existingTasks.length * 25;
-    console.log("used Minutes: ",usedMinutes);
+    console.log("used Minutes: ", usedMinutes);
 
+    //if exceeded and no override then, block
     if (usedMinutes + 25 > allowedMinutes && !override) {
       return res.status(403).json({
-        message: `Sleep < ${latestSleep.hours}h. Recommended workload is ${allowedMinutes} mins. Override required.`,
+        message: `Sleep < ${sleepRecord.hours}h. Recommended workload is ${allowedMinutes} mins. Override required.`,
         allowedMinutes,
         usedMinutes,
       });
@@ -37,7 +60,6 @@ exports.addTask = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
 
 exports.updateTask = async (req, res) => {
   try {
