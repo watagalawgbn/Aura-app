@@ -18,7 +18,12 @@ import axios from "axios";
 import { BASE_URL } from "@/constants/Api";
 import { useAuth } from "@/context/AuthContext";
 import { Audio } from "expo-av";
-import { addTask, deleteTask, updateTask } from "@/app/services/taskService";
+import {
+  addTask,
+  deleteTask,
+  updateTask,
+  getTasks,
+} from "@/app/services/taskService";
 
 type Task = { _id?: string; name: string; note: string; userId?: string };
 
@@ -45,18 +50,19 @@ const PomodoroScreen = () => {
   const [newTask, setNewTask] = useState<Task>({ name: "", note: "" });
   const [showGlobalOptions, setShowGlobalOptions] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(1 * 60);
+  const [secondsLeft, setSecondsLeft] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [taskMenuIndex, setTaskMenuIndex] = useState<number | null>(null);
 
   const { user } = useAuth();
 
+  // ---------------- TIMER ----------------
   useEffect(() => {
-    let timer: any;
+    let timer: ReturnType<typeof setInterval> | null = null;
     if (isRunning) {
       timer = setInterval(() => {
-        setSecondsLeft((prev) => {
+        setSecondsLeft((prev: number) => {
           if (prev <= 1) {
             setIsRunning(false);
             playAlarm();
@@ -66,8 +72,26 @@ const PomodoroScreen = () => {
         });
       }, 1000);
     }
-    return () => clearInterval(timer);
+    return () => {
+      if (timer) clearInterval(timer);
+    };
   }, [isRunning]);
+
+  useEffect(() => {
+    const loadTasks = async () => {
+      if (user?.id) {
+        const fetched = await getTasks(user.id);
+        setTasks(fetched);
+
+        // set first task as current
+        if (fetched.length > 0) {
+          setCurrentTaskIndex(0);
+        }
+      }
+    };
+
+    loadTasks();
+  }, [user?.id]);
 
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
@@ -91,11 +115,77 @@ const PomodoroScreen = () => {
     setIsRunning(false);
   };
 
+  // ---------------- TASK SAVE ----------------
+  const handleSaveTask = async () => {
+    if (newTask.name.trim()) {
+      try {
+        if (editIndex != null) {
+          // update existing
+          const existing = tasks[editIndex];
+          const updatedTask = await updateTask(existing._id!, newTask);
+
+          if (updatedTask) {
+            const updated = [...tasks];
+            updated[editIndex] = updatedTask;
+            setTasks(updated);
+          }
+        } else {
+          // try to add
+          const res = await addTask(newTask, user?.id!);
+
+          if (res.status === 201 && res.task) {
+            const task: Task = res.task; // now definitely a Task
+            setTasks((prev) => [...prev, task]);
+            if (tasks.length === 0) setCurrentTaskIndex(0);
+          } else if (res.status === 403) {
+            // workload exceeded
+            alert(
+              `${res.data.message}\n You already used ${res.data.usedMinutes} mins.`
+            );
+
+            // ask for override
+            const overrideRes = await addTask(newTask, user?.id!, true);
+            if (overrideRes.task) {
+              const task: Task = overrideRes.task;
+              setTasks((prev) => [...prev, task]);
+            }
+          } else if (res.status === 409) {
+            // no sleep record
+            alert("Please log your sleep hours before adding tasks.");
+          }
+        }
+
+        setShowModal(false);
+        setNewTask({ name: "", note: "" });
+        setEditIndex(null);
+      } catch (err) {
+        console.error("Error saving task", err);
+      }
+    }
+  };
+
+  // ---------------- TASK DELETE ----------------
+  const handleDeleteTask = async (index: number) => {
+    try {
+      const deleted = tasks[index];
+      await deleteTask(deleted._id!);
+      const updatedTasks = tasks.filter((_, i) => i !== index);
+      setTasks(updatedTasks);
+      setCurrentTaskIndex((prev) =>
+        prev === index ? null : prev && prev > index ? prev - 1 : prev
+      );
+      setTaskMenuIndex(null);
+    } catch (err) {
+      console.error("Failed to delete task", err);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <BackButton title="Study Smart" />
 
+      {/* MODE SELECTOR */}
       <View style={styles.modeSelector}>
         <TouchableOpacity
           style={[styles.modeButton, !isBreak && styles.activeMode]}
@@ -111,6 +201,7 @@ const PomodoroScreen = () => {
         </TouchableOpacity>
       </View>
 
+      {/* TIMER */}
       <LinearGradient
         colors={["#294C0D", "#5FB21F"]}
         style={styles.circleWrapper}
@@ -125,54 +216,55 @@ const PomodoroScreen = () => {
         </View>
       </LinearGradient>
 
+      {/* TASKS */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
-      {currentTaskIndex !== null && tasks.length > 0 && (
-        <View style={styles.currentTaskCard}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              flex: 1,
-              flexWrap: "wrap",
-            }}
-          >
-            <Feather
-              name="bookmark"
-              size={35}
-              color="#294C0D"
-              style={{ marginRight: 5 }}
-            />
-            <Text
-              style={[styles.currentTaskName, { maxWidth: "75%" }]}
-              numberOfLines={2}
-              ellipsizeMode="tail"
+        {currentTaskIndex !== null && tasks.length > 0 && (
+          <View style={styles.currentTaskCard}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                flex: 1,
+                flexWrap: "wrap",
+              }}
             >
-              {tasks[currentTaskIndex].name}
-            </Text>
+              <Feather
+                name="bookmark"
+                size={35}
+                color="#294C0D"
+                style={{ marginRight: 5 }}
+              />
+              <Text
+                style={[styles.currentTaskName, { maxWidth: "75%" }]}
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {tasks[currentTaskIndex].name}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 5,
+              }}
+            >
+              <Feather
+                name="clock"
+                size={15}
+                color="#294C0D"
+                style={{ marginRight: 8 }}
+              />
+              <Text style={styles.currentTaskMeta}>
+                {currentTaskIndex + 1}/{tasks.length} · {isBreak ? "5" : "25"}{" "}
+                Mins
+              </Text>
+            </View>
           </View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginTop: 5,
-            }}
-          >
-            <Feather
-              name="clock"
-              size={15}
-              color="#294C0D"
-              style={{ marginRight: 8 }}
-            />
-            <Text style={styles.currentTaskMeta}>
-              {currentTaskIndex + 1}/{tasks.length} · {isBreak ? "5" : "25"}{" "}
-              Mins
-            </Text>
-          </View>
-        </View>
-      )}
+        )}
 
-      
         <View style={{ paddingHorizontal: 20, marginTop: 30 }}>
+          {/* HEADER */}
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
@@ -184,6 +276,7 @@ const PomodoroScreen = () => {
             </TouchableOpacity>
           </View>
 
+          {/* GLOBAL MENU */}
           {showGlobalOptions && (
             <View style={styles.menuContainer}>
               <TouchableOpacity
@@ -203,7 +296,6 @@ const PomodoroScreen = () => {
                     await axios.delete(`${BASE_URL}/api/tasks/${task._id}`);
                   }
                   setTasks([]);
-
                   setCurrentTaskIndex(null);
                   setShowGlobalOptions(false);
                 }}
@@ -213,6 +305,7 @@ const PomodoroScreen = () => {
             </View>
           )}
 
+          {/* TASK LIST */}
           {tasks.map((task, index) => (
             <View key={index} style={styles.taskItemContainer}>
               <View style={styles.taskItem}>
@@ -249,12 +342,6 @@ const PomodoroScreen = () => {
                     <Feather name="more-vertical" size={20} color="#52AE77" />
                   </TouchableOpacity>
                 </View>
-
-                {taskMenuIndex === index && (
-                  <View style={styles.taskMenu}>
-                    {/* ... menu items ... */}
-                  </View>
-                )}
               </View>
 
               {taskMenuIndex === index && (
@@ -269,28 +356,7 @@ const PomodoroScreen = () => {
                   >
                     <Text style={styles.menuItem}>Edit</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={async () => {
-                      try {
-                        const deleted = tasks[index];
-                        await deleteTask(deleted._id!);
-                        const updatedTasks = tasks.filter(
-                          (_, i) => i !== index
-                        );
-                        setTasks(updatedTasks);
-                        setCurrentTaskIndex((prev) =>
-                          prev === index
-                            ? null
-                            : prev && prev > index
-                            ? prev - 1
-                            : prev
-                        );
-                        setTaskMenuIndex(null);
-                      } catch (err) {
-                        console.error("Failed to delete task", err);
-                      }
-                    }}
-                  >
+                  <TouchableOpacity onPress={() => handleDeleteTask(index)}>
                     <Text style={styles.menuItem}>Delete</Text>
                   </TouchableOpacity>
                 </View>
@@ -298,6 +364,7 @@ const PomodoroScreen = () => {
             </View>
           ))}
 
+          {/* ADD TASK */}
           <TouchableOpacity
             style={styles.addTaskButton}
             onPress={() => {
@@ -339,31 +406,7 @@ const PomodoroScreen = () => {
               >
                 <Pressable
                   style={[styles.modalButton, { backgroundColor: "#5FB21F" }]}
-                  onPress={async () => {
-                    if (newTask.name.trim()) {
-                      try {
-                        if (editIndex !== null) {
-                          // PUT (update existing)
-                          const existing = tasks[editIndex];
-                          // call the update task service from the taskService file
-                          const updatedTask = await updateTask(existing._id!, newTask);
-                          const updated = [...tasks];
-                          updated[editIndex] = updatedTask;
-                          setTasks(updated);
-                        } else {
-                          // call the add task service from the taskService file
-                          const createdTask = await addTask(newTask, user?.id!);
-                          setTasks((prev) => [...prev, createdTask]);
-                          if (tasks.length === 0) setCurrentTaskIndex(0);
-                        }
-                        setShowModal(false);
-                        setNewTask({ name: "", note: "" });
-                        setEditIndex(null);
-                      } catch (err) {
-                        console.error("Error saving task", err);
-                      }
-                    }
-                  }}
+                  onPress={handleSaveTask}
                 >
                   <Text style={styles.modalButtonText}>Save</Text>
                 </Pressable>
@@ -384,6 +427,5 @@ const PomodoroScreen = () => {
     </SafeAreaView>
   );
 };
-
 
 export default PomodoroScreen;
