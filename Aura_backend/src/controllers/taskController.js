@@ -2,7 +2,7 @@
 
 const Sleep = require("../models/Sleep");
 const Task = require("../models/Task");
-const { getMaxWorkload } = require("../utils/workloadRules");
+const { getMaxWorkLoad } = require("../utils/workloadRules");
 
 exports.addTask = async (req, res) => {
   try {
@@ -12,7 +12,7 @@ exports.addTask = async (req, res) => {
     console.log("latest sleep: ",latestSleep);
     let allowedMinutes = 300; // default max
     if (latestSleep) {
-      allowedMinutes = getMaxWorkload(latestSleep.hours);
+      allowedMinutes = getMaxWorkLoad(latestSleep.hours);
       console.log("Allowed Minutes: ",allowedMinutes);
     } 
 
