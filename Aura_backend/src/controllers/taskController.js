@@ -61,12 +61,28 @@ exports.addTask = async (req, res) => {
   }
 };
 
+exports.toggleCompletion = async (req, res) => {
+  try {
+    const { completed } = req.body;
+    const updated = await Task.findByIdAndUpdate(
+      req.params.id,
+      { completed },
+      { new: true }
+    );
+    if (!updated) return res.status(404).json({ error: "Task not found" });
+    res.status(200).json(updated);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
+
 exports.updateTask = async (req, res) => {
   try {
     const updated = await Task.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    res.json(updated);
+    res.status(200).json(updated);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

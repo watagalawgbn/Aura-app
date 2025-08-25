@@ -22,10 +22,10 @@ import {
   addTask,
   deleteTask,
   updateTask,
-  getTasks,
+  getTasks,toggleTaskCompletion
 } from "@/app/services/taskService";
 
-type Task = { _id?: string; name: string; note: string; userId?: string };
+type Task = { _id?: string; name: string; note: string; userId?: string, completed?: boolean;  };
 
 const playAlarm = async () => {
   try {
@@ -50,7 +50,7 @@ const PomodoroScreen = () => {
   const [newTask, setNewTask] = useState<Task>({ name: "", note: "" });
   const [showGlobalOptions, setShowGlobalOptions] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(25 * 60);
+  const [secondsLeft, setSecondsLeft] = useState(1 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [taskMenuIndex, setTaskMenuIndex] = useState<number | null>(null);
@@ -59,7 +59,7 @@ const PomodoroScreen = () => {
 
   // ---------------- TIMER ----------------
   useEffect(() => {
-    let timer: ReturnType<typeof setInterval> | null = null;
+    let timer: any;
     if (isRunning) {
       timer = setInterval(() => {
         setSecondsLeft((prev: number) => {
@@ -316,23 +316,75 @@ const PomodoroScreen = () => {
                     alignItems: "flex-start",
                   }}
                 >
-                  <TouchableOpacity
-                    style={{ flex: 1 }}
-                    onPress={() => setCurrentTaskIndex(index)}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      flex: 1,
+                    }}
                   >
-                    <Text
-                      style={{ fontSize: 16, fontWeight: "bold" }}
-                      numberOfLines={2}
-                      ellipsizeMode="tail"
+                    <TouchableOpacity
+                      onPress={async () => {
+                        const updated = await toggleTaskCompletion(
+                          task._id!,
+                          !task.completed
+                        );
+                        setTasks((prev) =>
+                          prev.map((t) => (t._id === updated._id ? updated : t))
+                        );
+                      }}
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: 12,
+                        borderWidth: 2,
+                        borderColor: "#52AE77",
+                        marginRight: 10,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: task.completed
+                          ? "#52AE77"
+                          : "transparent",
+                      }}
                     >
-                      {task.name}
-                    </Text>
-                    {task.note ? (
-                      <Text style={{ fontSize: 12, color: "#555" }}>
-                        {task.note}
+                      {task.completed && (
+                        <Feather name="check" size={16} color="#fff" />
+                      )}
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={{ flex: 1 }}
+                      onPress={() => setCurrentTaskIndex(index)}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          textDecorationLine: task.completed
+                            ? "line-through"
+                            : "none",
+                          color: task.completed ? "#999" : "#000",
+                        }}
+                        numberOfLines={2}
+                        ellipsizeMode="tail"
+                      >
+                        {task.name}
                       </Text>
-                    ) : null}
-                  </TouchableOpacity>
+                      {task.note ? (
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            color: task.completed ? "#aaa" : "#555",
+                            textDecorationLine: task.completed
+                              ? "line-through"
+                              : "none",
+                          }}
+                        >
+                          {task.note}
+                        </Text>
+                      ) : null}
+                    </TouchableOpacity>
+                  </View>
 
                   <TouchableOpacity
                     onPress={() =>
