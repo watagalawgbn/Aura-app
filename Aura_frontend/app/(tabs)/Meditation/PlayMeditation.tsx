@@ -12,32 +12,34 @@ import styles from "./PlayMeditation.styles";
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Audio, AVPlaybackStatus } from "expo-av";
-import { BASE_URL } from "@/constants/Api";
+import { getAudioUrl, getMeditationImageUrl } from "@/app/services/playMeditationService";
 
 const PlayMeditationScreen = () => {
   const router = useRouter();
-  const { title, filename, imageId } = useLocalSearchParams(); //extract parameters from route
+  //read params passed from previous screen
+  const { title, filename, imageId } = useLocalSearchParams(); 
 
   //make sure parameters are in string format(not array)
   const titleString = Array.isArray(title) ? title[0] : title;
+  const filenameString = Array.isArray(filename)? filename[0]: filename;
   const imageIdString = Array.isArray(imageId) ? imageId[0] : imageId;
 
   //manager audio and UI state
   const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0); // tplayback progress(0-1)
-  const [currentTime, setCurrentTime] = useState("0:00"); // Elapsed playback time
-  const [totalTime, setTotalTime] = useState("10:00"); // Total duration as string
+  const [progress, setProgress] = useState(0); // playback progress(0-1)
+  const [currentTime, setCurrentTime] = useState("0:00"); // Elapsed time label
+  const [totalTime, setTotalTime] = useState("10:00"); // Total duration label
   const [totalDuration, setTotalDuration] = useState(600000); // Total duration in milliseconds
-  const [isLoaded, setIsLoaded] = useState(false); //track loading state for API call
+  const [isLoaded, setIsLoaded] = useState(false); //audio loaded state
   const [imageUrl, setImageUrl] = useState(""); //url for the image
 
   const soundRef = useRef<Audio.Sound | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // When component mounts, set image URL from imageId
+  // Set the background image URL when the screen mounts or imageId changes
   useEffect(() => {
-    if (imageIdString && imageIdString.trim() !== "") {
-      const url = `${BASE_URL}/api/images/${imageIdString}`; // set the image url
+    const url = getMeditationImageUrl(imageIdString);
+    if (url) {
       setImageUrl(url);
       console.log("Image URL set:", url);
     } else {
@@ -79,6 +81,7 @@ const PlayMeditationScreen = () => {
       try {
         console.log("Starting audio load:", filename);
 
+        // Configure audio so it can play in background/silent mode
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: false,
           staysActiveInBackground: true,
@@ -86,9 +89,9 @@ const PlayMeditationScreen = () => {
           shouldDuckAndroid: true,
           playThroughEarpieceAndroid: false,
         });
-
+        //create sound object(dont auto-play)
         const { sound } = await Audio.Sound.createAsync(
-          { uri: `${BASE_URL}/api/audio/${filename}` },
+          { uri: getAudioUrl(filenameString) },
           { shouldPlay: false }
         );
 
@@ -96,7 +99,7 @@ const PlayMeditationScreen = () => {
         sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
         setIsLoaded(true);
 
-        // Set duration and format for UI
+        // Fetch a valid duration and show it
         const actualDuration = await waitForValidDuration(sound);
         if (actualDuration) {
           setTotalDuration(actualDuration);
@@ -164,14 +167,17 @@ const PlayMeditationScreen = () => {
     }
 
     if (status.durationMillis && status.positionMillis != null) {
+      //update progress bar value
       setProgress(status.positionMillis / status.durationMillis);
 
+      //update elapsed time label
       const currentMinutes = Math.floor(status.positionMillis / 60000);
       const currentSeconds = Math.floor((status.positionMillis % 60000) / 1000);
       setCurrentTime(
         `${currentMinutes}:${currentSeconds.toString().padStart(2, "0")}`
       );
 
+      //keep total time label in sync
       const totalMinutes = Math.floor(status.durationMillis / 60000);
       const totalSeconds = Math.floor((status.durationMillis % 60000) / 1000);
       setTotalTime(
@@ -179,8 +185,10 @@ const PlayMeditationScreen = () => {
       );
     }
 
+    // Mirror the actual playing state
     setIsPlaying(status.isPlaying ?? false);
 
+    // When track ends: reset UI and pause
     if (status.didJustFinish) {
       console.log("Playback finished");
       setIsPlaying(false);
@@ -188,10 +196,8 @@ const PlayMeditationScreen = () => {
       setCurrentTime("0:00");
       if (soundRef.current) {
         // Move back to start
-        await soundRef.current.setPositionAsync(0);
-
-        // Ensure it's paused (so it doesn’t auto-play)
-        await soundRef.current.pauseAsync();
+        await soundRef.current.setPositionAsync(0); //back to start
+        await soundRef.current.pauseAsync(); //ensure paused
       }
     }
   };
