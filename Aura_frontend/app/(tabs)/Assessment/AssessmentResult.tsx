@@ -19,7 +19,7 @@ export default function AssessmentResult() {
 
   // scores and assign colors to each category for the chart
   const data = [
-    { score: Number(phqScore), color: "#ff8a1dde" }, // Mood
+    { score: Number(phqScore), color: "#e87674ff" }, // Mood
     { score: Number(gadScore), color: "#6592e5" }, // Anxiety
     { score: Number(dassScore), color: "#7bdb4bff" }, // Stress
   ];
@@ -67,7 +67,7 @@ export default function AssessmentResult() {
           label="Mood"
           score={phqScore}
           severity={phqSeverity}
-          color="#ff8a1dde"
+          color="#e87674ff"
         />
         <DetailItem
           label="Anxiety"

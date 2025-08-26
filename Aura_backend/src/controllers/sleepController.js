@@ -12,7 +12,6 @@ exports.getSleepData = async (req, res) => {
     console.log("🔍 getSleepData called for user:", req.user.id);
     const userId = new mongoose.Types.ObjectId(req.user.id);
     const data = await Sleep.find({ userId }).sort({ date: 1 });
-    // console.log("📊 Found sleep data:", data);
     res.json(data);
   } catch (err) {
     console.error("❌ Error fetching sleep data:", err);

@@ -5,6 +5,7 @@ type taskData = {
   name: string,
   note: string,
   userId?: string,
+  completed?: boolean,
 };
 
 // add task
@@ -25,6 +26,17 @@ export const addTask = async (newTask: taskData, userId: string, override = fals
     throw new Error("Failed to add new task!");
   }
 };
+
+export const toggleTaskCompletion = async (taskId: string, completed: boolean) => {
+  try {
+    const res = await apiClient.patch(`/api/tasks/${taskId}`, { completed });
+    return res.data;
+  } catch (err) {
+    console.error("Error toggling task completion", err);
+    throw err;
+  }
+};
+
 
 //update task
 export const updateTask = async(taskId: string, updates: Partial<taskData>): Promise<taskData> => {

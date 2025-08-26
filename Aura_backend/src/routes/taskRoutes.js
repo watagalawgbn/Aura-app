@@ -6,7 +6,8 @@ const {
   addTask,
   updateTask,
   deleteTask,
-  getTasks,
+  getTasks, 
+  toggleCompletion
 } = require("../controllers/taskController");
 const authenticateToken = require('../middleware/authMiddleware');
 
@@ -16,5 +17,7 @@ router.post("/", addTask);
 router.put("/:id", updateTask);
 router.delete("/:id", deleteTask);
 router.get("/", getTasks);
+router.patch("/:id", toggleCompletion);
+
 
 module.exports = router;
