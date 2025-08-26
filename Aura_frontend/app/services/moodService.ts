@@ -3,8 +3,8 @@
 import apiClient from "./apiClient";
 
 export const logMood = async(mood: string): Promise<void> => {
-    // send post request to backend to add mood
     try{ 
+        // send post request to backend to add mood
         await apiClient.post(
             `/api/moods`, 
             { mood } //selected mood in the body

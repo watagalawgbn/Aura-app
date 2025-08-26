@@ -8,7 +8,7 @@ import {
   StatusBar,
 } from "react-native";
 import styles from "./Assessment.styles";
-import { fetchAssessmentQuestions } from "../../services/assessmentService";
+import { fetchAssessmentQuestions, submitAssessmentAnswers } from "../../services/assessmentService";
 import { ProgressBar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -64,19 +64,7 @@ export default function Assessment() {
       const formattedAnswers = Object.values(selectedOption);
 
       try {
-        const token = await SecureStore.getItemAsync("authToken");
-
-        const response = await fetch(`${BASE_URL}/api/assessment/submit`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({ answers: formattedAnswers }),
-        });
-        console.log("Authorization Header:", `Bearer ${token}`);
-
-        const data = await response.json();
+        const data = await submitAssessmentAnswers(formattedAnswers);
 
         router.push({
           pathname: "/(tabs)/Assessment/AssessmentResult",
