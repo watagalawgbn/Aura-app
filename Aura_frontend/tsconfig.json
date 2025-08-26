@@ -7,7 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["jest", "react", "react-test-renderer"],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
     }
   },
   "include": [

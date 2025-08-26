@@ -17,6 +17,8 @@ import { Feather } from "@expo/vector-icons";
 import axios from "axios";
 import { BASE_URL } from "@/constants/Api";
 import { useAuth } from "@/context/AuthContext";
+import { Audio } from "expo-av";
+
 import {
   addTask,
   deleteTask,
@@ -44,7 +46,8 @@ const PomodoroScreen = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [taskMenuIndex, setTaskMenuIndex] = useState<number | null>(null);
-
+  const [showBanner, setShowBanner] = useState(false);
+  const [bannerMessage, setBannerMessage] = useState("");
   const { user } = useAuth();
 
   // ---------------- TIMER ----------------
@@ -55,14 +58,23 @@ const PomodoroScreen = () => {
         setSecondsLeft((prev: number) => {
           if (prev <= 1) {
             setIsRunning(false);
-            //stop the timer
-            setIsRunning(false);
-            //switch to break mode
-            if(!isBreak){
+
+            // Play alarm sound
+            playAlarm();
+
+            // Show banner
+            if (!isBreak) {
+              setBannerMessage("Pomodoro finished 🎉 Time for a break!");
               switchMode(true);
-            } else{
+            } else {
+              setBannerMessage("Break over ⏰ Back to work!");
               switchMode(false);
             }
+            setShowBanner(true);
+
+            // Auto-hide banner after 3 seconds
+            setTimeout(() => setShowBanner(false), 3000);
+
             return 0;
           }
           return prev - 1;
@@ -72,7 +84,7 @@ const PomodoroScreen = () => {
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [isRunning]);
+  }, [isRunning, isBreak]);
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -105,6 +117,17 @@ const PomodoroScreen = () => {
     }
     setIsRunning((prev) => !prev);
   };
+
+  async function playAlarm() {
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+        require("../../../assets/audios/clock.mp3")
+      );
+      await sound.playAsync();
+    } catch (err) {
+      console.error("Error playing sound:", err);
+    }
+  }
 
   const switchMode = (breakMode: boolean) => {
     setIsBreak(breakMode);
@@ -326,9 +349,30 @@ const PomodoroScreen = () => {
                           task._id!,
                           !task.completed
                         );
-                        setTasks((prev) =>
-                          prev.map((t) => (t._id === updated._id ? updated : t))
-                        );
+
+                        setTasks((prev) => {
+                          // update the task in place
+                          const updatedList = prev.map((t) =>
+                            t._id === updated._id ? updated : t
+                          );
+
+                          // move completed tasks to bottom
+                          const reordered = [
+                            ...updatedList.filter((t) => !t.completed),
+                            ...updatedList.filter((t) => t.completed),
+                          ];
+
+                          // find new current task (first uncompleted)
+                          const nextIndex = reordered.findIndex(
+                            (t) => !t.completed
+                          );
+
+                          setCurrentTaskIndex(
+                            nextIndex !== -1 ? nextIndex : null
+                          );
+
+                          return reordered;
+                        });
                       }}
                       style={{
                         width: 24,
@@ -473,6 +517,29 @@ const PomodoroScreen = () => {
           </View>
         </Modal>
       </ScrollView>
+      {showBanner && (
+        <View
+          style={{
+            position: "absolute",
+            top: 60,
+            left: 20,
+            right: 20,
+            padding: 15,
+            backgroundColor: "#52AE77",
+            borderRadius: 10,
+            alignItems: "center",
+            shadowColor: "#000",
+            shadowOpacity: 0.2,
+            shadowOffset: { width: 0, height: 2 },
+            shadowRadius: 4,
+            elevation: 5,
+          }}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>
+            {bannerMessage}
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

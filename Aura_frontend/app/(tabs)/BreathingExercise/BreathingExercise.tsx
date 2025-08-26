@@ -257,7 +257,7 @@ export default function BreathingExercise() {
           >
             <Defs>
               <RadialGradient id="grad" cx="50%" cy="50%" r="50%">
-                <Stop offset="0%" stopColor="#5FB21F" stopOpacity="1" />
+                <Stop offset="25%" stopColor="#5FB21F" stopOpacity="1" />
                 <Stop offset="100%" stopColor="#224831" stopOpacity="1" />
               </RadialGradient>
             </Defs>
