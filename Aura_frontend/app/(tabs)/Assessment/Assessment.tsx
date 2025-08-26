@@ -44,15 +44,16 @@ export default function Assessment() {
   //-------------NEXT BUTTON-----------------------
   const handleNext = async () => {
     if (currentQuestionIndex < questions.length - 1) {
-      //go to 
+      //go to next question
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       fadeIn();
     } else {
+      //reached last question, submit answers
       const formattedAnswers = Object.values(selectedOption);
 
       try {
         const data = await submitAssessmentAnswers(formattedAnswers);
-
+        //navigate to results screen with scores
         router.push({
           pathname: "/(tabs)/Assessment/AssessmentResult",
           params: {
@@ -70,15 +71,19 @@ export default function Assessment() {
     }
   };
 
+  //-------------BACK BUTTON-----------------------
   const handleBack = () => {
     if (currentQuestionIndex === 0) {
+      //first question, go back to home
       router.navigate("/(tabs)/Home/Home");
     } else {
+      //otherwise go to back one step
       setCurrentQuestionIndex(currentQuestionIndex - 1);
       fadeIn();
     }
   };
 
+  //-------------ANIMATION-----------------------
   const fadeIn = () => {
     fadeAnim.setValue(0);
     Animated.timing(fadeAnim, {
@@ -88,12 +93,14 @@ export default function Assessment() {
     }).start();
   };
 
+  //start fade-in when questions load
   useEffect(() => {
     if (questions.length > 0) {
       fadeIn();
     }
   }, [questions]);
 
+  //-------------LOADINF/ERROR HANDLING-----------------------
   if (loading)
     return (
       <View style={styles.loadingContainer}>
@@ -110,8 +117,9 @@ export default function Assessment() {
 
   if (questions.length === 0) return null;
 
+  //-------------RENDER QUESTION-----------------------
   const currentQuestion = questions[currentQuestionIndex];
-  const progress = (currentQuestionIndex + 1) / questions.length;
+  const progress = (currentQuestionIndex + 1) / questions.length; //progress bar value
 
   return (
     <View style={styles.mainContainer}>
@@ -141,7 +149,8 @@ export default function Assessment() {
         </Text>
 
         <Text style={styles.currentQuestion}>{currentQuestion.question}?</Text>
-
+        
+        {/* options */}
         {currentQuestion.options.map((opt) => {
           const isSelected =
             selectedOption[currentQuestionIndex]?.answer === opt.value;
