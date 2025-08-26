@@ -20,6 +20,7 @@ export type Answer = {
     answer: number;
 };
 
+//--------------GET QUESTIONS----------------
 export const fetchAssessmentQuestions = async (): Promise<Question[]> => {
     try{
         const res = await apiClient.get(`/api/assessment`);
@@ -31,7 +32,7 @@ export const fetchAssessmentQuestions = async (): Promise<Question[]> => {
     }
 };
 
-//submit answers to backend
+//--------------SUBMIT ANSWERS----------------
 export const submitAssessmentAnswers = async(answers: Answer[]) => {
     try{
         const res = await apiClient.post(`/api/assessment/submit`, {answers});

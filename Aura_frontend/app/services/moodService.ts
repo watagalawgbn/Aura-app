@@ -2,15 +2,14 @@
 
 import apiClient from "./apiClient";
 
+//--------------ADD MOOD----------------
 export const logMood = async(mood: string): Promise<void> => {
     try{ 
-        // send post request to backend to add mood
         await apiClient.post(
             `/api/moods`, 
             { mood } //selected mood in the body
         );
     } 
-    //throw any errors occured if request failed
     catch(error){ 
         console.error("Error posting mood: ", error);
         throw new Error("Failed to log mood!");
