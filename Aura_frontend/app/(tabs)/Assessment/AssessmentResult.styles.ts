@@ -73,11 +73,13 @@ const styles = StyleSheet.create({
     color: "#333",
     marginBottom: 6,
     justifyContent: "space-between",
+    textAlign: "center",
   },
   recommendationText: {
     fontSize: 14,
     color: "#555",
     lineHeight: 20,
+    textAlign: "center",
   },
 });
 

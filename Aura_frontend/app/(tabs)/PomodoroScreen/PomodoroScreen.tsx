@@ -17,30 +17,20 @@ import { Feather } from "@expo/vector-icons";
 import axios from "axios";
 import { BASE_URL } from "@/constants/Api";
 import { useAuth } from "@/context/AuthContext";
-import { Audio } from "expo-av";
 import {
   addTask,
   deleteTask,
   updateTask,
-  getTasks,toggleTaskCompletion
+  getTasks,
+  toggleTaskCompletion,
 } from "@/app/services/taskService";
 
-type Task = { _id?: string; name: string; note: string; userId?: string, completed?: boolean;  };
-
-const playAlarm = async () => {
-  try {
-    const { sound } = await Audio.Sound.createAsync(
-      require("../../../assets/audios/alarm.mp3")
-    );
-    await sound.playAsync();
-
-    // Unload after 4 seconds
-    setTimeout(() => {
-      sound.unloadAsync();
-    }, 4000);
-  } catch (error) {
-    console.warn("Failed to play sound:", error);
-  }
+type Task = {
+  _id?: string;
+  name: string;
+  note: string;
+  userId?: string;
+  completed?: boolean;
 };
 
 const PomodoroScreen = () => {
@@ -65,7 +55,14 @@ const PomodoroScreen = () => {
         setSecondsLeft((prev: number) => {
           if (prev <= 1) {
             setIsRunning(false);
-            playAlarm();
+            //stop the timer
+            setIsRunning(false);
+            //switch to break mode
+            if(!isBreak){
+              switchMode(true);
+            } else{
+              switchMode(false);
+            }
             return 0;
           }
           return prev - 1;

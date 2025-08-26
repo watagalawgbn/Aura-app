@@ -6,7 +6,7 @@ import {
   ImageBackground,
   ScrollView,
   SafeAreaView,
-  Alert
+  Alert,
 } from "react-native";
 import styles from "./PlayMeditation.styles";
 import { Feather } from "@expo/vector-icons";
@@ -15,9 +15,8 @@ import { Audio, AVPlaybackStatus } from "expo-av";
 import { BASE_URL } from "@/constants/Api";
 
 const PlayMeditationScreen = () => {
-
   const router = useRouter();
-  const { title, filename, imageId } = useLocalSearchParams();//extract parameters from route
+  const { title, filename, imageId } = useLocalSearchParams(); //extract parameters from route
 
   //make sure parameters are in string format(not array)
   const titleString = Array.isArray(title) ? title[0] : title;
@@ -26,11 +25,11 @@ const PlayMeditationScreen = () => {
   //manager audio and UI state
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0); // tplayback progress(0-1)
-  const [currentTime, setCurrentTime] = useState("0:00"); // Elapsed playback time 
+  const [currentTime, setCurrentTime] = useState("0:00"); // Elapsed playback time
   const [totalTime, setTotalTime] = useState("10:00"); // Total duration as string
   const [totalDuration, setTotalDuration] = useState(600000); // Total duration in milliseconds
   const [isLoaded, setIsLoaded] = useState(false); //track loading state for API call
-  const [imageUrl, setImageUrl] = useState(""); //url for the image 
+  const [imageUrl, setImageUrl] = useState(""); //url for the image
 
   const soundRef = useRef<Audio.Sound | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -48,7 +47,9 @@ const PlayMeditationScreen = () => {
   }, [imageIdString]);
 
   // Wait until audio duration is valid
-  const waitForValidDuration = async ( sound: Audio.Sound ): Promise<number | null> => {
+  const waitForValidDuration = async (
+    sound: Audio.Sound
+  ): Promise<number | null> => {
     for (let i = 0; i < 30; i++) {
       const status = await sound.getStatusAsync();
 
@@ -95,7 +96,7 @@ const PlayMeditationScreen = () => {
         sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
         setIsLoaded(true);
 
-         // Set duration and format for UI
+        // Set duration and format for UI
         const actualDuration = await waitForValidDuration(sound);
         if (actualDuration) {
           setTotalDuration(actualDuration);
@@ -108,7 +109,10 @@ const PlayMeditationScreen = () => {
         }
       } catch (error) {
         console.error("Failed to load audio", error);
-        Alert.alert("Error", "Unable to load meditation audio. Please try again.");
+        Alert.alert(
+          "Error",
+          "Unable to load meditation audio. Please try again."
+        );
       }
     };
 
@@ -154,7 +158,7 @@ const PlayMeditationScreen = () => {
   }, [isPlaying]);
 
   // Update UI based on current playback status
-  const onPlaybackStatusUpdate = (status: AVPlaybackStatus) => {
+  const onPlaybackStatusUpdate = async(status: AVPlaybackStatus) => {
     if (!status.isLoaded || !("durationMillis" in status)) {
       return;
     }
@@ -182,6 +186,13 @@ const PlayMeditationScreen = () => {
       setIsPlaying(false);
       setProgress(0);
       setCurrentTime("0:00");
+      if (soundRef.current) {
+        // Move back to start
+        await soundRef.current.setPositionAsync(0);
+
+        // Ensure it's paused (so it doesn’t auto-play)
+        await soundRef.current.pauseAsync();
+      }
     }
   };
 
@@ -323,6 +334,5 @@ const PlayMeditationScreen = () => {
 
   return renderContent();
 };
-
 
 export default PlayMeditationScreen;
