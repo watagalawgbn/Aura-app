@@ -8,45 +8,30 @@ import {
   StatusBar,
 } from "react-native";
 import styles from "./Assessment.styles";
-import { fetchAssessmentQuestions, submitAssessmentAnswers } from "../../services/assessmentService";
+import { fetchAssessmentQuestions, submitAssessmentAnswers, Question, Answer } from "../../services/assessmentService";
 import { ProgressBar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { BASE_URL } from "@/constants/Api";
-import * as SecureStore from 'expo-secure-store';
 
-type Option = {
-  label: string;
-  value: number;
-};
-
-type Question = {
-  id: string;
-  question: string;
-  type: "PHQ" | "GAD" | "DASS";
-  options: Option[];
-};
 
 export default function Assessment() {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedOption, setSelectedOption] = useState<{
-    [index: number]: { id: string; type: string; answer: number };
-  }>({});
-  const isOptionSelected = selectedOption[currentQuestionIndex] !== undefined;
+  const [questions, setQuestions] = useState<Question[]>([]); //question list
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); //current question index
+  const [loading, setLoading] = useState(true); //loading state
+  const [error, setError] = useState<string | null>(null); //error state
+  const [selectedOption, setSelectedOption] = useState<{[index: number]: Answer;}>({}); //store user's answers
+  const isOptionSelected = selectedOption[currentQuestionIndex] !== undefined; //check if the user has selected a option
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current; //animation value
   const router = useRouter();
 
+  //-------------FETCH QUESTIONS----------------
   useEffect(() => {
     const loadQuestions = async () => {
       try {
-        const data = await fetchAssessmentQuestions();
+        const data = await fetchAssessmentQuestions(); //call the service
         setQuestions(data);
-      } catch (err) {
-        console.error("Failed to fetch questions:", err);
+      } catch{
         setError("Failed to load assessment questions");
       } finally {
         setLoading(false);
@@ -56,8 +41,10 @@ export default function Assessment() {
     loadQuestions();
   }, []);
 
+  //-------------NEXT BUTTON-----------------------
   const handleNext = async () => {
     if (currentQuestionIndex < questions.length - 1) {
+      //go to 
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       fadeIn();
     } else {

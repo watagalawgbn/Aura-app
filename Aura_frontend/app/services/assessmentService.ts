@@ -1,23 +1,20 @@
 //services/assessmentService.tsx
 
-import axios from 'axios';
-import { BASE_URL } from '@/constants/Api';
-import *  as SecureStore from "expo-secure-store";
 import apiClient from './apiClient';
 
-type Option = {
+export type Option = {
     label: string;
     value: number;
 };
 
-type Question = {
+export type Question = {
     id: string;
     question: string;
     type: "PHQ" | "GAD" | "DASS";
     options: Option[]; 
 };
 
-type Answer = {
+export type Answer = {
     id: string;
     type: string;
     answer: number;
