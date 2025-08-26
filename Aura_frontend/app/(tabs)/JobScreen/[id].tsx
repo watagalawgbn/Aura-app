@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router"; // to read params passed from JobCard
 import {
   ScrollView,
   View,
@@ -12,9 +12,9 @@ import styles from "./JobScreen.styles";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 export default function JobDetails() {
-  const { job } = useLocalSearchParams();
+  const { job } = useLocalSearchParams();  // get "job" param passed in router.push
   const jobData = JSON.parse(job as string);
-  console.log("📝 jobData in details screen: ", jobData);
+  console.log("jobData in details screen: ", jobData);
 
   const formatDate = (dateTime: string) => {
     if(!dateTime) return "Not Available";
