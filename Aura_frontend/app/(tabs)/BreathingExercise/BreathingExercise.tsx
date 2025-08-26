@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import styles from './BreathingExercise.styles';
+import styles from "./BreathingExercise.styles";
 import * as SecureStore from "expo-secure-store";
 import Animated, {
   useSharedValue,
@@ -24,32 +24,35 @@ import Animated, {
 } from "react-native-reanimated";
 import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
 import { BASE_URL } from "@/constants/Api";
+import { saveBreathingSession } from "@/app/services/breathingService";
 
 const { width } = Dimensions.get("window");
 const CIRCLE_SIZE = width * 0.5;
-const PROGRESS_CIRCLE_SIZE = CIRCLE_SIZE + 100; // Progress ring is larger
+const PROGRESS_CIRCLE_SIZE = CIRCLE_SIZE + 100; // outer progress circle size
 const PROGRESS_RADIUS = (PROGRESS_CIRCLE_SIZE - 20) / 2;
 const STROKE_WIDTH = 8;
-const CIRCUMFERENCE = 2 * Math.PI * PROGRESS_RADIUS;
+const CIRCUMFERENCE = 2 * Math.PI * PROGRESS_RADIUS; //circumference of the progress circle
 
+//animated svg circle
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 type Phase = "in" | "hold" | "out";
 
 export default function BreathingExercise() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [phase, setPhase] = useState<Phase>("in");
-  const [seconds, setSeconds] = useState(4);
-  const [quoteIndex, setQuoteIndex] = useState(0);
-  const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
-  const [totalDuration, setTotalDuration] = useState<number>(0);
+  const [isPlaying, setIsPlaying] = useState(false); //whether session is running
+  const [phase, setPhase] = useState<Phase>("in"); //current breathing phase
+  const [seconds, setSeconds] = useState(4); //countdown timer
+  const [quoteIndex, setQuoteIndex] = useState(0); // which quote to show
+  const [sessionStartTime, setSessionStartTime] = useState<number | null>(null); //session start timestamp
+  const [totalDuration, setTotalDuration] = useState<number>(0); //total session length
 
-  const countdownInterval = useRef<number | null>(null);
-  const intervalRef = useRef<number | null>(null);
+  const countdownInterval = useRef<number | null>(null); //countdown timer ref
+  const intervalRef = useRef<number | null>(null); //phase timer ref
 
-  const scale = useSharedValue(1);
-  const progress = useSharedValue(0);
+  const scale = useSharedValue(1); //circle scale(grow/shrink)
+  const progress = useSharedValue(0); //progress bar value
 
+  //durations(seconds) for each breathing phase
   const phaseDurations: Record<Phase, number> = {
     in: 4,
     hold: 7,
@@ -65,8 +68,9 @@ export default function BreathingExercise() {
     "You are safe, you are well.",
   ];
 
+  //---------------------------ANIMATE EACH PHASE------------------
   const animatePhase = (phase: Phase) => {
-    console.log("Animating phase:", phase);
+    //stop any running animations
     cancelAnimation(scale);
     cancelAnimation(progress);
 
@@ -74,6 +78,7 @@ export default function BreathingExercise() {
     progress.value = 0;
 
     if (phase === "in") {
+      //scale up during inhale
       scale.value = withTiming(1.2, {
         duration: phaseDurations.in * 1000,
         easing: Easing.inOut(Easing.ease),
@@ -83,6 +88,7 @@ export default function BreathingExercise() {
         easing: Easing.linear,
       });
     } else if (phase === "out") {
+      //scale down during exhale
       scale.value = withTiming(1, {
         duration: phaseDurations.out * 1000,
         easing: Easing.inOut(Easing.ease),
@@ -92,7 +98,7 @@ export default function BreathingExercise() {
         easing: Easing.linear,
       });
     } else if (phase === "hold") {
-      // Keep current scale during hold
+      // Keep current scale during hold, only progress
       progress.value = withTiming(1, {
         duration: phaseDurations.hold * 1000,
         easing: Easing.linear,
@@ -100,6 +106,7 @@ export default function BreathingExercise() {
     }
   };
 
+  //-----------------START SESSION----------------
   const startBreathing = () => {
     let currentPhase: Phase = "in";
     setPhase(currentPhase);
@@ -107,21 +114,25 @@ export default function BreathingExercise() {
     animatePhase(currentPhase);
     setSessionStartTime(Date.now());
 
+    //countdown for seconds display
     countdownInterval.current = setInterval(() => {
       setSeconds((s) => {
         return s > 0 ? s - 1 : s;
       });
     }, 1000);
 
+    //recursive phase loop
     const runPhase = (nextPhase: Phase) => {
-      setQuoteIndex((prev) => (prev + 1) % quotes.length); // move this above phase change
+      setQuoteIndex((prev) => (prev + 1) % quotes.length); // cycle quotes
       setPhase(nextPhase);
       setSeconds(phaseDurations[nextPhase]);
       animatePhase(nextPhase);
 
+      //choose next phase
       const next: Phase =
         nextPhase === "in" ? "hold" : nextPhase === "hold" ? "out" : "in";
 
+      // schedule next phase change
       intervalRef.current = setTimeout(
         () => runPhase(next),
         phaseDurations[nextPhase] * 1000
@@ -131,23 +142,27 @@ export default function BreathingExercise() {
     runPhase(currentPhase);
   };
 
+  //---------------STOP SESSION------------------------
   const stopBreathing = () => {
+    //cancel animations
     cancelAnimation(scale);
     cancelAnimation(progress);
+    //clear timers
     if (intervalRef.current) clearTimeout(intervalRef.current);
     if (countdownInterval.current) clearInterval(countdownInterval.current);
 
+    //reset visuals
     scale.value = 1;
     progress.value = 0;
     setPhase("in");
     setSeconds(4);
 
+    //save session duration if session was started
     if (sessionStartTime) {
       const durationSec = Math.floor((Date.now() - sessionStartTime) / 1000);
-      setTotalDuration(durationSec); // still useful if you want it stored in state
-      sendSessionToBackend(durationSec);
+      setTotalDuration(durationSec);
+      saveBreathingSession(durationSec);
 
-      // ✅ Move Alert here
       Alert.alert(
         "Session Complete",
         `You breathed for ${durationSec} seconds`
@@ -156,16 +171,18 @@ export default function BreathingExercise() {
     }
   };
 
+  //-------------------HANDLE PLAY/PAUSE
   useEffect(() => {
     if (isPlaying) {
       startBreathing();
     } else {
       stopBreathing();
     }
-
+    //cleanup when component unmounts
     return stopBreathing;
   }, [isPlaying]);
 
+  //---------------ANIMATED STYLES-----------------
   const animatedCircleStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
@@ -175,29 +192,6 @@ export default function BreathingExercise() {
       strokeDashoffset: CIRCUMFERENCE - CIRCUMFERENCE * progress.value,
     };
   });
-
-  const sendSessionToBackend = async (durationInSeconds: number) => {
-    try {
-      const userId = await SecureStore.getItemAsync("userId"); // Dynamically loaded
-      const token = await SecureStore.getItemAsync("authToken");
-      if (!userId) return console.warn("User ID not found in SecureStore");
-
-      await fetch(`${BASE_URL}/api/breathing-sessions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId,
-          duration: durationInSeconds,
-          pattern: { inhale: 4, hold: 7, exhale: 8 },
-        }),
-      });
-    } catch (error) {
-      console.error("Error saving session:", error);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -222,12 +216,14 @@ export default function BreathingExercise() {
         </TouchableOpacity>
       </View>
 
+      {/* Animated circle + progress circle */}
       <View style={styles.circleWrapper}>
         <Svg
           width={PROGRESS_CIRCLE_SIZE}
           height={PROGRESS_CIRCLE_SIZE}
           style={styles.svgContainer}
         >
+          {/* bg circle */}
           <Circle
             cx={PROGRESS_CIRCLE_SIZE / 2}
             cy={PROGRESS_CIRCLE_SIZE / 2}
@@ -236,6 +232,7 @@ export default function BreathingExercise() {
             strokeWidth={STROKE_WIDTH}
             fill="none"
           />
+          {/* progress circle */}
           <AnimatedCircle
             cx={PROGRESS_CIRCLE_SIZE / 2}
             cy={PROGRESS_CIRCLE_SIZE / 2}
@@ -248,7 +245,7 @@ export default function BreathingExercise() {
             fill="none"
           />
         </Svg>
-
+        {/* inner animated breating circle */}
         <Animated.View style={[styles.circle, animatedCircleStyle]}>
           <Svg
             height={CIRCLE_SIZE}
@@ -257,7 +254,7 @@ export default function BreathingExercise() {
           >
             <Defs>
               <RadialGradient id="grad" cx="50%" cy="50%" r="50%">
-                <Stop offset="0%" stopColor="#5FB21F" stopOpacity="1" />
+                <Stop offset="25%" stopColor="#5FB21F" stopOpacity="1" />
                 <Stop offset="100%" stopColor="#224831" stopOpacity="1" />
               </RadialGradient>
             </Defs>
@@ -273,8 +270,8 @@ export default function BreathingExercise() {
             {phase === "in"
               ? "Breathe In"
               : phase === "hold"
-              ? "Hold"
-              : "Breathe Out"}
+                ? "Hold"
+                : "Breathe Out"}
           </Text>
         </Animated.View>
       </View>
@@ -292,4 +289,3 @@ export default function BreathingExercise() {
     </SafeAreaView>
   );
 }
-

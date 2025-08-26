@@ -1,6 +1,6 @@
 //services/sleepService.tsx
 
-import dayjs from "dayjs";
+import dayjs from "dayjs"; //for date formatting
 import apiClient from "./apiClient";
 
 type sleepData = {
@@ -10,10 +10,11 @@ type sleepData = {
   endTime?: string;
 };
 
-//fetch sleep data to chart
+//--------------GET SLEEP DATA----------------
 export const fetchSleepData = async () => {
   try{
     const res = await apiClient.get<sleepData[]>("/api/sleep");
+    // Transform the data: format the date, rename "hours" to "duration"
     return res.data.map((entry) => ({
       date: dayjs(entry.date).format("YYYY-MM-DD"),
       duration: entry.hours,
@@ -28,7 +29,7 @@ export const fetchSleepData = async () => {
 };
 
 
-//add sleep records
+//-------------ADD SLEEP DATA----------------
 export const postSleepRecord = async (record: {
   date: string;
   duration: number;

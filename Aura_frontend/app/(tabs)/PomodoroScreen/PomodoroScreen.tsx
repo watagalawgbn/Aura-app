@@ -17,6 +17,8 @@ import { Feather } from "@expo/vector-icons";
 import axios from "axios";
 import { BASE_URL } from "@/constants/Api";
 import { useAuth } from "@/context/AuthContext";
+import { Audio } from "expo-av";
+
 import {
   addTask,
   deleteTask,
@@ -36,16 +38,17 @@ type Task = {
 const PomodoroScreen = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [currentTaskIndex, setCurrentTaskIndex] = useState<number | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [newTask, setNewTask] = useState<Task>({ name: "", note: "" });
-  const [showGlobalOptions, setShowGlobalOptions] = useState(false);
-  const [isBreak, setIsBreak] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(1 * 60);
-  const [isRunning, setIsRunning] = useState(false);
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [taskMenuIndex, setTaskMenuIndex] = useState<number | null>(null);
-
-  const { user } = useAuth();
+  const [showModal, setShowModal] = useState(false); //add task modal
+  const [newTask, setNewTask] = useState<Task>({ name: "", note: "" }); //data for new/edited task
+  const [showGlobalOptions, setShowGlobalOptions] = useState(false); //clear tasks menu
+  const [isBreak, setIsBreak] = useState(false); // pomodoro/break mode
+  const [secondsLeft, setSecondsLeft] = useState(25 * 60); //countdown time in seconds
+  const [isRunning, setIsRunning] = useState(false); //timer state
+  const [editIndex, setEditIndex] = useState<number | null>(null); //index of task being edited
+  const [taskMenuIndex, setTaskMenuIndex] = useState<number | null>(null); //index of task menu being shown
+  const [showBanner, setShowBanner] = useState(false); //show pomodoro/break banner
+  const [bannerMessage, setBannerMessage] = useState(""); // message inside banner
+  const { user } = useAuth(); //get current user
 
   // ---------------- TIMER ----------------
   useEffect(() => {
@@ -54,26 +57,37 @@ const PomodoroScreen = () => {
       timer = setInterval(() => {
         setSecondsLeft((prev: number) => {
           if (prev <= 1) {
+            //stop timer
             setIsRunning(false);
-            //stop the timer
-            setIsRunning(false);
-            //switch to break mode
-            if(!isBreak){
-              switchMode(true);
-            } else{
-              switchMode(false);
+
+            // Play alarm sound
+            playAlarm();
+
+            // Show bannermessage
+            if (!isBreak) {
+              setBannerMessage("Pomodoro finished 🎉 Time for a break!");
+              switchMode(true); //switch to break
+            } else {
+              setBannerMessage("Break over ⏰ Back to work!");
+              switchMode(false); //switch back to pomodoro
             }
+            setShowBanner(true);
+
+            // Auto-hide banner after 3 seconds
+            setTimeout(() => setShowBanner(false), 3000);
+
             return 0;
           }
-          return prev - 1;
+          return prev - 1; // decrement seconds
         });
-      }, 1000);
+      }, 1000); // run every second
     }
     return () => {
-      if (timer) clearInterval(timer);
+      if (timer) clearInterval(timer); //cleanup when stopping
     };
-  }, [isRunning]);
+  }, [isRunning, isBreak]);
 
+  //---------------- LOAD TASKS ----------------
   useEffect(() => {
     const loadTasks = async () => {
       if (user?.id) {
@@ -90,6 +104,8 @@ const PomodoroScreen = () => {
     loadTasks();
   }, [user?.id]);
 
+  // ---------------- HELPERS ----------------
+  //format seconds into mm:ss
   const formatTime = (s: number) => {
     const m = Math.floor(s / 60);
     const sec = s % 60;
@@ -98,6 +114,7 @@ const PomodoroScreen = () => {
       .padStart(2, "0")}`;
   };
 
+  //start/pause timer
   const toggleTimer = () => {
     if (tasks.length === 0 || currentTaskIndex === null) {
       alert("Please add a task before starting the timer.");
@@ -106,13 +123,26 @@ const PomodoroScreen = () => {
     setIsRunning((prev) => !prev);
   };
 
+  //play alarm sound
+  async function playAlarm() {
+    try {
+      const { sound } = await Audio.Sound.createAsync(
+        require("../../../assets/audios/clock.mp3")
+      );
+      await sound.playAsync();
+    } catch (err) {
+      console.error("Error playing sound:", err);
+    }
+  }
+
+  //switch between pomodoro and break
   const switchMode = (breakMode: boolean) => {
     setIsBreak(breakMode);
     setSecondsLeft(breakMode ? 5 * 60 : 25 * 60);
     setIsRunning(false);
   };
 
-  // ---------------- TASK SAVE ----------------
+  // ----------------SAVE TASK----------------
   const handleSaveTask = async () => {
     if (newTask.name.trim()) {
       try {
@@ -127,15 +157,15 @@ const PomodoroScreen = () => {
             setTasks(updated);
           }
         } else {
-          // try to add
+          // add new task
           const res = await addTask(newTask, user?.id!);
 
           if (res.status === 201 && res.task) {
-            const task: Task = res.task; // now definitely a Task
+            const task: Task = res.task; 
             setTasks((prev) => [...prev, task]);
             if (tasks.length === 0) setCurrentTaskIndex(0);
           } else if (res.status === 403) {
-            // workload exceeded
+            // user workload exceeded
             alert(
               `${res.data.message}\n You already used ${res.data.usedMinutes} mins.`
             );
@@ -147,11 +177,12 @@ const PomodoroScreen = () => {
               setTasks((prev) => [...prev, task]);
             }
           } else if (res.status === 409) {
-            // no sleep record
+            // user didn't log sleep hours
             alert("Please log your sleep hours before adding tasks.");
           }
         }
 
+        //reset modal state
         setShowModal(false);
         setNewTask({ name: "", note: "" });
         setEditIndex(null);
@@ -161,13 +192,14 @@ const PomodoroScreen = () => {
     }
   };
 
-  // ---------------- TASK DELETE ----------------
+  // ----------------DELETE TASK----------------
   const handleDeleteTask = async (index: number) => {
     try {
       const deleted = tasks[index];
       await deleteTask(deleted._id!);
       const updatedTasks = tasks.filter((_, i) => i !== index);
       setTasks(updatedTasks);
+      //update current task index
       setCurrentTaskIndex((prev) =>
         prev === index ? null : prev && prev > index ? prev - 1 : prev
       );
@@ -326,9 +358,30 @@ const PomodoroScreen = () => {
                           task._id!,
                           !task.completed
                         );
-                        setTasks((prev) =>
-                          prev.map((t) => (t._id === updated._id ? updated : t))
-                        );
+
+                        setTasks((prev) => {
+                          // update the task in place
+                          const updatedList = prev.map((t) =>
+                            t._id === updated._id ? updated : t
+                          );
+
+                          // move completed tasks to bottom
+                          const reordered = [
+                            ...updatedList.filter((t) => !t.completed),
+                            ...updatedList.filter((t) => t.completed),
+                          ];
+
+                          // set current task to first uncompleted
+                          const nextIndex = reordered.findIndex(
+                            (t) => !t.completed
+                          );
+
+                          setCurrentTaskIndex(
+                            nextIndex !== -1 ? nextIndex : null
+                          );
+
+                          return reordered;
+                        });
                       }}
                       style={{
                         width: 24,
@@ -473,6 +526,29 @@ const PomodoroScreen = () => {
           </View>
         </Modal>
       </ScrollView>
+      {showBanner && (
+        <View
+          style={{
+            position: "absolute",
+            top: 60,
+            left: 20,
+            right: 20,
+            padding: 15,
+            backgroundColor: "#52AE77",
+            borderRadius: 10,
+            alignItems: "center",
+            shadowColor: "#000",
+            shadowOpacity: 0.2,
+            shadowOffset: { width: 0, height: 2 },
+            shadowRadius: 4,
+            elevation: 5,
+          }}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>
+            {bannerMessage}
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

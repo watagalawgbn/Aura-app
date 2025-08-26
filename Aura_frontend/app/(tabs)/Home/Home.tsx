@@ -169,7 +169,7 @@ const HomeScreen = () => {
               <View style={styles.quickAccessContent}>
                 <Text style={styles.quickAccessTitle}>Boost Your Earnings</Text>
                 <TouchableOpacity
-                  onPress={() => router.push("/(tabs)/QuickAccess/QuickAccess")}
+                  onPress={() => router.push("/(tabs)/JobScreen/JobScreen")}
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>

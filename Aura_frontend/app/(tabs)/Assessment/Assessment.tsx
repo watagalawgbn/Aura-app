@@ -8,45 +8,30 @@ import {
   StatusBar,
 } from "react-native";
 import styles from "./Assessment.styles";
-import { fetchAssessmentQuestions } from "../../services/assessmentService";
+import { fetchAssessmentQuestions, submitAssessmentAnswers, Question, Answer } from "../../services/assessmentService";
 import { ProgressBar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { BASE_URL } from "@/constants/Api";
-import * as SecureStore from 'expo-secure-store';
 
-type Option = {
-  label: string;
-  value: number;
-};
-
-type Question = {
-  id: string;
-  question: string;
-  type: "PHQ" | "GAD" | "DASS";
-  options: Option[];
-};
 
 export default function Assessment() {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedOption, setSelectedOption] = useState<{
-    [index: number]: { id: string; type: string; answer: number };
-  }>({});
-  const isOptionSelected = selectedOption[currentQuestionIndex] !== undefined;
+  const [questions, setQuestions] = useState<Question[]>([]); //question list
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); //current question index
+  const [loading, setLoading] = useState(true); //loading state
+  const [error, setError] = useState<string | null>(null); //error state
+  const [selectedOption, setSelectedOption] = useState<{[index: number]: Answer;}>({}); //store user's answers
+  const isOptionSelected = selectedOption[currentQuestionIndex] !== undefined; //check if the user has selected a option
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current; //animation value
   const router = useRouter();
 
+  //-------------FETCH QUESTIONS----------------
   useEffect(() => {
     const loadQuestions = async () => {
       try {
-        const data = await fetchAssessmentQuestions();
+        const data = await fetchAssessmentQuestions(); //call the service
         setQuestions(data);
-      } catch (err) {
-        console.error("Failed to fetch questions:", err);
+      } catch{
         setError("Failed to load assessment questions");
       } finally {
         setLoading(false);
@@ -56,28 +41,19 @@ export default function Assessment() {
     loadQuestions();
   }, []);
 
+  //-------------NEXT BUTTON-----------------------
   const handleNext = async () => {
     if (currentQuestionIndex < questions.length - 1) {
+      //go to next question
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       fadeIn();
     } else {
+      //reached last question, submit answers
       const formattedAnswers = Object.values(selectedOption);
 
       try {
-        const token = await SecureStore.getItemAsync("authToken");
-
-        const response = await fetch(`${BASE_URL}/api/assessment/submit`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({ answers: formattedAnswers }),
-        });
-        console.log("Authorization Header:", `Bearer ${token}`);
-
-        const data = await response.json();
-
+        const data = await submitAssessmentAnswers(formattedAnswers);
+        //navigate to results screen with scores
         router.push({
           pathname: "/(tabs)/Assessment/AssessmentResult",
           params: {
@@ -95,15 +71,19 @@ export default function Assessment() {
     }
   };
 
+  //-------------BACK BUTTON-----------------------
   const handleBack = () => {
     if (currentQuestionIndex === 0) {
+      //first question, go back to home
       router.navigate("/(tabs)/Home/Home");
     } else {
+      //otherwise go to back one step
       setCurrentQuestionIndex(currentQuestionIndex - 1);
       fadeIn();
     }
   };
 
+  //-------------ANIMATION-----------------------
   const fadeIn = () => {
     fadeAnim.setValue(0);
     Animated.timing(fadeAnim, {
@@ -113,12 +93,14 @@ export default function Assessment() {
     }).start();
   };
 
+  //start fade-in when questions load
   useEffect(() => {
     if (questions.length > 0) {
       fadeIn();
     }
   }, [questions]);
 
+  //-------------LOADINF/ERROR HANDLING-----------------------
   if (loading)
     return (
       <View style={styles.loadingContainer}>
@@ -135,8 +117,9 @@ export default function Assessment() {
 
   if (questions.length === 0) return null;
 
+  //-------------RENDER QUESTION-----------------------
   const currentQuestion = questions[currentQuestionIndex];
-  const progress = (currentQuestionIndex + 1) / questions.length;
+  const progress = (currentQuestionIndex + 1) / questions.length; //progress bar value
 
   return (
     <View style={styles.mainContainer}>
@@ -166,7 +149,8 @@ export default function Assessment() {
         </Text>
 
         <Text style={styles.currentQuestion}>{currentQuestion.question}?</Text>
-
+        
+        {/* options */}
         {currentQuestion.options.map((opt) => {
           const isSelected =
             selectedOption[currentQuestionIndex]?.answer === opt.value;

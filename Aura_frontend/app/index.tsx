@@ -10,7 +10,7 @@ const Index = () => {
   useEffect(() => {
     if (!loading) {
       if (user) {
-        router.replace("/(tabs)/SleepScreen/SleepTimerScreen");
+        router.replace("/(tabs)/Home/Home");
       } else {
         router.replace("/(auth)/SignIn/SignIn");
       }

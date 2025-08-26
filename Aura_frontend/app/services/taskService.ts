@@ -8,17 +8,15 @@ type taskData = {
   completed?: boolean,
 };
 
-// add task
+//-------------ADD TASK------------
 export const addTask = async (newTask: taskData, userId: string, override = false): Promise<{task?: taskData, status: number; data: any}> => {
   try {
     const req = await apiClient.post(`/api/tasks`, {
-      ...newTask,
+      ...newTask, // spread task fields (name, note, etc.)
       userId,
       override,
     });
-    console.log("task added:", req.data.task);
-    console.log("Tdata:", req.data);
-    return {task: req.data.task, status: req.status, data: req.data};
+    return {task: req.data.task, status: req.status, data: req.data}; //return created task
   } catch (e: any) {
     if(e.response){
       return { status: e.response.status, data: e.response.data};    
@@ -27,10 +25,11 @@ export const addTask = async (newTask: taskData, userId: string, override = fals
   }
 };
 
+//------------ Toggle task completion -------------
 export const toggleTaskCompletion = async (taskId: string, completed: boolean) => {
   try {
-    const res = await apiClient.patch(`/api/tasks/${taskId}`, { completed });
-    return res.data;
+    const res = await apiClient.patch(`/api/tasks/${taskId}`, { completed }); //only update completed field
+    return res.data; //return updated task
   } catch (err) {
     console.error("Error toggling task completion", err);
     throw err;
@@ -38,12 +37,12 @@ export const toggleTaskCompletion = async (taskId: string, completed: boolean) =
 };
 
 
-//update task
-export const updateTask = async(taskId: string, updates: Partial<taskData>): Promise<taskData> => {
+//------------UPDATE TASK----------------
+export const updateTask = async(taskId: string, updates: Partial<taskData>): Promise<taskData> => { //accept partal updates
     try{
         const req = await apiClient.put(`/api/tasks/${taskId}`, updates);
         console.log("Updated task: ", req.data);
-        return req.data;
+        return req.data; //return updated task
     }
     catch(e){
         console.error("Failed to update task:", e);
@@ -51,7 +50,7 @@ export const updateTask = async(taskId: string, updates: Partial<taskData>): Pro
     }
 };
 
-// delete a task
+//--------------DELETE TASK----------------
 export const deleteTask = async(taskId: string): Promise<void> => {
     try{
         const res = await apiClient.delete(`/api/tasks/${taskId}`);
@@ -63,10 +62,11 @@ export const deleteTask = async(taskId: string): Promise<void> => {
     }
 };
 
+//--------------GET TASKS----------------
 export const getTasks = async (userId: string) => {
   try {
     const res = await apiClient.get(`/api/tasks?userId=${userId}`);
-    return res.data.tasks; // make sure your backend returns { tasks: Task[] }
+    return res.data.tasks; // backend should return { tasks: Task[] }
   } catch (err) {
     console.error("Error fetching tasks", err);
     return [];
