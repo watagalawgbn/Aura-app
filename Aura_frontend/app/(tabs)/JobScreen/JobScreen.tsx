@@ -24,7 +24,8 @@ const JobScreen = () => {
   const [loading, setLoading] = useState(false); 
   const [currentPage, setCurrentPage] = useState(1); //page number for pagination
 
-  const handleJobs = async () => { // fetch jobs from the backend API
+  //----------------------FETCH JOBS--------------------------
+  const handleJobs = async () => { 
     if (skillList.length === 0) {
       console.warn("⚠️ Cannot fetch jobs without skills");
       alert("⚠️ Cannot fetch jobs without skills");
@@ -32,6 +33,8 @@ const JobScreen = () => {
     }
     try {
       setLoading(true);
+
+      //call backend API to fetch jobs
       const results = await fetchJobs({
         skills: skillList,
         page: currentPage,
@@ -53,7 +56,7 @@ const JobScreen = () => {
           (job, index, self) =>
             index === self.findIndex((j) => j.id === job.id)
         );
-
+        //save to storage for caching
         AsyncStorage.setItem(
           "jobData",
           JSON.stringify({ jobs: uniqueJobs, skills: skillList })
@@ -68,7 +71,7 @@ const JobScreen = () => {
     }
   };
 
-  //load cached data on first mount
+  //l------------------LOAD CACHED DATA----------------
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -85,7 +88,7 @@ const JobScreen = () => {
     loadData();
   }, []);
 
-  //clear state when leaving the screen
+  //----------------------CLEAR STATE ON EXIT--------------
   useFocusEffect(
     useCallback(() => {
       // screen focused → keep state
@@ -99,14 +102,14 @@ const JobScreen = () => {
     }, [])
   );
 
-  //add a new skill to the list
+  //-----------------ADD NEW SKILL-------------------
   const handleAddSkill = async () => {
     if (skills.trim() !== "") {
       const updatedSkills = [...skillList, skills.trim()];
       setSkillList(updatedSkills);
       setJobs([]); //clear jobs so we only fresh results
-      setCurrentPage(1);
-      setSkills("");
+      setCurrentPage(1); //reset pagination
+      setSkills(""); //clear input skills
 
       await AsyncStorage.setItem(
         "jobData",
@@ -115,7 +118,7 @@ const JobScreen = () => {
     }
   };
 
-  //auto fetch when page changes(for pagination)
+  //----------------AUTO FETCH ON PAGE CHANGE------------------
   useEffect(() => {
     if (currentPage > 1) {
       handleJobs();
@@ -159,7 +162,7 @@ const JobScreen = () => {
                   onPress={async () => {
                     setSkillList((prev) => {
                       const updated = prev.filter((_, i) => i !== index);
-                      setJobs([]); // ✅ clear old jobs
+                      setJobs([]); // clear old jobs
                       setCurrentPage(1);
                       AsyncStorage.setItem(
                         "jobData",

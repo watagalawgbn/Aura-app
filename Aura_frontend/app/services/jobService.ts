@@ -37,8 +37,10 @@ export const fetchJobs = async({
             city,
             page
         });
+        //extract results safely(fallback empty array if none)
         const results: Job[] = res.data.results || [];
 
+        //remove duplicate jobs by id
         const uniqueResults = results.filter(
             (job, index, self) => index === self.findIndex((j) => j.id === job.id)
         );

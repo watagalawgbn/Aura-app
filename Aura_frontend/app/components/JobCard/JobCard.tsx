@@ -5,6 +5,7 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import type { Job } from "@/app/services/jobService";
 
+//props type for jobcard
 type JobCardProps = {
   job: Job;
 };
@@ -38,8 +39,8 @@ const JobCard = ({ job }: JobCardProps) => {
         style={styles.applyButton2}
         onPress={() =>
           router.push({
-            pathname: "/(tabs)/JobScreen/[id]",
-            params: { id: job.id, job: JSON.stringify(job) },
+            pathname: "/(tabs)/JobScreen/[id]", //dynamic job details screen
+            params: { id: job.id, job: JSON.stringify(job) }, //pass job id and full job as string
           })
         }
       >
