@@ -13,7 +13,6 @@ import {
   Alert,
 } from "react-native";
 import styles from "./BreathingExercise.styles";
-import * as SecureStore from "expo-secure-store";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -23,7 +22,6 @@ import Animated, {
   cancelAnimation,
 } from "react-native-reanimated";
 import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
-import { BASE_URL } from "@/constants/Api";
 import { saveBreathingSession } from "@/app/services/breathingService";
 
 const { width } = Dimensions.get("window");
