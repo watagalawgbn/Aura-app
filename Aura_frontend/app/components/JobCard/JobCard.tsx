@@ -3,19 +3,7 @@ import React from "react";
 import styles from "../../(tabs)/JobScreen/JobScreen.styles";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-
-export type Job = {
-  id: string;
-  title: string;
-  company: string;
-  location: string;
-  type: string | null;
-  postedAt: string;
-  applyLink: string;
-  description: string;           
-  descriptionSnippet: string; 
-  remote: boolean;
-};
+import type { Job } from "@/app/services/jobService";
 
 type JobCardProps = {
   job: Job;

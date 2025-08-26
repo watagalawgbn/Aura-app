@@ -1,3 +1,4 @@
+//services/breathingService.ts
 import apiClient from "./apiClient";
 import * as SecureStore from 'expo-secure-store';
 
@@ -13,7 +14,6 @@ export type BreathingSession = {
 
 export const saveBreathingSession = async (durationInSeconds: number) => {
   try {
-    // no need to fetch token here — apiClient already attaches it
     const userId = await SecureStore.getItemAsync("userId");
     if (!userId) {
       console.warn("User ID not found in SecureStore");
