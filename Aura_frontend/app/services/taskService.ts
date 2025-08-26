@@ -11,12 +11,12 @@ type taskData = {
 //-------------ADD TASK------------
 export const addTask = async (newTask: taskData, userId: string, override = false): Promise<{task?: taskData, status: number; data: any}> => {
   try {
-    const req = await apiClient.post(`/api/tasks`, {
+    const res = await apiClient.post(`/api/tasks`, {
       ...newTask, // spread task fields (name, note, etc.)
       userId,
       override,
     });
-    return {task: req.data.task, status: req.status, data: req.data}; //return created task
+    return {task: res.data.task, status: res.status, data: res.data}; //return created task
   } catch (e: any) {
     if(e.response){
       return { status: e.response.status, data: e.response.data};    
