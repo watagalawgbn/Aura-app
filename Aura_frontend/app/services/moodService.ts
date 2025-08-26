@@ -1,4 +1,4 @@
-//services.moodService.ts
+//services/moodService.ts
 
 import apiClient from "./apiClient";
 
