@@ -4,6 +4,8 @@ const Sleep = require("../models/Sleep");
 const Task = require("../models/Task");
 const { getMaxWorkLoad } = require("../utils/workloadRules");
 
+
+//-----------------ADD TASK-----------------
 exports.addTask = async (req, res) => {
   try {
     const { name, note, userId, override } = req.body;
@@ -61,6 +63,8 @@ exports.addTask = async (req, res) => {
   }
 };
 
+
+//----------------TOGGLE TASK COMPLETION-----------------
 exports.toggleCompletion = async (req, res) => {
   try {
     const { completed } = req.body;
@@ -76,7 +80,7 @@ exports.toggleCompletion = async (req, res) => {
   }
 };
 
-
+//----------------UPDATE TASK DETAILS-----------------
 exports.updateTask = async (req, res) => {
   try {
     const updated = await Task.findByIdAndUpdate(req.params.id, req.body, {
@@ -88,6 +92,7 @@ exports.updateTask = async (req, res) => {
   }
 };
 
+//----------------DELETE TASK-----------------
 exports.deleteTask = async (req, res) => {
   try {
     await Task.findByIdAndDelete(req.params.id);
@@ -97,6 +102,7 @@ exports.deleteTask = async (req, res) => {
   }
 };
 
+//----------------GET TASKS FOR TODAY-----------------
 exports.getTasks = async (req, res) => {
   try {
     const { userId } = req.query; // expecting ?userId=xxx

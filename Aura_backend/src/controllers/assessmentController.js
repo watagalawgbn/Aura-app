@@ -2,7 +2,7 @@ const { getShuffledQuestions } = require("../services/assessmentService");
 const { calculateScores } = require("../services/scoringService");
 const AssessmentResult = require("../models/AssessmentResult");
 
-// GET /api/assessments
+//----------------GET ASSESSMENT QUESTIONS-----------------
 exports.getAssessmentQuestions = (req, res) => {
   try {
     //fetch and shuffle questions from the service
@@ -14,7 +14,7 @@ exports.getAssessmentQuestions = (req, res) => {
   }
 };
 
-// POST /api/assessments/submit
+//----------------SUBMIT ASSESSMENT-----------------
 exports.submitAssessment = async (req, res) => {
   try {
     const userId = req.user.id;

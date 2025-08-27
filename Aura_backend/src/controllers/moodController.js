@@ -2,14 +2,15 @@
 
 const Mood = require("../models/Mood");
 
+//-----------------ADD MOOD-----------------
 exports.addMood = async (req, res) => {
   const { mood } = req.body;
 
   try {
     const newMood = new Mood({ user: req.user.id, mood });
-    console.log("New iddd: ", req.user.id);
+    console.log("New id: ", req.user.id);
     await newMood.save();
-    console.log("New mood saveddd: ", newMood);
+    console.log("New mood saved: ", newMood);
     res.status(201).json(newMood);
   } catch (err) {
     console.log(`Exception occured: ${err}`);
@@ -17,6 +18,7 @@ exports.addMood = async (req, res) => {
   }
 };
 
+//-----------------GET MOODS-----------------
 exports.getMoods = async (req, res) => {
   const { range } = req.query; // 'weeks', 'months'
   const end = new Date();
