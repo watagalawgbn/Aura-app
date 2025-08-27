@@ -5,7 +5,7 @@ exports.saveSession = async (req, res) => {
   try {
     const { userId, duration, pattern } = req.body;
 
-    const session = new BreathingSession({ userId, duration, pattern });
+    const session = new BreathingSession({ userId, duration, pattern }); //create a new session document
     await session.save();
 
     res.status(201).json({ message: "Session saved", session });
