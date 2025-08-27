@@ -11,7 +11,7 @@ const authenticateToken = require("../middleware/authMiddleware");
 // Get shuffled assessment questions
 router.get("/", getAssessmentQuestions);
 
-// Submit assessment answers (only require authentication for this route)
+// Submit assessment answers
 router.post("/submit", authenticateToken, submitAssessment);
 
 module.exports = router;

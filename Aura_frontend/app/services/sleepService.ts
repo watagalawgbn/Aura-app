@@ -2,13 +2,7 @@
 
 import dayjs from "dayjs"; //for date formatting
 import apiClient from "./apiClient";
-
-type sleepData = {
-  date: string;
-  hours: number;
-  startTime?: string;
-  endTime?: string;
-};
+import { sleepData } from "@/types/sleep";
 
 //--------------GET SLEEP DATA----------------
 export const fetchSleepData = async () => {

@@ -8,7 +8,7 @@ import {
   StatusBar,
   Pressable,
 } from "react-native";
-import styles from "./QuickAccess.styles";
+import styles from "./QuickAccessScreen.styles";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import BackButton from "../../components/BackButton";
@@ -70,14 +70,14 @@ const QuickAccessScreen = () => {
             image={require("../../../assets/images/stress.jpg")}
             title="Meditation"
             subtitle={"Guided sessions for inner calm"}
-            onPress={() => router.navigate("/(tabs)/Meditation/Meditation")}
+            onPress={() => router.navigate("/(tabs)/Meditation/MeditationScreen")}
           />
           <FeatureCard
             image={require("../../../assets/images/calm.jpeg")}
             title="Breathing"
             subtitle={"Mindful breathing to relax"}
             onPress={() =>
-              router.navigate("/(tabs)/BreathingExercise/BreathingExercise")
+              router.navigate("/(tabs)/BreathingExercise/BreathingExerciseScreen")
             }
           />
         </View>

@@ -322,7 +322,9 @@ const PomodoroScreen = () => {
               <TouchableOpacity
                 onPress={async () => {
                   for (const task of tasks) {
-                    await axios.delete(`${BASE_URL}/api/tasks/${task._id}`);
+                    if(task._id){
+                    await deleteTask(task._id);
+                    }
                   }
                   setTasks([]);
                   setCurrentTaskIndex(null);

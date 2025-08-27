@@ -7,8 +7,9 @@ import {
   Animated,
   StatusBar,
 } from "react-native";
-import styles from "./Assessment.styles";
-import { fetchAssessmentQuestions, submitAssessmentAnswers, Question, Answer } from "../../services/assessmentService";
+import styles from "./AssessmentScreen.styles";
+import { fetchAssessmentQuestions, submitAssessmentAnswers } from "../../services/assessmentService";
+import { Question, Answer } from "@/types/assessment";
 import { ProgressBar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -55,7 +56,7 @@ export default function Assessment() {
         const data = await submitAssessmentAnswers(formattedAnswers);
         //navigate to results screen with scores
         router.push({
-          pathname: "/(tabs)/Assessment/AssessmentResult",
+          pathname: "/(tabs)/Assessment/AssessmentResultScreen",
           params: {
             phqScore: data.scores.PHQ.totalScore,
             phqSeverity: data.scores.PHQ.severity,

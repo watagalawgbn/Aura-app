@@ -36,7 +36,7 @@ const AssessmentResultsSchema = new mongoose.Schema({
         questionId: String,
         questionType: String,
         answer: Number
-    }]
+    }] //store raw answers without processing for reference
 },{
     timestamps: true
 });

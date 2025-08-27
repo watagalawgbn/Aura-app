@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import styles from "./BreathingExercise.styles";
+import styles from "./BreathingExerciseScreen.styles";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,

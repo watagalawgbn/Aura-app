@@ -8,10 +8,10 @@ import {
   StatusBar,
   ScrollView,
 } from "react-native";
-import styles from "./Home.styles";
+import styles from "./HomeScreen.styles";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import MoodLog from "../Mood/Mood";
+import MoodLog from "../Mood/MoodScreen";
 import { useAuth } from "../../../context/AuthContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { getGreeting } from "@/utils/getGreeting";
@@ -81,7 +81,7 @@ const HomeScreen = () => {
             {/* Mental Health Assessment Card */}
             <TouchableOpacity
               style={styles.insightCard}
-              onPress={() => router.push("/(tabs)/Assessment/Assessment")}
+              onPress={() => router.push("/(tabs)/Assessment/AssessmentScreen")}
             >
               <Text style={styles.insightCardTitle}>
                 Mental Health Assessment
@@ -144,7 +144,7 @@ const HomeScreen = () => {
                   Stress-Free Meditation
                 </Text>
                 <TouchableOpacity
-                  onPress={() => router.push("/(tabs)/Meditation/Meditation")}
+                  onPress={() => router.push("/(tabs)/Meditation/MeditationScreen")}
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>

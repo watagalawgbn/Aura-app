@@ -3,7 +3,7 @@
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { View, Text, TouchableOpacity, ScrollView, StatusBar } from "react-native";
-import styles from "./AssessmentResult.styles";
+import styles from "./AssessmentResultScreen.styles";
 import MentalHealthDonutChart from "../../components/MentalHealthDonutChart";
 
 export default function AssessmentResult() {

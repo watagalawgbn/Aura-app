@@ -18,7 +18,7 @@ const TabsLayout = () => {
         <View style={styles.container}>
           {/* Home */}
           <TouchableOpacity
-            onPress={() => router.navigate("/(tabs)/Home/Home")}
+            onPress={() => router.navigate("/(tabs)/Home/HomeScreen")}
             style={styles.itemsCenter}
           >
             <Ionicons
@@ -31,7 +31,7 @@ const TabsLayout = () => {
 
           {/* Meditation */}
           <TouchableOpacity
-            onPress={() => router.navigate("/(tabs)/Meditation/Meditation")}
+            onPress={() => router.navigate("/(tabs)/Meditation/MeditationScreen")}
             style={styles.itemsCenter}
           >
             <Image
@@ -48,7 +48,7 @@ const TabsLayout = () => {
 
           {/* Quick Access */}
           <TouchableOpacity
-            onPress={() => router.navigate("/(tabs)/QuickAccess/QuickAccess")}
+            onPress={() => router.navigate("/(tabs)/QuickAccess/QuickAccessScreen")}
             style={styles.itemsCenter}
           >
             <MaterialCommunityIcons
@@ -63,7 +63,7 @@ const TabsLayout = () => {
 
           {/* Profile */}
           <TouchableOpacity
-            onPress={() => router.navigate("/(tabs)/Profile/Profile")}
+            onPress={() => router.navigate("/(tabs)/Profile/ProfileScreen")}
             style={styles.itemsCenter}
           >
             <Ionicons
