@@ -5,10 +5,9 @@ const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 const resetPasswordTemplate = require("../templates/resetPasswordEmail");
 
-//signup
+//---------------------SIGNUP----------------------
 exports.signup = async (req, res) => {
   console.log("Received Sign-Up request:", req.body);
   const { name, email, password } = req.body;
@@ -35,7 +34,7 @@ exports.signup = async (req, res) => {
   }
 };
 
-//signin
+//------------------SIGNIN--------------------
 exports.signin = async (req, res) => {
   console.log("Received Sign-In request:", req.body);
   const { email, password } = req.body;
@@ -62,18 +61,18 @@ exports.signin = async (req, res) => {
   }
 };
 
-//profile
+//------------------PROFILE------------------------
 exports.getMe = async (req, res) => {
   try {
     const { id, name, email } = req.user;
     res.json({ id, name, email });
   } catch (err) {
-    console.error("Error in /me route:", err.message);
+    console.error("Error occured in getMe:", err.message);
     res.status(500).send("server error");
   }
 };
 
-//forgot password
+//---------------FORGOT PASSWORD--------------------
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email });
@@ -99,7 +98,7 @@ exports.forgotPassword = async (req, res) => {
   res.json({ msg: "Reset link sent to your email." });
 };
 
-//reset password
+//--------------RESET PASSWORD----------------------
 exports.resetPassword = async (req, res) => {
   const { token, password } = req.body;
   const user = await User.findOne({
