@@ -2,16 +2,6 @@
 import apiClient from "./apiClient";
 import * as SecureStore from 'expo-secure-store';
 
-export type BreathingSession = {
-  userId: string;
-  duration: number; // in seconds
-  pattern: {
-    inhale: number;
-    hold: number;
-    exhale: number;
-  };
-};
-
 export const saveBreathingSession = async (durationInSeconds: number) => {
   try {
     const userId = await SecureStore.getItemAsync("userId");
