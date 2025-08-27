@@ -28,7 +28,6 @@ exports.signup = async (req, res) => {
     console.log("User registered:", email);
 
     const token = generateToken(user);
-    // console.log("Token generated:", token);
     res.json({ token });
   } catch (error) {
     console.error("Sign-Up Error:", error.message);

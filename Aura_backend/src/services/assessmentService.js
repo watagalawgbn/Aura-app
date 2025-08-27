@@ -3,10 +3,10 @@
 const fs = require('fs');
 const path = require('path');
 
-// Helper function to load and process the assessment questions
+// load and group the assessment questions
 const getAssessmentQuestions = () => {
     const filePath = path.join(__dirname, '../data/assessment_questions.json');
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf8')); //read questions from JSON file
 
     const grouped = {
         PHQ: [],
@@ -14,7 +14,7 @@ const getAssessmentQuestions = () => {
         DASS: [],
     };
 
-    // Process the questions into the appropriate groups
+    // transform each question into the right group
     data.forEach((q) => {
         let transformedQuestion = {
             id: q.id,
@@ -25,22 +25,22 @@ const getAssessmentQuestions = () => {
         if (q.type === 'GAD') {
             transformedQuestion.type = 'GAD';
             transformedQuestion.options = q.options.map(opt => ({
-                label: opt.text,
-                value: opt.score,
+                label: opt.text, //answer text
+                value: opt.score, //numerical score
             }));
             grouped.GAD.push(transformedQuestion);
         } else if (q.scale === 'PHQ-9') {
             transformedQuestion.type = 'PHQ';
             transformedQuestion.options = q.options.map(score => ({
-                label: q.labels[score.toString()],
-                value: score,
+                label: q.labels[score.toString()], //label from JSON
+                value: score, //numerical score
             }));
             grouped.PHQ.push(transformedQuestion);
         } else if (q.scale === 'DASS') {
             transformedQuestion.type = 'DASS';
             transformedQuestion.options = q.options.map(score => ({
-                label: q.labels[score.toString()],
-                value: score,
+                label: q.labels[score.toString()], //label from JSON
+                value: score, //numerical score
             }));
             grouped.DASS.push(transformedQuestion);
         }
@@ -49,24 +49,24 @@ const getAssessmentQuestions = () => {
     return grouped;
 };
 
-// Helper function to get random values from an array
+// get random values from an array
 const getRandomValues = (arr, n) => {
     if (arr.length === 0 || n <= 0) return [];
     const count = Math.min(n, arr.length);
     return arr.sort(() => 0.5 - Math.random()).slice(0, count);
 };
 
-// Function to get shuffled random questions
+// get 4 random questions from each group and shuffle them
 const getShuffledQuestions = () => {
     const grouped = getAssessmentQuestions();
 
     const selected = [
-        ...getRandomValues(grouped.PHQ, 4),
-        ...getRandomValues(grouped.GAD, 4),
-        ...getRandomValues(grouped.DASS, 4),
+        ...getRandomValues(grouped.PHQ, 4), //pick 4 PHQ
+        ...getRandomValues(grouped.GAD, 4), //pick 4 GAD
+        ...getRandomValues(grouped.DASS, 4), //pick 4 DASS
     ];
 
-    return selected.sort(() => 0.5 - Math.random());
+    return selected.sort(() => 0.5 - Math.random()); //shuffle all selected questions
 };
 
 module.exports = {
