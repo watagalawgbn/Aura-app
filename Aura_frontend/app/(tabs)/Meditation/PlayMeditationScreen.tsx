@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   Alert,
 } from "react-native";
-import styles from "./PlayMeditation.styles";
+import styles from "./PlayMeditationScreen.styles";
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Audio, AVPlaybackStatus } from "expo-av";

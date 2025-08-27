@@ -6,7 +6,7 @@ import {
   Image,
   Alert,
 } from "react-native";
-import styles from "./Mood.styles";
+import styles from "./MoodScreen.styles";
 import Modal from "react-native-modal";
 import { logMood } from "../../services/moodService";
 

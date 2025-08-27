@@ -9,7 +9,7 @@ import {
   StatusBar,
   ActivityIndicator,
 } from "react-native";
-import styles from "./Meditation.styles";
+import styles from "./MeditationScreen.styles";
 import { useRouter } from "expo-router";
 import BackButton from "../../components/BackButton";
 import {
@@ -47,7 +47,7 @@ const MeditationScreen = () => {
         key={audio._id}
         onPress={() =>
           router.push({
-            pathname: "/(tabs)/Meditation/PlayMeditation",
+            pathname: "/(tabs)/Meditation/PlayMeditationScreen",
             params: {
               id: audio._id,
               title: audio.title,
