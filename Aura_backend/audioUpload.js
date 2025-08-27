@@ -15,6 +15,7 @@ console.log("Uploading from directory:", audioDir);
 console.log("Audio files:", fs.readdirSync(audioDir));
 console.log("Image files:", fs.readdirSync(imageDir));
 
+//get duration of audio file in seconds using ffprobe
 async function getDurationSeconds(filePath) {
   try {
     const output = execSync(`ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`);
@@ -26,37 +27,43 @@ async function getDurationSeconds(filePath) {
 }
 
 async function uploadImagesAndAudios() {
+  //connect to mongo
   await mongoose.connect(mongoURI);
   const client = await MongoClient.connect(mongoURI);
   const db = client.db();
+
+  //create Gridfs buckets
   const imageBucket = new GridFSBucket(db, { bucketName: "images" });
   const audioBucket = new GridFSBucket(db, { bucketName: "audios" });
 
   const imageFiles = fs.readdirSync(imageDir);
   const audioFiles = fs.readdirSync(audioDir);
 
+  //warn if more audios than images
   if (audioFiles.length > imageFiles.length) {
     console.warn("More audio files than images. Some audios won't get a unique image.");
   }
 
+  //loop through all audio files
   for (let i = 0; i < audioFiles.length; i++) {
     const audioFile = audioFiles[i];
-    const imageFile = imageFiles[i];
+    const imageFile = imageFiles[i];//match audio with image by index
 
     const audioFullPath = path.join(audioDir, audioFile);
     const imageFullPath = imageFile ? path.join(imageDir, imageFile) : null;
 
-    // Upload audio to GridFS
+    // Upload audios to GridFS
     const audioUploadStream = audioBucket.openUploadStream(audioFile);
     const audioStream = fs.createReadStream(audioFullPath);
     await new Promise((resolve, reject) => {
       audioStream.pipe(audioUploadStream).on("error", reject).on("finish", resolve);
     });
 
+    //get audio duration
     const durationSec = await getDurationSeconds(audioFullPath);
     const title = path.parse(audioFile).name;
 
-    // Create Meditation
+    // Create Meditation document in mongodb
     const meditation = await Meditation.create({
       title,
       description: "",
@@ -73,13 +80,14 @@ async function uploadImagesAndAudios() {
       await new Promise((resolve, reject) => {
         imageStream.pipe(imageUploadStream).on("error", reject).on("finish", resolve);
       });
-
+      //save image document with reference to meditation
       const imageDoc = await Image.create({
         filename: imageFile,
         gridfsId: imageUploadStream.id,
         meditation: meditation._id,
       });
 
+      //link image to meditation
       meditation.image = imageDoc._id;
       await meditation.save();
 
@@ -88,7 +96,7 @@ async function uploadImagesAndAudios() {
       console.log(`No image available for "${audioFile}"`);
     }
   }
-
+  //close connections
   await mongoose.disconnect();
   await client.close();
 }
