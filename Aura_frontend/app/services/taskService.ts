@@ -1,12 +1,5 @@
 import apiClient from "./apiClient";
-
-type taskData = {
-  _id?: string,
-  name: string,
-  note: string,
-  userId?: string,
-  completed?: boolean,
-};
+import { taskData } from "@/types/task";
 
 //-------------ADD TASK------------
 export const addTask = async (newTask: taskData, userId: string, override = false): Promise<{task?: taskData, status: number; data: any}> => {

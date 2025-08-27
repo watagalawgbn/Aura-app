@@ -2,17 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import dayjs from "dayjs";
-
-type SleepRecord = {
-  //structure of the sleep record
-  date: string;
-  duration: number;
-};
-
-type SleepChartProps = {
-  selectedDate: string | Date; //selected day which use to figure out the week
-  sleepRecords: SleepRecord[]; //array of all sleep data entries
-};
+import { SleepChartProps } from "@/types/sleep";
 
 const SleepChart: React.FC<SleepChartProps> = ({
   selectedDate,
