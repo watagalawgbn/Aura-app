@@ -2,11 +2,10 @@ const { searchJobs } = require("../services/jsearchService");
 const SavedJob = require("../models/SavedJob");
 const JobListing = require("../models/JobListing");
 
-
 //Build a short search string for JSearch using skills + employmentType + city
 function buildQuery({ skills = [], employmentType = "", city = "" }) {
   const cleaned = (Array.isArray(skills) ? skills : []) // ensure it's an array
-    .map(String) // coerce everything to string
+    .map(String) 
     .map((s) => s.trim()) //remove extra spaces
     .filter(Boolean) //drop empty items
     .slice(0, 5);  //cap at 5 skills so query stays short

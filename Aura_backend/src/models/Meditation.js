@@ -7,8 +7,8 @@ const MeditationSchema = new mongoose.Schema({
   description: String,
   filename: String,
   duration: Number,
-  audioGridFsId: mongoose.Schema.Types.ObjectId,
-  image: { type: mongoose.Schema.Types.ObjectId, ref: "Image" },
+  audioGridFsId: mongoose.Schema.Types.ObjectId, //link to audio file in GridFS
+  image: { type: mongoose.Schema.Types.ObjectId, ref: "Image" }, //linked image
 });
 
 module.exports = mongoose.model("Meditation", MeditationSchema);
