@@ -2,13 +2,7 @@
 
 import { BASE_URL } from "@/constants/Api";
 import apiClient from "./apiClient";
-
-export type MeditationAudio = {
-    _id: string;
-    title: string;
-    filename: string;
-    image?: string | {_id: string} | null;
-};
+import { MeditationAudio } from "@/types/meditation";
 
 //-----------------FETCH MEDITATION AUDIOS----------------
 export const fetchMeditations = async(): Promise<MeditationAudio[]> => {
