@@ -14,8 +14,6 @@ import React, { useState, useEffect } from "react";
 import BackButton from "../../components/BackButton";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
-import axios from "axios";
-import { BASE_URL } from "@/constants/Api";
 import { useAuth } from "@/context/AuthContext";
 import { Audio } from "expo-av";
 
