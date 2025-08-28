@@ -1,15 +1,25 @@
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, StatusBar } from "react-native";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StatusBar,
+} from "react-native";
 import styles from "./AssessmentResultScreen.styles";
 import MentalHealthDonutChart from "../../components/MentalHealthDonutChart";
 
 export default function AssessmentResult() {
   const { scores, recommendations } = useLocalSearchParams();
 
-  // Parse JSON params
+  // Parse JSON params 
   const parsedScores = typeof scores === "string" ? JSON.parse(scores) : scores;
-  const parsedRecs = typeof recommendations === "string" ? JSON.parse(recommendations) : recommendations;
+  const parsedRecs =
+    typeof recommendations === "string"
+      ? JSON.parse(recommendations)
+      : recommendations;
 
   const phqScore = parsedScores.PHQ?.totalScore ?? 0;
   const phqSeverity = parsedScores.PHQ?.severity ?? "Minimal";
@@ -20,8 +30,8 @@ export default function AssessmentResult() {
 
   const data = [
     { score: Number(phqScore), color: "#e87674ff" }, // Mood
-    { score: Number(gadScore), color: "#6592e5" },   // Anxiety
-    { score: Number(dassScore), color: "#7bdb4bff" },// Stress
+    { score: Number(gadScore), color: "#6592e5" }, // Anxiety
+    { score: Number(dassScore), color: "#7bdb4bff" }, // Stress
   ];
 
   const totalScore = phqScore + gadScore + dassScore;
@@ -35,13 +45,16 @@ export default function AssessmentResult() {
     recommendationText = "Keep practicing healthy habits.";
   } else if (overallPercent <= 50) {
     status = "You're experiencing some stress or low mood.";
-    recommendationText = "Try daily self-care routines like mindfulness or breathing exercises.";
+    recommendationText =
+      "Try daily self-care routines like mindfulness or breathing exercises.";
   } else if (overallPercent <= 75) {
     status = "You're showing signs of moderate emotional distress.";
-    recommendationText = "Consider regular meditation or talking to a trusted friend or counselor.";
+    recommendationText =
+      "Consider regular meditation or talking to a trusted friend or counselor.";
   } else {
     status = "You may be experiencing high mental stress.";
-    recommendationText = "We strongly recommend speaking with a mental health professional.";
+    recommendationText =
+      "We strongly recommend speaking with a mental health professional.";
   }
 
   return (
@@ -49,76 +62,166 @@ export default function AssessmentResult() {
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
       <Text style={styles.title}>Your Mental Health Result</Text>
+
       <MentalHealthDonutChart data={data} />
 
+      {/* status blurb */}
       <View style={styles.feedbackBox}>
         <Text style={styles.statusText}>{status}</Text>
         <Text style={styles.recommendationText}>{recommendationText}</Text>
       </View>
 
-      <View style={styles.breakdown}>
-        <DetailItem label="Mood" score={phqScore} severity={phqSeverity} color="#e87674ff" />
-        <DetailItem label="Anxiety" score={gadScore} severity={gadSeverity} color="#42A5F5" />
-        <DetailItem label="Stress" score={dassScore} severity={dassSeverity} color="#66BB6A" />
+      {/* ---------- Wellness Breakdown cards ---------- */}
+      <Text style={styles.sectionHeader}>Wellness Breakdown</Text>
+      <View style={styles.cardsRow}>
+        <BreakdownCard
+          value={phqScore}
+          label="Mood"
+          severity={phqSeverity}
+          color="#e87674"
+          accentBg="rgba(232,118,116,0.12)"
+        />
+        <BreakdownCard
+          value={gadScore}
+          label="Anxiety"
+          severity={gadSeverity}
+          color="#6592e5"
+          accentBg="rgba(101,146,229,0.12)"
+        />
+        <BreakdownCard
+          value={dassScore}
+          label="Stress"
+          severity={dassSeverity}
+          color="#7bdb4b"
+          accentBg="rgba(123,219,75,0.12)"
+        />
       </View>
 
-      {/* ✅ Recommended Meditations */}
-      {parsedRecs?.meditations?.length > 0 && (
+      {/* Recommended Actions - Only show if there are recommendations */}
+      {(parsedRecs?.meditations?.length > 0 ||
+        parsedRecs?.breathings?.length > 0) && (
         <>
-          <Text style={styles.sectionHeader}>Recommended Meditations</Text>
-          {parsedRecs.meditations.map((item: any) => (
-            <TouchableOpacity
-              key={item._id}
-              style={styles.button}
-              onPress={() =>
-                router.push({
-                  pathname: "/(tabs)/Meditation/PlayMeditationScreen",
-                  params: {
-                    title: item.title,
-                    filename: item.filename,
-                    imageId: item.image ?? null,
-                  },
-                })
-              }
-            >
-              <Text style={styles.buttonText}>{item.title}</Text>
-            </TouchableOpacity>
-          ))}
-        </>
-      )}
+          <Text style={styles.sectionHeader}>Small Steps Toward Balance</Text>
 
-      {/* ✅ Recommended Breathing Exercises */}
-      {parsedRecs?.breathings?.length > 0 && (
-        <>
-          <Text style={styles.sectionHeader}>Recommended Breathing Exercises</Text>
-          {parsedRecs.breathings.map((item: any) => (
-            <TouchableOpacity
-              key={item.title}
-              style={styles.button}
-              onPress={() =>
-                router.push({
-                  pathname: "/(tabs)/BreathingExercise/BreathingExerciseScreen", // 👈 you’ll make this screen
-                  params: {
-                    title: item.title,
-                    duration: item.duration,
-                  },
-                })
-              }
-            >
-              <Text style={styles.buttonText}>{item.title}</Text>
-            </TouchableOpacity>
-          ))}
+          {/* Meditations subsection */}
+          {parsedRecs?.meditations?.length > 0 && (
+            <>
+              <Text style={styles.sectionSubheader}>Guided Meditations</Text>
+              {parsedRecs.meditations.map((item: any) => (
+                <ActionRow
+                  key={item._id}
+                  leftIconType="meditation"
+                  title={item.title}
+                  subtitle="Guided meditation"
+                  ctaText="Start"
+                  onPress={() =>
+                    router.push({
+                      pathname: "/(tabs)/Meditation/PlayMeditationScreen",
+                      params: {
+                        title: item.title,
+                        filename: item.filename,
+                        imageId: item.image ?? null,
+                      },
+                    })
+                  }
+                />
+              ))}
+            </>
+          )}
+
+          {/* Breathing exercises subsection */}
+          {parsedRecs?.breathings?.length > 0 && (
+            <>
+              <Text style={styles.sectionSubheader}>Breathing Exercises</Text>
+              {parsedRecs.breathings.map((item: any) => (
+                <ActionRow
+                  key={item.title}
+                  leftIconType="breathing"
+                  title={item.title}
+                  subtitle="Breathing exercise"
+                  ctaText="Begin"
+                  onPress={() =>
+                    router.push({
+                      pathname:
+                        "/(tabs)/BreathingExercise/BreathingExerciseScreen",
+                      params: { title: item.title, duration: item.duration },
+                    })
+                  }
+                />
+              ))}
+            </>
+          )}
         </>
       )}
     </ScrollView>
   );
 }
 
-const DetailItem = ({ label, score, severity, color }: any) => (
-  <View style={styles.item}>
-    <Text style={[styles.label, { color }]}>{label}</Text>
-    <Text style={styles.info}>
-      {score} ({severity})
-    </Text>
-  </View>
-);
+
+const BreakdownCard = ({
+  value,
+  label,
+  severity,
+  color,
+  accentBg,
+}: {
+  value: number;
+  label: string;
+  severity: string;
+  color: string;
+  accentBg: string;
+}) => {
+  return (
+    <View style={[styles.card, { backgroundColor: "#fff" }]}>
+      <Text style={[styles.cardScore, { color }]}>{value}</Text>
+      <Text style={styles.cardLabel}>{label}</Text>
+      <Text style={styles.cardSeverity}>{severity}</Text>
+    </View>
+  );
+};
+
+const ActionRow = ({
+  leftIconType,
+  title,
+  subtitle,
+  ctaText,
+  onPress,
+}: {
+  leftIconType: "meditation" | "breathing";
+  title: string;
+  subtitle: string;
+  ctaText: string;
+  onPress: () => void;
+}) => {
+  const isBreathing = leftIconType === "breathing";
+
+  return (
+    <View style={styles.actionRow}>
+      <View
+        style={[
+          styles.actionIconWrap,
+          isBreathing ? styles.actionIconWrapBreath : null,
+        ]}
+      >
+        {isBreathing ? (
+          <MaterialCommunityIcons
+            name="weather-windy"
+            size={24}
+            color="#4CAF50"
+          />
+        ) : (
+          <Ionicons name="musical-notes" size={24} color="#4CAF50" />
+        )}
+      </View>
+
+      <View style={styles.actionTextWrap}>
+        <Text style={styles.actionTitle}>{title}</Text>
+        <Text style={styles.actionSubtitle}>{subtitle}</Text>
+      </View>
+
+      <TouchableOpacity style={styles.ctaBtn} onPress={onPress}>
+        <Text style={styles.ctaBtnText}>{ctaText}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
