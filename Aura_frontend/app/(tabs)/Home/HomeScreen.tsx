@@ -124,7 +124,7 @@ const HomeScreen = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Access</Text>
             <TouchableOpacity
-              onPress={() => router.push("/(tabs)/QuickAccess/QuickAccess")}
+              onPress={() => router.push("/(tabs)/QuickAccess/QuickAccessScreen")}
             >
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>

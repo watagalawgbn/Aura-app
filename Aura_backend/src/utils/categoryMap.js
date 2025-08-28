@@ -8,14 +8,14 @@ const categoryMap = {
         Severe: ["relaxation", "professional"],
     },
     GAD: {
-        Mild: ["anxiety", "relaxation"],
-        Moderate: ["anxiety", "sleep"],
-        Severe: ["anxiety", "stress"],
+        Mild: ["anxiety", "relaxation", "breathing"],
+        Moderate: ["anxiety", "sleep", "breathing"],
+        Severe: ["anxiety", "stress", "breathing"],
     },
     DASS: {
-        Mild: ["stress", "relaxation"],
-        Moderate: ["stress", "focus"],
-        Severe: ["stress", "sleep"],
+        Mild: ["stress", "relaxation", "breathing"],
+        Moderate: ["stress", "focus", "breathing"],
+        Severe: ["stress", "sleep", "breathing"],
         "Extremely Severe": ["stress", "professional"],
     }
 };

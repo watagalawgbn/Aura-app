@@ -53,17 +53,13 @@ export default function Assessment() {
       const formattedAnswers = Object.values(selectedOption);
 
       try {
-        const data = await submitAssessmentAnswers(formattedAnswers);
+        const result = await submitAssessmentAnswers(formattedAnswers);
         //navigate to results screen with scores
         router.push({
           pathname: "/(tabs)/Assessment/AssessmentResultScreen",
           params: {
-            phqScore: data.scores.PHQ.totalScore,
-            phqSeverity: data.scores.PHQ.severity,
-            gadScore: data.scores.GAD.totalScore,
-            gadSeverity: data.scores.GAD.severity,
-            dassScore: data.scores.DASS.totalScore,
-            dassSeverity: data.scores.DASS.severity,
+            scores: JSON.stringify(result.scores),
+            recommendations: JSON.stringify(result.recommendations),
           },
         });
       } catch (error) {
@@ -76,7 +72,7 @@ export default function Assessment() {
   const handleBack = () => {
     if (currentQuestionIndex === 0) {
       //first question, go back to home
-      router.navigate("/(tabs)/Home/Home");
+      router.navigate("/(tabs)/Home/HomeScreen");
     } else {
       //otherwise go to back one step
       setCurrentQuestionIndex(currentQuestionIndex - 1);

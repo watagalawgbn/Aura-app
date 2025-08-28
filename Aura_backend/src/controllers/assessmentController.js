@@ -42,6 +42,7 @@ exports.submitAssessment = async (req, res) => {
 
     //get personalized recommendations
     const recommendations = await getRecommendations(scores);
+    console.log("Recommendations:", recommendations);
 
     res.json({ message: "Assessment submitted successfully", scores, recommendations });
   } catch (error) {

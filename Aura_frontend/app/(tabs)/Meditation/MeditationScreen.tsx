@@ -16,8 +16,8 @@ import {
   fetchMeditations,
   getImageUrl,
   getImageId,
-  type MeditationAudio,
 } from "@/app/services/meditationService";
+import { MeditationAudio } from "@/types/meditation";
 
 const MeditationScreen = () => {
   const router = useRouter();

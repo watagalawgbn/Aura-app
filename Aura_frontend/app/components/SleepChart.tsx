@@ -16,7 +16,6 @@ const SleepChart: React.FC<SleepChartProps> = ({
   const data = [...Array(7)].map((_, i) => {
     const date = startOfWeek.clone().add(i, "day").format("YYYY-MM-DD");
     const record = sleepRecords.find((r) => r.date === date);
-    console.log(`🔍 Checking date: ${date}`, record);
 
     return {
       value: record?.duration ?? 0,
