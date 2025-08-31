@@ -8,16 +8,10 @@ import BackButton from "../../components/BackButton";
 import { Feather } from "@expo/vector-icons";
 import SleepChart from "../../components/SleepChart";
 import { fetchSleepData } from "../../services/sleepService";
+import { SleepRecord } from "@/types/sleep";
 
 const SleepBetterScreen = () => {
-  type sleepRecord = {
-    date: string;
-    duration: number;
-    startTime?: string;
-    endTime?: string;
-  };
-
-  const [sleepRecords, setSleepRecords] = useState<sleepRecord[]>([]);
+  const [sleepRecords, setSleepRecords] = useState<SleepRecord[]>([]);
   const [chartWeekStart, setChartWeekStart] = useState(
     dayjs().startOf("week").add(1, "day")
   );

@@ -86,6 +86,7 @@ const PomodoroScreen = () => {
     };
   }, [isRunning, isBreak]);
 
+  
   //---------------- LOAD TASKS ----------------
   useEffect(() => {
     const loadTasks = async () => {
