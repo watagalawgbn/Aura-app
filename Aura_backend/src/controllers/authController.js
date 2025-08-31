@@ -3,9 +3,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
-const crypto = require("crypto");
-const sendEmail = require("../utils/sendEmail");
-const resetPasswordTemplate = require("../templates/resetPasswordEmail");
 
 //---------------------SIGNUP----------------------
 exports.signup = async (req, res) => {
@@ -70,48 +67,4 @@ exports.getMe = async (req, res) => {
     console.error("Error occured in getMe:", err.message);
     res.status(500).send("server error");
   }
-};
-
-//---------------FORGOT PASSWORD--------------------
-exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    return res.status(404).json({ msg: "User not found" });
-  }
-
-  const token = crypto.randomBytes(32).toString("hex");
-  user.resetPasswordToken = token;
-  user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 mins
-  await user.save();
-
-  const link = `exp://exp.host/@watagala/Aura_frontend/--(auth)/reset-password/${token}`;
-  const html = resetPasswordTemplate(user.name, link);
-
-  await sendEmail(
-    user.email,
-    "Reset Your Password - AURA.",
-    `Click to reset your password: ${link}`,
-    html
-  );
-  res.json({ msg: "Reset link sent to your email." });
-};
-
-//--------------RESET PASSWORD----------------------
-exports.resetPassword = async (req, res) => {
-  const { token, password } = req.body;
-  const user = await User.findOne({
-    resetPasswordToken: token,
-    resetPasswordExpires: { $gt: Date.now() },
-  });
-
-  if (!user) return res.status(400).json({ msg: "Invalid or expired token." });
-
-  user.password = await bcrypt.hash(password, 10);
-  user.resetPasswordToken = null;
-  user.resetPasswordExpires = null;
-
-  await user.save();
-  res.json({ msg: "Password has been reset." });
 };
