@@ -18,6 +18,7 @@ import { SignInRequest, AuthResponse } from "../../../types/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
 import { BASE_URL } from "@/constants/Api";
+import { signIn } from "@/app/services/authService";
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -45,21 +46,12 @@ const SignIn: React.FC = () => {
     }
 
     try {
-      const res = await axios.post<AuthResponse>(
-        `${BASE_URL}/api/auth/signin`,
-        payload
-      );
-
-      const token = res.data.token;
-      await login(token);
-      console.log("Tokennn:", token);
-
+      const res = await signIn(payload);
+      await login(res.token);
       alert("Signed in successfully");
       router.replace("/(tabs)/Home/HomeScreen");
     } catch (error: any) {
-      const message =
-        error?.response?.data?.message || "Sign in failed. Try again.";
-      alert(message);
+      alert(error.message);
     }
   };
 

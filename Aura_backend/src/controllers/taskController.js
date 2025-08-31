@@ -48,7 +48,7 @@ exports.addTask = async (req, res) => {
     //if exceeded and no override then, block
     if (usedMinutes + 25 > allowedMinutes && !override) {
       return res.status(403).json({
-        message: `Sleep < ${sleepRecord.hours}h. Recommended workload is ${allowedMinutes} mins. Override required.`,
+        message: `You've reached your recommended workload for today (${allowedMinutes} mins based on ${sleepRecord.hours}h sleep).`,
         allowedMinutes,
         usedMinutes,
       });

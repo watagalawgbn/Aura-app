@@ -49,7 +49,7 @@ exports.signin = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       console.log("Invalid password for:", email);
-      return res.status(400).json({ msg: "Invalid credentials" });
+      return res.status(400).json({ msg: "Invalid credentials" }); 
     }
 
     const token = generateToken(user);

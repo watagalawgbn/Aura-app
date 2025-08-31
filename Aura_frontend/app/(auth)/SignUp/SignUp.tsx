@@ -12,18 +12,16 @@ import {
 } from "react-native";
 import styles from "./SignUp.styles";
 import { useRouter } from "expo-router";
-import axios from "axios";
-import { SignUpRequest, AuthResponse } from "../../../types/auth";
+import { SignUpRequest } from "../../../types/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
-import { BASE_URL } from "@/constants/Api";
+import { signUp } from "@/app/services/authService";
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-
   const { login } = useAuth();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -45,19 +43,13 @@ const SignUp: React.FC = () => {
     }
 
     try {
-      const res = await axios.post<AuthResponse>(
-        `${BASE_URL}/api/auth/signup`,
-        payload
-      );
-      console.log("Tokennn:", res.data.token);
-      await login(res.data.token);
+      const res = await signUp(payload);
+      await login(res.token);
       alert("Signed up successfully");
 
       router.replace("/(tabs)/Home/HomeScreen");
     } catch (error: any) {
-      const message =
-        error?.response?.data?.message || "Sign up failed. Try again.";
-      alert(message);
+      alert(error.message);
     }
   };
 
