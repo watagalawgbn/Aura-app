@@ -8,9 +8,11 @@ export type sleepData = {
 export type SleepRecord = {
   date: string;
   duration: number;
+  startTime?: string;
+  endTime?: string;
 };
 
 export type SleepChartProps = {
-  selectedDate: string | Date; 
-  sleepRecords: SleepRecord[]; 
+  selectedDate: string | Date;
+  sleepRecords: SleepRecord[];
 };

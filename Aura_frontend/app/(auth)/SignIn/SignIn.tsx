@@ -113,12 +113,6 @@ const SignIn: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={() => router.push("/(auth)/ForgotPassword")}>
-          <View style={styles.forgotPassword}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </View>
-        </TouchableOpacity>
-
         <TouchableOpacity
           style={styles.googleButton}
           onPress={() => {

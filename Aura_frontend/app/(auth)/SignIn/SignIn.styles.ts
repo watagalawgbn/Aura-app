@@ -23,14 +23,6 @@ const styles = StyleSheet.create({
   },
   icon: { marginRight: 10 },
   input: { flex: 1 },
-  forgotPassword: {
-    marginRight: 230,
-    marginBottom: 10,
-  },
-  forgotPasswordText: {
-    color: "#555",
-    fontWeight: "regular",
-  },
   googleButton: {
     backgroundColor: "#eee",
     borderRadius: 10,

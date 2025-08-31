@@ -15,7 +15,8 @@ import JobCard from "@/app/components/JobCard/JobCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
-import { fetchJobs, Job } from "@/app/services/jobService";
+import { fetchJobs } from "@/app/services/jobService";
+import { Job } from "@/types/job";
 
 const JobScreen = () => {
   const [skills, setSkills] = useState(""); // form input for a new skill

@@ -6,7 +6,7 @@ import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 type BackButtonProps = {
-  title: string;
+  title?: string;
 };
 
 const BackButton = ({ title }: BackButtonProps) => {
@@ -18,9 +18,13 @@ const BackButton = ({ title }: BackButtonProps) => {
         </View>
       </TouchableOpacity>
 
-      <View style={styles.titleWrapper}>
-        <Text style={styles.headerTitle}>{title}</Text>
-      </View>
+      {title ? (
+        <View style={[styles.titleWrapper, { marginTop: 65 }]}>
+          <Text style={styles.headerTitle}>{title}</Text>
+        </View>
+      ) : (
+        <View style={{ flex: 1 }} /> // keeps spacing balanced
+      )}
 
       <TouchableOpacity>
         <Feather name="more-vertical" size={24} color="#52AE77" />

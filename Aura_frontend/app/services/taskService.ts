@@ -66,4 +66,4 @@ export const getTasks = async (userId: string) => {
   }
 };
 
-export default { addTask, updateTask, deleteTask };
+export default { addTask, updateTask, deleteTask, getTasks };
