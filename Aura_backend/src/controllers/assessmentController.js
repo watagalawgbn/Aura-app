@@ -1,8 +1,9 @@
 const { getShuffledQuestions } = require("../services/assessmentService");
 const { calculateScores } = require("../services/scoringService");
 const AssessmentResult = require("../models/AssessmentResult");
+const { getRecommendations } = require("../services/recommendationService");
 
-// GET /api/assessments
+//----------------GET ASSESSMENT QUESTIONS-----------------
 exports.getAssessmentQuestions = (req, res) => {
   try {
     //fetch and shuffle questions from the service
@@ -14,7 +15,7 @@ exports.getAssessmentQuestions = (req, res) => {
   }
 };
 
-// POST /api/assessments/submit
+//----------------SUBMIT ASSESSMENT-----------------
 exports.submitAssessment = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -39,7 +40,11 @@ exports.submitAssessment = async (req, res) => {
 
     await newResult.save();
 
-    res.json({ message: "Assessment submitted successfully", scores });
+    //get personalized recommendations
+    const recommendations = await getRecommendations(scores);
+    console.log("Recommendations:", recommendations);
+
+    res.json({ message: "Assessment submitted successfully", scores, recommendations });
   } catch (error) {
     console.error("Assessment submission error:", error);
     res.status(500).json({ error: "Internal server error" });

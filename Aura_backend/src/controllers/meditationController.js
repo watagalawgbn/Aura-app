@@ -4,14 +4,16 @@ const Meditation = require("../models/Meditation");
 
 exports.getAllMeditations = async (req, res) => {
   try {
+    //fetch all meditations and include associated image data
     const meditations = await Meditation.find().populate("image");
-
+    //build a clean response object
     const response = meditations.map(meditation => ({
       _id: meditation._id,
       title: meditation.title,
       description: meditation.description,
       filename: meditation.filename,
       duration: meditation.duration,
+      //return only the image ID if image exists
       image: meditation.image ? meditation.image._id.toString() : null
     }));
 

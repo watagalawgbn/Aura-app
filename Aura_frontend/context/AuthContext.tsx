@@ -1,5 +1,4 @@
 // context/AuthContext.tsx
-
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
@@ -30,35 +29,57 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   const login = async (token: string) => {
     try {
-      await SecureStore.setItemAsync("authToken", token); // Save token securely
-  
-      // Decode token locally
       const decoded: JwtPayload = jwtDecode(token);
-      setUser({ id: decoded.id, name: decoded.name, email: decoded.email });
-  
-      // Persist userId for API calls
+
+      // Check expiration
+      if (decoded.exp * 1000 < Date.now()) {
+        console.error("Token expired");
+        await logout();
+        return;
+      }
+
+      // Save token securely
+      await SecureStore.setItemAsync("authToken", token);
       await SecureStore.setItemAsync("userId", decoded.id);
+
+      // Update user state
+      setUser({ id: decoded.id, name: decoded.name, email: decoded.email });
     } catch (error) {
       console.error("Login error", error);
     }
   };
 
   const logout = async () => {
-    await SecureStore.deleteItemAsync("authToken"); // Clear token
+    await SecureStore.deleteItemAsync("authToken");
     await SecureStore.deleteItemAsync("userId");
     setUser(null);
-    console.log('User signed out!');
+    console.log("User signed out!");
   };
 
+  const restoreUser = async () => {
+    const token = await SecureStore.getItemAsync("authToken");
+    if (token) {
+      try {
+        const decoded: JwtPayload = jwtDecode(token);
+
+        if (decoded.exp * 1000 > Date.now()) {
+          await login(token); // restores user session
+        } else {
+          await logout(); // cleanup expired token
+        }
+      } catch (err) {
+        console.error("Failed to decode token", err);
+        await logout();
+      }
+    }
+    setLoading(false);
+  };
+
+  // Run restoreUser on app start
   useEffect(() => {
-    const restoreUser = async () => {
-      const token = await SecureStore.getItemAsync("authToken");
-      if (token) await login(token); // Restore user session
-      setLoading(false);
-    };
     restoreUser();
   }, []);
 

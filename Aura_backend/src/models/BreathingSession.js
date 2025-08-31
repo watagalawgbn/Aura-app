@@ -9,7 +9,7 @@ const breathingSessionSchema = new mongoose.Schema({
     hold: Number,
     exhale: Number
   },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("BreathingSession", breathingSessionSchema);

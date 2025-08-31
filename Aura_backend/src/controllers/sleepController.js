@@ -3,27 +3,28 @@
 const Sleep = require("../models/Sleep");
 const mongoose = require("mongoose");
 
-//get all sleep records
+//----------------GET ALL SLEEP DATA-----------------
 exports.getSleepData = async (req, res) => {
-  console.log("🔍 getSleepData endpoint hit!");
-  console.log("🔍 User from token:", req.user);
+  console.log("User from token:", req.user);
 
   try {
-    console.log("🔍 getSleepData called for user:", req.user.id);
+    console.log("getSleepData called for user:", req.user.id);
     const userId = new mongoose.Types.ObjectId(req.user.id);
+    //find all sleep records for the user, sorted by date
     const data = await Sleep.find({ userId }).sort({ date: 1 });
     res.json(data);
   } catch (err) {
-    console.error("❌ Error fetching sleep data:", err);
+    console.error("Error fetching sleep data:", err);
     res.status(500).json({ message: "Error fetching sleep data" });
   }
 };
 
-//get all sleep data by date
+//----------------GET SLEEP DATA BY DATE-----------------
 exports.getSleepByDate = async (req, res) => {
   try {
     const userId = mongoose.Types.ObjectId(req.user.id);
     const { date } = req.params;
+    //find record by userId and date
     const data = await Sleep.find({ userId, date });
     if (!data) res.status(404).json({ message: "No data for this date!" });
     res.json(data);
@@ -33,7 +34,7 @@ exports.getSleepByDate = async (req, res) => {
   }
 };
 
-//add or update sleep data
+//-----------------ADD/UPDATE SLEEP DATA-----------------
 exports.postSleepData = async (req, res) => {
   try {
     if (!req.user) {
@@ -56,6 +57,7 @@ exports.postSleepData = async (req, res) => {
       return res.status(400).json({ message: "Date and hours are required" });
     }
 
+    //if record exists, update it, else create new
     const existing = await Sleep.findOne({ userId, date });
 
     if (existing) {

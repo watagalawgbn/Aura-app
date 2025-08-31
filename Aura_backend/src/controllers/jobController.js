@@ -2,11 +2,10 @@ const { searchJobs } = require("../services/jsearchService");
 const SavedJob = require("../models/SavedJob");
 const JobListing = require("../models/JobListing");
 
-
 //Build a short search string for JSearch using skills + employmentType + city
 function buildQuery({ skills = [], employmentType = "", city = "" }) {
   const cleaned = (Array.isArray(skills) ? skills : []) // ensure it's an array
-    .map(String) // coerce everything to string
+    .map(String) 
     .map((s) => s.trim()) //remove extra spaces
     .filter(Boolean) //drop empty items
     .slice(0, 5);  //cap at 5 skills so query stays short
@@ -20,6 +19,8 @@ function buildQuery({ skills = [], employmentType = "", city = "" }) {
     .trim(); //final clean
 }
 
+
+//----------------GET JOB RECOMMENDATIONS-----------------
 exports.getRecommendations = async (req, res) => {
   try {
     const {
@@ -94,7 +95,7 @@ exports.getRecommendations = async (req, res) => {
   }
 };
 
-// Save a job a user liked/applied (idempotent link to cached listing)
+// ----------------SAVE A JOB-----------------
 exports.saveJob = async (req, res) => {
   try {
     const { userId, job } = req.body || {}; // expect user id and job
@@ -104,7 +105,7 @@ exports.saveJob = async (req, res) => {
         .json({ error: "userId and job {id,...} are required." });
     }
 
-    // 1) splits  "City, State, Country" into separate fields
+    // splits  "City, State, Country" into separate fields
     let city = "",
       state = "",
       country = "";
@@ -115,7 +116,7 @@ exports.saveJob = async (req, res) => {
       [city, state, country] = [parts[0] || "", parts[1] || "", parts[2] || ""];
     }
 
-    // 2) Upsert a cached JobListing (if it exists, update; otherwise create)
+    // Upsert a cached JobListing (if it exists, update; otherwise create)
     const listing = await JobListing.findOneAndUpdate(
       { jobId: job.id }, // find by external job id
       {
@@ -134,7 +135,7 @@ exports.saveJob = async (req, res) => {
       { new: true, upsert: true, setDefaultsOnInsert: true } // return the new/updated doc
     );
 
-    // 3) create or keep the user listing link in savedJob
+    // create or keep the user listing link in savedJob
     const saved = await SavedJob.findOneAndUpdate(
       { userId, jobRef: listing._id },  // unique by user + job listing
       { userId, jobRef: listing._id },  // no extra payload yet (status/notes later)
@@ -149,6 +150,7 @@ exports.saveJob = async (req, res) => {
   }
 };
 
+//----------------GET SAVED JOBS-----------------
 exports.getSavedJobs = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -164,6 +166,7 @@ exports.getSavedJobs = async (req, res) => {
   }
 };
 
+//----------------DELETE A SAVED JOB-----------------
 exports.deleteSavedJob = async (req, res) => {
   try {
     const { id } = req.params; // SavedJob _id
