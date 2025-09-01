@@ -1,4 +1,4 @@
-export type taskData = {
+export type Task = {
   _id?: string,
   name: string,
   note: string,

@@ -33,7 +33,7 @@ const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
     // if no mood selected, prevent the submission
     if (!selectedMood) {
       Alert.alert(
-        "No Mood Selected",
+        "No Mood Selected ⚠️",
         "Please select a mood before proceeding."
       );
       return;
@@ -51,7 +51,7 @@ const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
     } catch (err) {
       console.error("Error saving mood: ", err);
       //show error message if failes
-      Alert.alert("Error", "Failed to log mood. Try again");
+      Alert.alert("Error ⚠️", "Failed to log mood. Try again");
     }
   };
 

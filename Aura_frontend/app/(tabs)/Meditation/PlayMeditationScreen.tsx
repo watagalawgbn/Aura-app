@@ -113,7 +113,7 @@ const PlayMeditationScreen = () => {
       } catch (error) {
         console.error("Failed to load audio", error);
         Alert.alert(
-          "Error",
+          "Error ⚠️",
           "Unable to load meditation audio. Please try again."
         );
       }

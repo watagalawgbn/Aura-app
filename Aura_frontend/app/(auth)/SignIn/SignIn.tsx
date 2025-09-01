@@ -10,14 +10,13 @@ import {
   ScrollView,
   Platform,
   StatusBar,
+  Alert,
 } from "react-native";
 import styles from "./SignIn.styles";
 import { useRouter } from "expo-router";
-import axios from "axios";
-import { SignInRequest, AuthResponse } from "../../../types/auth";
+import { SignInRequest } from "../../../types/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
-import { BASE_URL } from "@/constants/Api";
 import { signIn } from "@/app/services/authService";
 
 const SignIn: React.FC = () => {
@@ -36,22 +35,26 @@ const SignIn: React.FC = () => {
     const payload: SignInRequest = { email, password };
 
     if (!email || !password) {
-      alert("Please fill out all fields.");
+      Alert.alert(
+        "Missing Fields ⚠️",
+        "Please fill out all fields.");
       return;
     }
 
     if (!email.includes("@")) {
-      alert("Please enter a valid email address.");
+      Alert.alert(
+        "Invalid Email Address ⚠️",
+        "Please enter a valid email address.");
       return;
     }
 
     try {
       const res = await signIn(payload);
       await login(res.token);
-      alert("Signed in successfully");
+      Alert.alert("Success 🎉", "You’ve signed in successfully!");
       router.replace("/(tabs)/Home/HomeScreen");
     } catch (error: any) {
-      alert(error.message);
+      Alert.alert(error.message);
     }
   };
 
@@ -61,7 +64,7 @@ const SignIn: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
     >
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff"/>
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
@@ -147,7 +150,5 @@ const SignIn: React.FC = () => {
     </KeyboardAvoidingView>
   );
 };
-
-
 
 export default SignIn;

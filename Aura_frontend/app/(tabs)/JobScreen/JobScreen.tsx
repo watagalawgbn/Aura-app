@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Alert
 } from "react-native";
 import styles from "./JobScreen.styles";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -29,7 +30,7 @@ const JobScreen = () => {
   const handleJobs = async () => { 
     if (skillList.length === 0) {
       console.warn("⚠️ Cannot fetch jobs without skills");
-      alert("⚠️ Cannot fetch jobs without skills");
+      Alert.alert("Error ⚠️","Cannot fetch jobs without skills");
       return;
     }
     try {

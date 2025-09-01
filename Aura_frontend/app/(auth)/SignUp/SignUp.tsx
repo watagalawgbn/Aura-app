@@ -9,6 +9,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import styles from "./SignUp.styles";
 import { useRouter } from "expo-router";
@@ -33,23 +34,25 @@ const SignUp: React.FC = () => {
     const payload: SignUpRequest = { name, email, password };
 
     if (!name || !email || !password) {
-      alert("All fields are required.");
+      Alert.alert("Missing Fields ⚠️", "All fields are required.");
       return;
     }
 
     if (!email.includes("@")) {
-      alert("Please enter a valid email address.");
+      Alert.alert(
+        "Invalid Email Address ⚠️",
+        "Please enter a valid email address."
+      );
       return;
     }
 
     try {
       const res = await signUp(payload);
       await login(res.token);
-      alert("Signed up successfully");
-
+      Alert.alert("Success 🎉", "Signed up successfully");
       router.replace("/(tabs)/Home/HomeScreen");
     } catch (error: any) {
-      alert(error.message);
+      Alert.alert(error.message);
     }
   };
 
@@ -151,6 +154,5 @@ const SignUp: React.FC = () => {
     </KeyboardAvoidingView>
   );
 };
-
 
 export default SignUp;
