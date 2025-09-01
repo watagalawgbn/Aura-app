@@ -41,7 +41,7 @@ const PomodoroScreen = () => {
   const [newTask, setNewTask] = useState<Task>({ name: "", note: "" }); //data for new/edited task
   const [showGlobalOptions, setShowGlobalOptions] = useState(false); //clear tasks menu
   const [isBreak, setIsBreak] = useState(false); // pomodoro/break mode
-  const [secondsLeft, setSecondsLeft] = useState(25 * 60); //countdown time in seconds
+  const [secondsLeft, setSecondsLeft] = useState(1 * 60); //countdown time in seconds
   const [isRunning, setIsRunning] = useState(false); //timer state
   const [editIndex, setEditIndex] = useState<number | null>(null); //index of task being edited
   const [taskMenuIndex, setTaskMenuIndex] = useState<number | null>(null); //index of task menu being shown
