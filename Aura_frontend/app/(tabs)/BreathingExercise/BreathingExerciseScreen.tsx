@@ -141,22 +141,19 @@ export default function BreathingExercise() {
   };
 
   //---------------STOP SESSION------------------------
-  const stopBreathing = () => {
-    //cancel animations
+  const stopBreathing = (save = true) => {
     cancelAnimation(scale);
     cancelAnimation(progress);
-    //clear timers
+
     if (intervalRef.current) clearTimeout(intervalRef.current);
     if (countdownInterval.current) clearInterval(countdownInterval.current);
 
-    //reset visuals
     scale.value = 1;
     progress.value = 0;
     setPhase("in");
     setSeconds(4);
 
-    //save session duration if session was started
-    if (sessionStartTime) {
+    if (save && sessionStartTime) {
       const durationSec = Math.floor((Date.now() - sessionStartTime) / 1000);
       setTotalDuration(durationSec);
       saveBreathingSession(durationSec);
@@ -165,7 +162,6 @@ export default function BreathingExercise() {
         "Session Complete",
         `You breathed for ${durationSec} seconds`
       );
-      console.log("alert sent");
     }
   };
 
@@ -174,10 +170,9 @@ export default function BreathingExercise() {
     if (isPlaying) {
       startBreathing();
     } else {
-      stopBreathing();
+      stopBreathing(true); // only save when user explicitly pauses
     }
-    //cleanup when component unmounts
-    return stopBreathing;
+    return () => stopBreathing(false); // cleanup without saving
   }, [isPlaying]);
 
   //---------------ANIMATED STYLES-----------------
