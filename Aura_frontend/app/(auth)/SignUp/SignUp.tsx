@@ -9,6 +9,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import styles from "./SignUp.styles";
 import { useRouter } from "expo-router";
@@ -45,8 +46,7 @@ const SignUp: React.FC = () => {
     try {
       const res = await signUp(payload);
       await login(res.token);
-      alert("Signed up successfully");
-
+      Alert.alert("Success 🎉", "Signed up successfully");
       router.replace("/(tabs)/Home/HomeScreen");
     } catch (error: any) {
       alert(error.message);
@@ -151,6 +151,5 @@ const SignUp: React.FC = () => {
     </KeyboardAvoidingView>
   );
 };
-
 
 export default SignUp;
