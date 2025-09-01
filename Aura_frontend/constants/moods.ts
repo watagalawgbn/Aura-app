@@ -1,4 +1,4 @@
-export const moodOptions = [
+export const moods = [
   { label: "Happy", image: require("../assets/images/happy.png") },
   { label: "Neutral", image: require("../assets/images/neutral.png") },
   { label: "Sad", image: require("../assets/images/sad.png") },

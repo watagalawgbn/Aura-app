@@ -15,7 +15,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { getTasks } from "@/app/services/taskService";
 import { fetchAverageSleep } from "@/app/services/sleepService";
 import { getCurrentMood } from "@/app/services/moodService";
-import { moodOptions } from "@/constants/moods";
+import { moods } from "@/constants/moods";
 import BackButton from "@/app/components/BackButton";
 
 export default function Profile() {
@@ -66,7 +66,7 @@ export default function Profile() {
     fetchMood();
   }, []);
 
-  const currentMoodData = moodOptions.find(
+  const currentMoodData = moods.find(
   m => m.label.toLowerCase() === currentMood?.toLowerCase()
 );
 
