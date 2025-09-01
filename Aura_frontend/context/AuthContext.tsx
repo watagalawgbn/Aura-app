@@ -2,19 +2,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
-
-type User = {
-  id: string;
-  name: string;
-  email: string;
-};
-
-type JwtPayload = {
-  id: string;
-  name: string;
-  email: string;
-  exp: number;
-};
+import { JwtPayload, User } from "../types/auth";
 
 type AuthContextType = {
   user: User | null;
