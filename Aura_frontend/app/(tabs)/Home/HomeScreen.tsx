@@ -35,28 +35,26 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#224831" barStyle="light-content" />
 
-      {/* Header section of the home screen */}
+      {/* Header*/}
       <LinearGradient
-        colors={["#224831", "#5FB21F"]}
-        start={{ x: 0.5, y: 0.5 }}
-        end={{ x: 0.5, y: 1 }}
+        colors={["#5FB21F", "#224831"]}
+        start={{ x: 0, y: 0.5 }}
+        end={{ x: 1, y: 0.5 }}
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <View style={styles.logoContainer}>
-            <Image
-              source={require("../../../assets/images/aura.png")}
-              style={styles.logo}
-            />
-          </View>
           <View style={styles.greetingContainer}>
             <Text style={styles.date}>{formattedDate}</Text>
             <Text style={styles.greeting}>{greetingMessage},</Text>
             <Text style={styles.greeting}>{user?.name ?? "User"}!</Text>
           </View>
-          <TouchableOpacity style={styles.notificationIcon}>
-            <Feather name="bell" size={24} color="black" border="1" />
-          </TouchableOpacity>
+
+          <View >
+            <Image
+              source={require("../../../assets/images/aura.png")}
+              style={styles.logo}
+            />
+          </View>
         </View>
       </LinearGradient>
 
@@ -110,7 +108,9 @@ const HomeScreen = () => {
             {/*Sleep tracking card*/}
             <TouchableOpacity
               style={styles.insightCard}
-              onPress={() => router.push("/(tabs)/SleepScreen/SleepBetterScreen")}
+              onPress={() =>
+                router.push("/(tabs)/SleepScreen/SleepBetterScreen")
+              }
             >
               <Text style={styles.insightCardTitle}>Track your sleep</Text>
               <Image
@@ -124,7 +124,9 @@ const HomeScreen = () => {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Access</Text>
             <TouchableOpacity
-              onPress={() => router.push("/(tabs)/QuickAccess/QuickAccessScreen")}
+              onPress={() =>
+                router.push("/(tabs)/QuickAccess/QuickAccessScreen")
+              }
             >
               <Text style={styles.seeAllText}>See All</Text>
             </TouchableOpacity>
@@ -144,7 +146,9 @@ const HomeScreen = () => {
                   Stress-Free Meditation
                 </Text>
                 <TouchableOpacity
-                  onPress={() => router.push("/(tabs)/Meditation/MeditationScreen")}
+                  onPress={() =>
+                    router.push("/(tabs)/Meditation/MeditationScreen")
+                  }
                   style={styles.exploreButton}
                 >
                   <Text style={styles.exploreButtonText}>Explore</Text>

@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native";
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -26,51 +25,27 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 20,
-    // marginRight: 20,
   },
   greetingContainer: {
     flexDirection: "column",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "flex-start",
     flex: 1,
   },
   greeting: {
     fontSize: 22,
     fontWeight: "bold",
     color: "white",
-    textAlign: "center",
+    textAlign: "left",
   },
   date: {
     fontSize: 14,
     fontWeight: "500",
     color: "white",
-    textAlign: "center",
+    textAlign: "left",
     marginVertical: 5,
   },
-  notificationIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 5,
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    marginTop: 10,
-  },
-  searchInput: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#333",
-  },
+
   content: {
     flex: 1,
   },
@@ -106,26 +81,25 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   insightCard: {
-  width: 200, // fixed width for better horizontal scrolling
-  backgroundColor: "white",
-  borderRadius: 25,
-  padding: 15,
-  marginRight: 15, // adds space between cards
-  borderWidth: 1,
-  borderColor: "#eee",
-  justifyContent: "space-between",
-  height: 250,
-  elevation: 5,
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.2,
-  shadowRadius: 4,
-},
-insightsContent: {
-  paddingLeft: 10,
-  paddingRight: 10,
-}
-,
+    width: 200,
+    backgroundColor: "white",
+    borderRadius: 25,
+    padding: 15,
+    marginRight: 15,
+    borderWidth: 1,
+    borderColor: "#eee",
+    justifyContent: "space-between",
+    height: 250,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  insightsContent: {
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
   insightCardTitle: {
     fontSize: 16,
     fontWeight: "bold",
