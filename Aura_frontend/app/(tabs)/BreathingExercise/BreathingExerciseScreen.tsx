@@ -159,7 +159,7 @@ export default function BreathingExercise() {
       saveBreathingSession(durationSec);
 
       Alert.alert(
-        "Session Complete",
+        "Session Complete 🎉",
         `You breathed for ${durationSec} seconds`
       );
     }

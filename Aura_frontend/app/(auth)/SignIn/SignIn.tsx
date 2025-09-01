@@ -36,14 +36,14 @@ const SignIn: React.FC = () => {
 
     if (!email || !password) {
       Alert.alert(
-        "Missing Fields",
+        "Missing Fields ⚠️",
         "Please fill out all fields.");
       return;
     }
 
     if (!email.includes("@")) {
       Alert.alert(
-        "Invalid Email Address",
+        "Invalid Email Address ⚠️",
         "Please enter a valid email address.");
       return;
     }
@@ -54,7 +54,7 @@ const SignIn: React.FC = () => {
       Alert.alert("Success 🎉", "You’ve signed in successfully!");
       router.replace("/(tabs)/Home/HomeScreen");
     } catch (error: any) {
-      alert(error.message);
+      Alert.alert(error.message);
     }
   };
 

@@ -17,7 +17,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
 import { Audio } from "expo-av";
-
 import {
   addTask,
   deleteTask,
@@ -25,14 +24,7 @@ import {
   getTasks,
   toggleTaskCompletion,
 } from "@/app/services/taskService";
-
-type Task = {
-  _id?: string;
-  name: string;
-  note: string;
-  userId?: string;
-  completed?: boolean;
-};
+import { Task } from "@/types/task";
 
 const PomodoroScreen = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -117,7 +109,7 @@ const PomodoroScreen = () => {
   //start/pause timer
   const toggleTimer = () => {
     if (tasks.length === 0 || currentTaskIndex === null) {
-      alert("Please add a task before starting the timer.");
+      Alert.alert("Please add a task before starting the timer! ⚠️");
       return;
     }
     setIsRunning((prev) => !prev);
@@ -167,7 +159,7 @@ const PomodoroScreen = () => {
           } else if (res.status === 403) {
             // user workload exceeded
             Alert.alert(
-              "Workload Limit Reached",
+              "Workload Limit Reached ⚠️",
               `${res.data.message}\nYou’ve already focused for ${res.data.usedMinutes} mins today.`,
               [
                 { text: "Cancel", style: "cancel" },
@@ -182,7 +174,7 @@ const PomodoroScreen = () => {
             );
           } else if (res.status === 409) {
             // user didn't log sleep hours
-            alert("Please log your sleep hours before adding tasks.");
+            Alert.alert("Please log your sleep hours before adding tasks! ⚠️");
           }
         }
 

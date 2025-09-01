@@ -34,12 +34,15 @@ const SignUp: React.FC = () => {
     const payload: SignUpRequest = { name, email, password };
 
     if (!name || !email || !password) {
-      alert("All fields are required.");
+      Alert.alert("Missing Fields ⚠️", "All fields are required.");
       return;
     }
 
     if (!email.includes("@")) {
-      alert("Please enter a valid email address.");
+      Alert.alert(
+        "Invalid Email Address ⚠️",
+        "Please enter a valid email address."
+      );
       return;
     }
 
@@ -49,7 +52,7 @@ const SignUp: React.FC = () => {
       Alert.alert("Success 🎉", "Signed up successfully");
       router.replace("/(tabs)/Home/HomeScreen");
     } catch (error: any) {
-      alert(error.message);
+      Alert.alert(error.message);
     }
   };
 
