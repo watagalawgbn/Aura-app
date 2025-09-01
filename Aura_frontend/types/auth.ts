@@ -12,3 +12,16 @@ export type SignUpRequest = {
 export type AuthResponse = {
   token: string;
 };
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+export type JwtPayload = {
+  id: string;
+  name: string;
+  email: string;
+  exp: number;
+};
