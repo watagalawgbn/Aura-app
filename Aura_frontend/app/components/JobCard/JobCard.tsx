@@ -3,7 +3,9 @@ import React from "react";
 import styles from "../../(tabs)/JobScreen/JobScreen.styles";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import type { Job } from "@/app/services/jobService";
+import { Job } from "@/types/job";
+import { saveJob } from "@/app/services/jobService";
+import * as SecureStore from "expo-secure-store";
 
 //props type for jobcard
 type JobCardProps = {
@@ -12,9 +14,33 @@ type JobCardProps = {
 
 const JobCard = ({ job }: JobCardProps) => {
   const router = useRouter();
+  const handleSave = async () => {
+    try {
+      // grab logged in userId from storage (or your auth context)
+      const userId = await SecureStore.getItemAsync("userId");
+      if (!userId) {
+        console.warn("⚠️ No user logged in, cannot save job");
+        return;
+      }
+
+      await saveJob(userId, job);
+      console.log("✅ Job saved:", job.title);
+    } catch (err: any) {
+      console.error("❌ Error saving job:", err.message);
+    }
+  };
+
   return (
     <View style={styles.jobCard}>
-      <Text style={styles.jobTitle}>{job.title}</Text>
+      <View style={styles.jobHeader}>
+        <Text style={styles.jobTitle} numberOfLines={1}>
+          {job.title}
+        </Text>
+        <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+          <Text style={styles.saveButtonText}>Save Job</Text>
+        </TouchableOpacity>
+      </View>
+
       <Text style={styles.companyName}>{job.company}</Text>
       <View style={styles.jobTags}>
         <View style={styles.tagWithIcon}>
@@ -33,7 +59,10 @@ const JobCard = ({ job }: JobCardProps) => {
         )}
       </View>
       <Text numberOfLines={3} style={styles.jobDesc}>
-        {job.description || job.descriptionSnippet || "No description available."}...
+        {job.description ||
+          job.descriptionSnippet ||
+          "No description available."}
+        ...
       </Text>
       <TouchableOpacity
         style={styles.applyButton2}

@@ -31,4 +31,14 @@ export const fetchJobs = async({
     }
 }
 
-export default { fetchJobs };
+export const saveJob = async (userId: string, job: Job) => {
+  try {
+    const res = await apiClient.post("/api/jobs/save", { userId, job });
+    return res.data;
+  } catch (err: any) {
+    console.error("Failed to save job:", err.response?.data || err.message);
+    throw new Error("Failed to save job!");
+  }
+};
+
+export default { fetchJobs, saveJob };

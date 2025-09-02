@@ -112,9 +112,26 @@ const styles = StyleSheet.create({
     borderColor: "#edededff",
     borderWidth: 1,
   },
+  jobHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   jobTitle: {
     fontWeight: "500",
     fontSize: 16,
+    flexShrink: 1, // allow text to shrink if needed
+    marginRight: 8, // spacing from button
+  },
+  saveButton: {
+    backgroundColor: "#52AE77",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 5,
+  },
+  saveButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
   jobTitlewithId: {
     fontWeight: "500",
@@ -260,7 +277,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderColor: "#5FB21F",
     borderWidth: 1.5,
-    borderRadius: 999, 
+    borderRadius: 999,
     marginRight: 8,
     marginBottom: 8,
   },
