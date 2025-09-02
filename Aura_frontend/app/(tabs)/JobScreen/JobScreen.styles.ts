@@ -120,8 +120,8 @@ const styles = StyleSheet.create({
   jobTitle: {
     fontWeight: "500",
     fontSize: 16,
-    flexShrink: 1, // allow text to shrink if needed
-    marginRight: 8, // spacing from button
+    flexShrink: 1,
+    marginRight: 8, 
   },
   saveButton: {
     backgroundColor: "#52AE77",
