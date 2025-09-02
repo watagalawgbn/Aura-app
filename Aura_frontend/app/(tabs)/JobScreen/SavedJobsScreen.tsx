@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import apiClient from "@/app/services/apiClient";
 import JobCard from "@/app/components/JobCard/JobCard";
 import BackButton from "@/app/components/BackButton";
-import { FlatList } from "react-native";
 
 export default function SavedJobsScreen() {
   const [jobs, setJobs] = useState<any[]>([]);
@@ -63,7 +62,7 @@ export default function SavedJobsScreen() {
         <FlatList
           data={jobs}
           keyExtractor={(job) => job.id}
-          renderItem={({ item }) => <JobCard job={item} />}
+          renderItem={({ item }) => <JobCard job={item} initialSaved={true}/>}
           contentContainerStyle={{ paddingBottom: 150 }}
           showsVerticalScrollIndicator={false}
         />
