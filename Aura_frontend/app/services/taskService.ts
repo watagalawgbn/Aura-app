@@ -1,8 +1,8 @@
 import apiClient from "./apiClient";
-import { taskData } from "@/types/task";
+import { Task } from "@/types/task";
 
 //-------------ADD TASK------------
-export const addTask = async (newTask: taskData, userId: string, override = false): Promise<{task?: taskData, status: number; data: any}> => {
+export const addTask = async (newTask: Task, userId: string, override = false): Promise<{task?: Task, status: number; data: any}> => {
   try {
     const res = await apiClient.post(`/api/tasks`, {
       ...newTask, // spread task fields (name, note, etc.)
@@ -31,7 +31,7 @@ export const toggleTaskCompletion = async (taskId: string, completed: boolean) =
 
 
 //------------UPDATE TASK----------------
-export const updateTask = async(taskId: string, updates: Partial<taskData>): Promise<taskData> => { //accept partal updates
+export const updateTask = async(taskId: string, updates: Partial<Task>): Promise<Task> => { //accept partal updates
     try{
         const req = await apiClient.put(`/api/tasks/${taskId}`, updates);
         console.log("Updated task: ", req.data);
