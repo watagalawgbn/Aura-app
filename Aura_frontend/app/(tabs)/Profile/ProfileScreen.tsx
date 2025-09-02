@@ -67,80 +67,99 @@ export default function Profile() {
   }, []);
 
   const currentMoodData = moods.find(
-  m => m.label.toLowerCase() === currentMood?.toLowerCase()
-);
+    (m) => m.label.toLowerCase() === currentMood?.toLowerCase()
+  );
 
   const firstName = (user?.name || "").split(" ")[0] || "User";
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff"/>
-      <BackButton/>
-
-      {/* HEADER */}
-      <View style={styles.hero}>
-        <View style={styles.welcomeRow}>
-          <View style={styles.welcomeAvatar}>
-            <Ionicons name="person" size={34} color="#5FB21F" />
-          </View>
-          <View style={{ flex: 1, paddingLeft: 10 }}>
-            <Text style={styles.welcomeTitle}>Welcome back,</Text>
-            <Text style={styles.welcomeTitle}>{firstName}</Text>
-            <Text style={styles.welcomeSub}>
-              Ready for your wellness journey today?
-            </Text>
-          </View>
-        </View>
-
-        {/* Wellness Cards */}
-        <View style={styles.cardRow}>
-          <View style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>Average Sleep</Text>
-              <Ionicons name="moon-outline" size={18} color="#5FB21F" />
-            </View>
-            <Text style={styles.cardValue}>{avgSleep}</Text>
-            <Text style={styles.cardSubtitle}>
-              {avgSleep >= 7 ? "Optimal range" : "Below optimal"}
-            </Text>
-          </View>
-
-          <View style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>Focus Sessions</Text>
-              <Ionicons name="radio-outline" size={18} color="#5FB21F" />
-            </View>
-            <Text style={styles.cardValue}>{todaysTasks}</Text>
-            <Text style={styles.cardSubtitle}>Today</Text>
-          </View>
-        </View>
-
-        <View style={styles.moodRow}>
-          <View style={styles.moodCard}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>Current Mood</Text>
-              <Ionicons name="heart-outline" size={18} color="#5FB21F" />
-            </View>
-
-            {currentMoodData ? (
-              <>
-                <Image source={currentMoodData.image} style={{ width: 40, height: 40 }} />
-                <Text style={styles.cardSubtitle}>{currentMoodData.label}</Text>
-              </>
-            ) : (
-              <>
-                <Text style={styles.cardEmoji}>🙂</Text>
-                <Text style={styles.cardSubtitle}>No mood logged</Text>
-              </>
-            )}
-          </View>
-        </View>
-      </View>
-
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <BackButton />
       <ScrollView
         contentContainerStyle={styles.body}
         showsVerticalScrollIndicator={false}
       >
+        {/* HEADER */}
+        <View style={styles.hero}>
+          <View style={styles.welcomeRow}>
+            <View style={styles.welcomeAvatar}>
+              <Ionicons name="person" size={34} color="#5FB21F" />
+            </View>
+            <View style={{ flex: 1, paddingLeft: 10 }}>
+              <Text style={styles.welcomeTitle}>Welcome back,</Text>
+              <Text style={styles.welcomeTitle}>{firstName}</Text>
+              <Text style={styles.welcomeSub}>
+                Ready for your wellness journey today?
+              </Text>
+            </View>
+          </View>
+
+          {/* Wellness Cards */}
+          <View style={styles.cardRow}>
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>Average Sleep</Text>
+                <Ionicons name="moon-outline" size={18} color="#5FB21F" />
+              </View>
+              <Text style={styles.cardValue}>{avgSleep}</Text>
+              <Text style={styles.cardSubtitle}>
+                {avgSleep >= 7 ? "Optimal range" : "Below optimal"}
+              </Text>
+            </View>
+
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>Focus Sessions</Text>
+                <Ionicons name="radio-outline" size={18} color="#5FB21F" />
+              </View>
+              <Text style={styles.cardValue}>{todaysTasks}</Text>
+              <Text style={styles.cardSubtitle}>Today</Text>
+            </View>
+          </View>
+
+          <View style={styles.moodRow}>
+            <View style={styles.moodCard}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>Current Mood</Text>
+                <Ionicons name="heart-outline" size={18} color="#5FB21F" />
+              </View>
+
+              {currentMoodData ? (
+                <>
+                  <Image
+                    source={currentMoodData.image}
+                    style={{ width: 40, height: 40 }}
+                  />
+                  <Text style={styles.cardSubtitle}>
+                    {currentMoodData.label}
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.cardEmoji}>🙂</Text>
+                  <Text style={styles.cardSubtitle}>No mood logged</Text>
+                </>
+              )}
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.jobRow}
+            onPress={() => router.push("/(tabs)/JobScreen/SavedJobsScreen")}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={styles.cardTitle}>Your Saved Jobs</Text>
+              <Text style={styles.cardSubtitle}>
+                View and manage jobs you’ve saved while browsing.
+              </Text>
+            </View>
+            <Ionicons name="arrow-forward" size={20} color="#5FB21F" />
+          </TouchableOpacity>
+        </View>
+
         {/* Account */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
