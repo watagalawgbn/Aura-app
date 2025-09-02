@@ -1,19 +1,23 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../(tabs)/JobScreen/JobScreen.styles";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Job } from "@/types/job";
 import { saveJob } from "@/app/services/jobService";
 import * as SecureStore from "expo-secure-store";
+import apiClient from "@/app/services/apiClient";
 
 //props type for jobcard
 type JobCardProps = {
   job: Job;
+  initialSaved?: boolean;
 };
 
-const JobCard = ({ job }: JobCardProps) => {
+const JobCard = ({ job, initialSaved }: JobCardProps) => {
   const router = useRouter();
+  const [isSaved, setIsSaved] = useState(initialSaved);
+
   const handleSave = async () => {
     try {
       // grab logged in userId from storage (or your auth context)
@@ -24,11 +28,27 @@ const JobCard = ({ job }: JobCardProps) => {
       }
 
       await saveJob(userId, job);
+      setIsSaved(true);
       console.log("✅ Job saved:", job.title);
     } catch (err: any) {
       console.error("❌ Error saving job:", err.message);
     }
   };
+
+  useEffect(() => {
+    const checkSaved = async () => {
+      const userId = await SecureStore.getItemAsync("userId");
+      if (!userId) return;
+
+      const res = await apiClient.get(`/api/jobs/saved/${userId}`);
+      const isJobSaved = res.data.some(
+        (saved: any) => saved.jobRef.jobId === job.id
+      );
+      setIsSaved(isJobSaved);
+    };
+
+    checkSaved();
+  }, [job.id]);
 
   return (
     <View style={styles.jobCard}>
@@ -37,7 +57,11 @@ const JobCard = ({ job }: JobCardProps) => {
           {job.title}
         </Text>
         <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-          <Ionicons name="bookmark" size={25} color="#5FB21F"/>
+          <Ionicons
+            name={isSaved ? "bookmark" : "bookmark-outline"}
+            size={25}
+            color="#5FB21F"
+          />
         </TouchableOpacity>
       </View>
 
