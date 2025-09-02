@@ -2,20 +2,15 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   container: { flex: 1, backgroundColor: "#ffffffff" },
-
   hero: {
-    // paddingTop: 12,
+    paddingTop: 12,
     paddingBottom: 20,
     paddingHorizontal: 20,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     backgroundColor: "#ffffffff",
   },
-  welcomeRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 15,
-  },
+  welcomeRow: { flexDirection: "row", alignItems: "center", marginBottom: 15 },
   welcomeAvatar: {
     width: 60,
     height: 60,
@@ -38,6 +33,7 @@ export default StyleSheet.create({
     borderRadius: 14,
     padding: 16,
     marginHorizontal: 6,
+    marginVertical: 10,
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -61,13 +57,11 @@ export default StyleSheet.create({
     elevation: 2,
     alignItems: "center",
   },
-
   cardTitle: { fontSize: 14, fontWeight: "600", color: "#325B52" },
   cardEmoji: { fontSize: 32 },
   cardValue: { fontSize: 20, fontWeight: "700", color: "#0B3B2E" },
   cardSubtitle: { fontSize: 13, color: "#6C8A84" },
-
-  body: { padding: 20 },
+  body: { padding: 15 },
   section: {
     backgroundColor: "#fff",
     borderRadius: 16,
@@ -86,7 +80,6 @@ export default StyleSheet.create({
     marginBottom: 8,
   },
   sectionTitle: { fontSize: 16, fontWeight: "700", color: "#113A32" },
-
   inputRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -99,7 +92,11 @@ export default StyleSheet.create({
   },
   inputIcon: { marginRight: 8, color: "#325B52" },
   input: { flex: 1, fontSize: 15, color: "#0B3B2E" },
-
+  jobRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   button: {
     backgroundColor: "#5FB21F",
     height: 52,
@@ -109,12 +106,12 @@ export default StyleSheet.create({
   },
   buttonText: { color: "#fff", fontWeight: "700", fontSize: 16 },
   buttonDisabled: { opacity: 0.5 },
-
   logoutBtn: {
     backgroundColor: "#ffffffff",
     marginTop: 10,
     borderWidth: 1,
     borderColor: "#ce6a6aff",
+    marginBottom: 50,
   },
   logoutText: { color: "#C62828", fontWeight: "800", fontSize: 16 },
 });

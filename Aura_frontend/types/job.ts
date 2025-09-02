@@ -3,7 +3,7 @@ export type Job = {
   title: string;
   company: string;
   location: string;
-  type?: string | null;     // optional to be safe
+  type?: string | null;     
   postedAt?: string;
   applyLink?: string;
   description?: string;           

@@ -37,7 +37,7 @@ const JobCard = ({ job }: JobCardProps) => {
           {job.title}
         </Text>
         <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>Save Job</Text>
+          <Ionicons name="bookmark" size={25} color="#5FB21F"/>
         </TouchableOpacity>
       </View>
 
