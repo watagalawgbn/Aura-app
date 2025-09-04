@@ -104,7 +104,8 @@ const styles = StyleSheet.create({
   cardSeverity: {
     fontSize: 13,
     color: "#2c8a57",
-    marginTop: 2
+    marginTop: 2,
+    textAlign: 'center'
   },
 
   /* recommended actions list rows */
