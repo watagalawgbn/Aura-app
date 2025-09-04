@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import styles from "./AssessmentResultScreen.styles";
 import MentalHealthDonutChart from "../../components/MentalHealthDonutChart";
+import BreakdownCard from "@/app/components/BreakDownCard";
+import ActionRow from "@/app/components/ActionRow";
 
 export default function AssessmentResult() {
   const { scores, recommendations } = useLocalSearchParams();
@@ -76,7 +78,7 @@ export default function AssessmentResult() {
       <View style={styles.cardsRow}>
         <BreakdownCard
           value={phqScore}
-          label="Mood"
+          label="Depression"
           severity={phqSeverity}
           color="#e87674"
           accentBg="rgba(232,118,116,0.12)"
@@ -156,72 +158,3 @@ export default function AssessmentResult() {
     </ScrollView>
   );
 }
-
-
-const BreakdownCard = ({
-  value,
-  label,
-  severity,
-  color,
-  accentBg,
-}: {
-  value: number;
-  label: string;
-  severity: string;
-  color: string;
-  accentBg: string;
-}) => {
-  return (
-    <View style={[styles.card, { backgroundColor: "#fff" }]}>
-      <Text style={[styles.cardScore, { color }]}>{value}</Text>
-      <Text style={styles.cardLabel}>{label}</Text>
-      <Text style={styles.cardSeverity}>{severity}</Text>
-    </View>
-  );
-};
-
-const ActionRow = ({
-  leftIconType,
-  title,
-  subtitle,
-  ctaText,
-  onPress,
-}: {
-  leftIconType: "meditation" | "breathing";
-  title: string;
-  subtitle: string;
-  ctaText: string;
-  onPress: () => void;
-}) => {
-  const isBreathing = leftIconType === "breathing";
-
-  return (
-    <View style={styles.actionRow}>
-      <View
-        style={[
-          styles.actionIconWrap,
-          isBreathing ? styles.actionIconWrapBreath : null,
-        ]}
-      >
-        {isBreathing ? (
-          <MaterialCommunityIcons
-            name="weather-windy"
-            size={24}
-            color="#4CAF50"
-          />
-        ) : (
-          <Ionicons name="musical-notes" size={24} color="#4CAF50" />
-        )}
-      </View>
-
-      <View style={styles.actionTextWrap}>
-        <Text style={styles.actionTitle}>{title}</Text>
-        <Text style={styles.actionSubtitle}>{subtitle}</Text>
-      </View>
-
-      <TouchableOpacity style={styles.ctaBtn} onPress={onPress}>
-        <Text style={styles.ctaBtnText}>{ctaText}</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
