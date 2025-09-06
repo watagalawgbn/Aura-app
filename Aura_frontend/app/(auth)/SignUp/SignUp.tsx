@@ -9,7 +9,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from "react-native";
 import styles from "./SignUp.styles";
 import { useRouter } from "expo-router";
@@ -17,6 +16,7 @@ import { SignUpRequest } from "../../../types/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
 import { signUp } from "@/app/services/authService";
+import Toast from "react-native-toast-message";
 
 const SignUp: React.FC = () => {
   const [name, setName] = useState("");
@@ -34,25 +34,55 @@ const SignUp: React.FC = () => {
     const payload: SignUpRequest = { name, email, password };
 
     if (!name || !email || !password) {
-      Alert.alert("Missing Fields ⚠️", "All fields are required.");
+      Toast.show({
+        type: "error",
+        text1: "Missing Fields ⚠️",
+        text2: "All fields are required.",
+        visibilityTime: 5000,
+        position: "top",
+        autoHide: true,
+      });
       return;
     }
 
     if (!email.includes("@")) {
-      Alert.alert(
-        "Invalid Email Address ⚠️",
-        "Please enter a valid email address."
-      );
+      Toast.show({
+        type: "error",
+        text1: "Invalid Email Address ⚠️",
+        text2: "Please enter a valid email address.",
+        visibilityTime: 5000,
+        position: "top",
+        autoHide: true,
+      });
       return;
     }
 
     try {
       const res = await signUp(payload);
       await login(res.token);
-      Alert.alert("Success 🎉", "Signed up successfully");
+      Toast.show({
+        type: "success",
+        text1: "Success 🎉",
+        text2: `Welcome aboard 🌟`,
+        position: "top",
+        visibilityTime: 5000,
+        autoHide: true,
+      });
       router.replace("/(tabs)/Home/HomeScreen");
     } catch (error: any) {
-      Alert.alert(error.message);
+      const message =
+        error?.response?.data?.message || // if it's from an API
+        error?.message || // normal JS error
+        "Something went wrong. Please try again.";
+
+      Toast.show({
+        type: "error",
+        text1: "Error ⚠️",
+        text2: message,
+        position: "top",
+        visibilityTime: 5000,
+        autoHide: true,
+      });
     }
   };
 

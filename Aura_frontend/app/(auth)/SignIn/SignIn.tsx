@@ -10,7 +10,6 @@ import {
   ScrollView,
   Platform,
   StatusBar,
-  Alert,
 } from "react-native";
 import styles from "./SignIn.styles";
 import { useRouter } from "expo-router";
@@ -18,6 +17,7 @@ import { SignInRequest } from "../../../types/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@/context/AuthContext";
 import { signIn } from "@/app/services/authService";
+import Toast from "react-native-toast-message";
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -35,26 +35,55 @@ const SignIn: React.FC = () => {
     const payload: SignInRequest = { email, password };
 
     if (!email || !password) {
-      Alert.alert(
-        "Missing Fields ⚠️",
-        "Please fill out all fields.");
+      Toast.show({
+        type: "error",
+        text1: "Missing Fields ⚠️",
+        text2: "All fields are required.",
+        visibilityTime: 5000,
+        position: "top",
+        autoHide: true,
+      });
       return;
     }
 
     if (!email.includes("@")) {
-      Alert.alert(
-        "Invalid Email Address ⚠️",
-        "Please enter a valid email address.");
+      Toast.show({
+        type: "error",
+        text1: "Invalid Email Address ⚠️",
+        text2: "Please enter a valid email address.",
+        visibilityTime: 5000,
+        position: "top",
+        autoHide: true,
+      });
       return;
     }
 
     try {
       const res = await signIn(payload);
       await login(res.token);
-      Alert.alert("Success 🎉", "You’ve signed in successfully!");
+      Toast.show({
+        type: "success",
+        text1: "Success🎉",
+        text2: `Welcome back 👋`,
+        position: "top",
+        visibilityTime: 5000,
+        autoHide: true,
+      });
       router.replace("/(tabs)/Home/HomeScreen");
     } catch (error: any) {
-      Alert.alert(error.message);
+      const message =
+        error?.response?.data?.message || // if it's from an API
+        error?.message || // normal JS error
+        "Something went wrong. Please try again.";
+
+      Toast.show({
+        type: "error",
+        text1: "Error ⚠️",
+        text2: message,
+        position: "top",
+        visibilityTime: 5000,
+        autoHide: true,
+      });
     }
   };
 
@@ -116,7 +145,7 @@ const SignIn: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.googleButton}
           onPress={() => {
             // TODO: google login
@@ -131,7 +160,7 @@ const SignIn: React.FC = () => {
             />
             <Text style={styles.googleText}>Sign in with Google</Text>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <TouchableOpacity onPress={handleSignUp} style={styles.mainButton}>
           <Text style={styles.mainButtonText}>Sign In</Text>

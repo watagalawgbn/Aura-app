@@ -1,10 +1,9 @@
-//app/components/Toast.tsx
-
+// src/components/toastConfig.tsx
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-const ToastConfig = {
+const toastConfig = {
   success: ({ text1, text2 }: any) => (
     <View style={styles.container}>
       <Feather
@@ -14,44 +13,55 @@ const ToastConfig = {
         style={styles.icon}
       />
       <View>
-        <Text style={styles.text1}>{text1}</Text>
+        <Text style={styles.title}>{text1}</Text>
+        {text2 ? <Text style={styles.message}>{text2}</Text> : null}
+      </View>
+    </View>
+  ),
+
+  error: ({ text1, text2 }: any) => (
+    <View style={[styles.container, { backgroundColor: "#1C1C1E" }]}>
+      <Feather name="x-circle" size={20} color="#E53935" style={styles.icon} />
+      <View style={{ flex: 1 }}>
+        <Text style={styles.title}>{text1}</Text>
         {text2 ? <Text style={styles.message}>{text2}</Text> : null}
       </View>
     </View>
   ),
 };
 
-export default ToastConfig;
+export default toastConfig;
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#D1F2C8",
-    padding: 14,
+    alignItems: "center", 
+    justifyContent: "center",
+    alignSelf: "center", 
+    maxWidth: "90%", 
+    paddingVertical: 14,
+    paddingHorizontal: 18,
     borderRadius: 12,
-    marginHorizontal: 16,
     marginBottom: 20,
+    backgroundColor: "#1C1C1E",
     shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 6,
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 4,
   },
   icon: {
-    marginRight: 12,
+    marginRight: 8,
   },
   title: {
-    color: "#000000ff",
+    color: "#fff",
     fontSize: 15,
     fontWeight: "600",
+    textAlign: "center",
   },
   message: {
-    color: "#000000ff",
+    color: "#D0D0D0",
     fontSize: 13,
     marginTop: 2,
-  },
-  text1: { 
-    flex: 1, 
-    color: "#000000ff" 
+    textAlign: "center",
   },
 });
