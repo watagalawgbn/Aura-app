@@ -8,7 +8,6 @@ import {
   TextInput,
   Pressable,
   TouchableOpacity,
-  Alert,
 } from "react-native";
 import styles from "./PomodoroScreen.styles";
 import React, { useState, useEffect } from "react";
