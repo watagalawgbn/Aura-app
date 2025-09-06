@@ -6,13 +6,13 @@ import {
   ImageBackground,
   ScrollView,
   SafeAreaView,
-  Alert,
 } from "react-native";
 import styles from "./PlayMeditationScreen.styles";
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Audio, AVPlaybackStatus } from "expo-av";
 import { getAudioUrl, getMeditationImageUrl } from "@/app/services/playMeditationService";
+import Toast from "react-native-toast-message";
 
 const PlayMeditationScreen = () => {
   const router = useRouter();
@@ -112,10 +112,14 @@ const PlayMeditationScreen = () => {
         }
       } catch (error) {
         console.error("Failed to load audio", error);
-        Alert.alert(
-          "Error ⚠️",
-          "Unable to load meditation audio. Please try again."
-        );
+        Toast.show({
+          type: "error",
+          text1: "Error ⚠️",
+          text2: `Unable to load meditation audio. Please try again.`,
+          visibilityTime: 4000,
+          position: "bottom",
+          autoHide: true,
+        });
       }
     };
 

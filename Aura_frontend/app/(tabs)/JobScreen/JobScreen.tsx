@@ -7,7 +7,6 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  Alert
 } from "react-native";
 import styles from "./JobScreen.styles";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
@@ -18,6 +17,7 @@ import { ActivityIndicator } from "react-native-paper";
 import { useFocusEffect } from "@react-navigation/native";
 import { fetchJobs } from "@/app/services/jobService";
 import { Job } from "@/types/job";
+import Toast from "react-native-toast-message";
 
 const JobScreen = () => {
   const [skills, setSkills] = useState(""); // form input for a new skill
@@ -30,7 +30,14 @@ const JobScreen = () => {
   const handleJobs = async () => { 
     if (skillList.length === 0) {
       console.warn("⚠️ Cannot fetch jobs without skills");
-      Alert.alert("Error ⚠️","Cannot fetch jobs without skills");
+      Toast.show({
+        type: "error",
+        text1: "Error ⚠️",
+        text2: `Cannot fetch jobs without skills`, 
+        visibilityTime: 4000,
+        position: "bottom",
+        autoHide: true,
+      });
       return;
     }
     try {

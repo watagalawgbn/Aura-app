@@ -5,8 +5,6 @@ const { width } = Dimensions.get("window");
 const CIRCLE_SIZE = width * 0.5;
 const PROGRESS_CIRCLE_SIZE = CIRCLE_SIZE + 100; // Progress ring is larger
 const PROGRESS_RADIUS = (PROGRESS_CIRCLE_SIZE - 20) / 2;
-const STROKE_WIDTH = 8;
-const CIRCUMFERENCE = 2 * Math.PI * PROGRESS_RADIUS;
 
 const styles = StyleSheet.create({
   container: {
