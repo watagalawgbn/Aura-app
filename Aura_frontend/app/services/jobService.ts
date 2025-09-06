@@ -41,4 +41,15 @@ export const saveJob = async (userId: string, job: Job) => {
   }
 };
 
+export const deleteSavedJob = async (id: string) => {
+  try {
+    const res = await apiClient.delete(`/api/jobs/saved/${id}`);
+    return res.data;
+  } catch (err: any) {
+    console.error("Failed to delete saved job:", err.response?.data || err.message);
+    throw new Error("Failed to delete saved job!");
+  }
+};
+
+
 export default { fetchJobs, saveJob };
