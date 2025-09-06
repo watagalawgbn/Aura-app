@@ -1,7 +1,8 @@
 // src/components/toastConfig.tsx
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
 
 const toastConfig = {
   success: ({ text1, text2 }: any) => (
@@ -25,6 +26,29 @@ const toastConfig = {
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>{text1}</Text>
         {text2 ? <Text style={styles.message}>{text2}</Text> : null}
+      </View>
+    </View>
+  ),
+
+  limit: ({ text1, text2, props }: any) => (
+    <View style={styles.container}>
+      <Feather name="alert-triangle" size={20} color="#FFC107" style={styles.icon} />
+      <View style={{ flex: 1 }}>
+        <Text style={styles.title}>{text1}</Text>
+        {text2 ? <Text style={styles.message}>{text2}</Text> : null}
+
+        {/* Add Anyway button */}
+        {props?.onAddAnyway && (
+          <TouchableOpacity
+            onPress={() => {
+              props.onAddAnyway();
+              Toast.hide();
+            }}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Add Anyway</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   ),
@@ -64,4 +88,17 @@ const styles = StyleSheet.create({
     marginTop: 2,
     textAlign: "center",
   },
+  button: {
+  marginTop: 8,
+  paddingVertical: 6,
+  paddingHorizontal: 12,
+  backgroundColor: "#4CAF50",
+  borderRadius: 6,
+  alignSelf: "center",
+},
+buttonText: {
+  color: "#fff",
+  fontWeight: "600",
+},
+
 });

@@ -25,6 +25,7 @@ import {
   toggleTaskCompletion,
 } from "@/app/services/taskService";
 import { Task } from "@/types/task";
+import Toast from "react-native-toast-message";
 
 const PomodoroScreen = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -78,7 +79,6 @@ const PomodoroScreen = () => {
     };
   }, [isRunning, isBreak]);
 
-  
   //---------------- LOAD TASKS ----------------
   useEffect(() => {
     const loadTasks = async () => {
@@ -109,7 +109,14 @@ const PomodoroScreen = () => {
   //start/pause timer
   const toggleTimer = () => {
     if (tasks.length === 0 || currentTaskIndex === null) {
-      Alert.alert("Please add a task before starting the timer! ⚠️");
+      Toast.show({
+        type: "error",
+        text1: "Error ⚠️",
+        text2: "Please add a task before starting the timer!",
+        visibilityTime: 4000,
+        position: "bottom",
+        autoHide: true,
+      });
       return;
     }
     setIsRunning((prev) => !prev);
@@ -157,24 +164,29 @@ const PomodoroScreen = () => {
             setTasks((prev) => [...prev, task]);
             if (tasks.length === 0) setCurrentTaskIndex(0);
           } else if (res.status === 403) {
-            // user workload exceeded
-            Alert.alert(
-              "Workload Limit Reached ⚠️",
-              `${res.data.message}\nYou’ve already focused for ${res.data.usedMinutes} mins today.`,
-              [
-                { text: "Cancel", style: "cancel" },
-                {
-                  text: "Add Anyway",
-                  onPress: async () => {
-                    const overrideRes = await addTask(newTask, user?.id!, true);
-                    if (overrideRes.task) { const task: Task = overrideRes.task; setTasks((prev) => [...prev, task]); }
-                  },
+            Toast.show({
+              type: "limit",
+              text1: "Workload Limit Reached",
+              text2: `${res.data.message}\nYou’ve already focused for ${res.data.usedMinutes} mins today.`,
+              props: {
+                onAddAnyway: async () => {
+                  const overrideRes = await addTask(newTask, user?.id!, true);
+                  if (overrideRes.task) {
+                    setTasks((prev) => [...prev, overrideRes.task as Task]);
+                  }
                 },
-              ]
-            );
+              },
+            });
           } else if (res.status === 409) {
             // user didn't log sleep hours
-            Alert.alert("Please log your sleep hours before adding tasks! ⚠️");
+            Toast.show({
+              type: "error",
+              text1: "Error ⚠️",
+              text2: "Please log your sleep hours before adding tasks!",
+              visibilityTime: 4000,
+              position: "bottom",
+              autoHide: true,
+            });
           }
         }
 
