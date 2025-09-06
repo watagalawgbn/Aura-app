@@ -18,7 +18,8 @@ export default function SavedJobsScreen() {
         const res = await apiClient.get(`/api/jobs/saved/${userId}`);
         // `res.data` is an array of SavedJob docs with populated `jobRef`
         const normalized = res.data.map((saved: any) => ({
-          id: saved.jobRef.jobId,
+          savedId: saved._id, // SavedJob document id
+          id: saved.jobRef.jobId, // external job id
           title: saved.jobRef.title,
           company: saved.jobRef.company,
           location: [
@@ -62,7 +63,18 @@ export default function SavedJobsScreen() {
         <FlatList
           data={jobs}
           keyExtractor={(job) => job.id}
-          renderItem={({ item }) => <JobCard job={item} initialSaved={true}/>}
+          renderItem={({ item }) => (
+            <JobCard
+              job={item}
+              initialSaved={true}
+              onRemove={() => {
+                // remove job immediately from state
+                setJobs((prev) =>
+                  prev.filter((j) => j.savedId !== item.savedId)
+                );
+              }}
+            />
+          )}
           contentContainerStyle={{ paddingBottom: 150 }}
           showsVerticalScrollIndicator={false}
         />

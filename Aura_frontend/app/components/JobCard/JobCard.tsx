@@ -1,54 +1,47 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "../../(tabs)/JobScreen/JobScreen.styles";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Job } from "@/types/job";
-import { saveJob } from "@/app/services/jobService";
+import { saveJob, deleteSavedJob } from "@/app/services/jobService";
 import * as SecureStore from "expo-secure-store";
-import apiClient from "@/app/services/apiClient";
 
-//props type for jobcard
 type JobCardProps = {
-  job: Job;
+  job: Job & { savedId?: string }; // include SavedJob._id for deletion
   initialSaved?: boolean;
+  onRemove?: () => void;
 };
 
-const JobCard = ({ job, initialSaved }: JobCardProps) => {
+const JobCard = ({ job, initialSaved = false, onRemove }: JobCardProps) => {
   const router = useRouter();
-  const [isSaved, setIsSaved] = useState(initialSaved);
+  const [saved, setSaved] = useState(initialSaved);
+  const [savedId, setSavedId] = useState(job.savedId || null);
 
-  const handleSave = async () => {
+  const toggleSave = async () => {
     try {
-      // grab logged in userId from storage (or your auth context)
-      const userId = await SecureStore.getItemAsync("userId");
-      if (!userId) {
-        console.warn("⚠️ No user logged in, cannot save job");
-        return;
-      }
-
-      await saveJob(userId, job);
-      setIsSaved(true);
-      console.log("✅ Job saved:", job.title);
-    } catch (err: any) {
-      console.error("❌ Error saving job:", err.message);
-    }
-  };
-
-  useEffect(() => {
-    const checkSaved = async () => {
       const userId = await SecureStore.getItemAsync("userId");
       if (!userId) return;
 
-      const res = await apiClient.get(`/api/jobs/saved/${userId}`);
-      const isJobSaved = res.data.some(
-        (saved: any) => saved.jobRef.jobId === job.id
-      );
-      setIsSaved(isJobSaved);
-    };
-
-    checkSaved();
-  }, [job.id]);
+      if (saved) {
+        // remove from saved jobs
+        if (savedId) {
+          await deleteSavedJob(savedId);
+          // notify parent to remove from list
+          onRemove?.();
+        }
+        setSaved(false);
+        setSavedId(null);
+      } else {
+        // save job
+        const res = await saveJob(userId, job);
+        setSaved(true);
+        setSavedId(res._id); // backend returns SavedJob doc
+      }
+    } catch (err) {
+      console.error("Failed to toggle save", err);
+    }
+  };
 
   return (
     <View style={styles.jobCard}>
@@ -56,9 +49,9 @@ const JobCard = ({ job, initialSaved }: JobCardProps) => {
         <Text style={styles.jobTitle} numberOfLines={1}>
           {job.title}
         </Text>
-        <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+        <TouchableOpacity onPress={toggleSave} style={styles.saveButton}>
           <Ionicons
-            name={isSaved ? "bookmark" : "bookmark-outline"}
+            name={saved ? "bookmark" : "bookmark-outline"}
             size={25}
             color="#5FB21F"
           />
@@ -69,7 +62,7 @@ const JobCard = ({ job, initialSaved }: JobCardProps) => {
       <View style={styles.jobTags}>
         <View style={styles.tagWithIcon}>
           <Ionicons name="location" size={16} color="#224831" />
-          <Text style={styles.tagText}>{job.location}</Text>
+          <Text style={styles.tagText}>{job.location || "N/A"}</Text>
         </View>
         <View style={styles.tagWithIcon}>
           <MaterialIcons name="schedule" size={16} color="#224831" />
@@ -82,18 +75,19 @@ const JobCard = ({ job, initialSaved }: JobCardProps) => {
           </View>
         )}
       </View>
+
       <Text numberOfLines={3} style={styles.jobDesc}>
         {job.description ||
           job.descriptionSnippet ||
           "No description available."}
-        ...
       </Text>
+
       <TouchableOpacity
         style={styles.applyButton2}
         onPress={() =>
           router.push({
-            pathname: "/(tabs)/JobScreen/[id]", //dynamic job details screen
-            params: { id: job.id, job: JSON.stringify(job) }, //pass job id and full job as string
+            pathname: "/(tabs)/JobScreen/[id]",
+            params: { id: job.id, job: JSON.stringify(job) },
           })
         }
       >
