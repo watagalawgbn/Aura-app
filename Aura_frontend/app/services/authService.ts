@@ -9,7 +9,9 @@ export const signUp = async (payload: SignUpRequest): Promise<AuthResponse> => {
     return res.data;
   } catch (err: any) {
     console.error("SignUp Error:", err);
-    throw new Error(err?.response?.data?.message || "Sign up failed. Try again.");
+    throw new Error(
+      err?.response?.data?.message || "Sign up failed. Try again."
+    );
   }
 };
 
@@ -19,8 +21,10 @@ export const signIn = async (payload: SignInRequest): Promise<AuthResponse> => {
     const res = await apiClient.post<AuthResponse>("/api/auth/signin", payload);
     return res.data;
   } catch (err: any) {
-    console.error("SignIn Error:", err);
-    throw new Error(err?.response?.data?.message || "Sign in failed. Try again.");
+    throw {
+      message: err?.response?.data?.msg || "Sign in failed. Try again.",
+      staus: err?.response?.staus,
+    };
   }
 };
 

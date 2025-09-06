@@ -71,15 +71,10 @@ const SignIn: React.FC = () => {
       });
       router.replace("/(tabs)/Home/HomeScreen");
     } catch (error: any) {
-      const message =
-        error?.response?.data?.message || // if it's from an API
-        error?.message || // normal JS error
-        "Something went wrong. Please try again.";
-
       Toast.show({
         type: "error",
         text1: "Error ⚠️",
-        text2: message,
+        text2: error?.message || "Something went wrong. Please try again.",
         position: "top",
         visibilityTime: 5000,
         autoHide: true,
