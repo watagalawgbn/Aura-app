@@ -10,7 +10,6 @@ import {
   SafeAreaView,
   StatusBar,
   TouchableOpacity,
-  Alert,
 } from "react-native";
 import styles from "./BreathingExerciseScreen.styles";
 import Animated, {
@@ -23,6 +22,8 @@ import Animated, {
 } from "react-native-reanimated";
 import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
 import { saveBreathingSession } from "@/app/services/breathingService";
+import Toast from "react-native-toast-message";
+
 
 const { width } = Dimensions.get("window");
 const CIRCLE_SIZE = width * 0.5;
@@ -158,10 +159,14 @@ export default function BreathingExercise() {
       setTotalDuration(durationSec);
       saveBreathingSession(durationSec);
 
-      Alert.alert(
-        "Session Complete 🎉",
-        `You breathed for ${durationSec} seconds`
-      );
+      Toast.show({
+        type: "success",
+        text1: "Session Complete 🎉",
+        text2: `You breathed for ${durationSec} seconds`,
+        position: "bottom",
+        visibilityTime: 4000,
+        autoHide: true,
+      })
     }
   };
 

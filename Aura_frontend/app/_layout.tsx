@@ -3,6 +3,8 @@ import { Slot } from "expo-router";
 import { AuthProvider } from "../context/AuthContext";
 import React, { useEffect } from "react";
 import * as Linking from 'expo-linking';
+import Toast from 'react-native-toast-message';
+import ToastConfig from "@/app/components/ToastConfig";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -16,6 +18,7 @@ export default function RootLayout() {
   return (
     <AuthProvider>
         <Slot />  
+        <Toast config={ToastConfig} />
     </AuthProvider>
   );
 }
