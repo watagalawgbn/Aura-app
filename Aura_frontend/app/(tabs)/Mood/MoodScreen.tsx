@@ -4,11 +4,11 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  Alert,
 } from "react-native";
 import styles from "./MoodScreen.styles";
 import Modal from "react-native-modal";
 import { logMood } from "../../services/moodService";
+import Toast from "react-native-toast-message";
 
 //define the props for moodlog
 type MoodLogProps = {
@@ -32,26 +32,38 @@ const MoodLog: React.FC<MoodLogProps> = ({ isVisible, onClose }) => {
   const handleSubmitMood = async () => {
     // if no mood selected, prevent the submission
     if (!selectedMood) {
-      Alert.alert(
-        "No Mood Selected ⚠️",
-        "Please select a mood before proceeding."
-      );
+
+      Toast.show({
+        type: "error",
+        text1: "Error ⚠️",
+        text2: "Please select a mood before proceeding.",
+        visibilityTime: 4000,
+        position: "top",
+        autoHide: true,
+      });
       return;
     }
 
     try {
       await logMood(selectedMood); //call moodService to add mood
-
-      // show sucess message & close the modal
-      Alert.alert(
-        "Mood Noted",
-        `You selected "${selectedMood}" as your mood.`,
-        [{ text: "OK", onPress: onClose }]
-      );
+      Toast.show({
+        type: "success",
+        text1: "Success 🎉",
+        text2: `You selected "${selectedMood}" as your mood.`,
+        visibilityTime: 4000,
+        position: "top",
+        autoHide: true,
+      });
     } catch (err) {
       console.error("Error saving mood: ", err);
-      //show error message if failes
-      Alert.alert("Error ⚠️", "Failed to log mood. Try again");
+      Toast.show({
+        type: "error",
+        text1: "Error ⚠️",
+        text2: "Failed to log mood. Try again!",
+        visibilityTime: 4000,
+        position: "top",
+        autoHide: true,
+      });
     }
   };
 
