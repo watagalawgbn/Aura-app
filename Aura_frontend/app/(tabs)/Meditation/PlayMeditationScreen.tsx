@@ -11,17 +11,20 @@ import styles from "./PlayMeditationScreen.styles";
 import { Feather } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Audio, AVPlaybackStatus } from "expo-av";
-import { getAudioUrl, getMeditationImageUrl } from "@/app/services/playMeditationService";
+import {
+  getAudioUrl,
+  getMeditationImageUrl,
+} from "@/app/services/playMeditationService";
 import Toast from "react-native-toast-message";
 
 const PlayMeditationScreen = () => {
   const router = useRouter();
   //read params passed from previous screen
-  const { title, filename, imageId } = useLocalSearchParams(); 
+  const { title, filename, imageId } = useLocalSearchParams();
 
   //make sure parameters are in string format(not array)
   const titleString = Array.isArray(title) ? title[0] : title;
-  const filenameString = Array.isArray(filename)? filename[0]: filename;
+  const filenameString = Array.isArray(filename) ? filename[0] : filename;
   const imageIdString = Array.isArray(imageId) ? imageId[0] : imageId;
 
   //manager audio and UI state
@@ -165,7 +168,7 @@ const PlayMeditationScreen = () => {
   }, [isPlaying]);
 
   // Update UI based on current playback status
-  const onPlaybackStatusUpdate = async(status: AVPlaybackStatus) => {
+  const onPlaybackStatusUpdate = async (status: AVPlaybackStatus) => {
     if (!status.isLoaded || !("durationMillis" in status)) {
       return;
     }

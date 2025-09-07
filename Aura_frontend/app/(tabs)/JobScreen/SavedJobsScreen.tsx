@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, StatusBar, FlatList, ActivityIndicator } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import apiClient from "@/app/services/apiClient";
 import JobCard from "@/app/components/JobCard/JobCard";
@@ -54,6 +54,7 @@ export default function SavedJobsScreen() {
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 20 }}>
+      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <BackButton title="Saved Jobs" />
       {jobs.length === 0 ? (
         <Text style={{ textAlign: "center", marginTop: 20 }}>
