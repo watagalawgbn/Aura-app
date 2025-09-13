@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser({ id: decoded.id, name: decoded.name, email: decoded.email });
     } catch (error) {
       console.error("Login error", error);
+      throw new Error("Failed to log in!");
     }
   };
 
