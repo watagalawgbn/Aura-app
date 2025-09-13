@@ -21,6 +21,7 @@ export default function Assessment() {
   const [loading, setLoading] = useState(true); //loading state
   const [error, setError] = useState<string | null>(null); //error state
   const [selectedOption, setSelectedOption] = useState<{[index: number]: Answer;}>({}); //store user's answers
+
   const isOptionSelected = selectedOption[currentQuestionIndex] !== undefined; //check if the user has selected a option
 
   const fadeAnim = useRef(new Animated.Value(0)).current; //animation value
@@ -72,7 +73,7 @@ export default function Assessment() {
   const handleBack = () => {
     if (currentQuestionIndex === 0) {
       //first question, go back to home
-      router.navigate("/(tabs)/Home/HomeScreen");
+      router.push("/(tabs)/Home/HomeScreen");
     } else {
       //otherwise go to back one step
       setCurrentQuestionIndex(currentQuestionIndex - 1);
