@@ -69,7 +69,7 @@ export default function Assessment() {
         });
       } catch (error) {
         console.error("Failed to submit assessment", error);
-        throw new Error;
+        throw new Error("Failed to submit assessment");
       }
     }
   };
