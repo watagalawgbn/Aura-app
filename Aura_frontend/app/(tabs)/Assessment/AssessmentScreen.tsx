@@ -8,19 +8,24 @@ import {
   StatusBar,
 } from "react-native";
 import styles from "./AssessmentScreen.styles";
-import { fetchAssessmentQuestions, submitAssessmentAnswers } from "../../services/assessmentService";
+import {
+  fetchAssessmentQuestions,
+  submitAssessmentAnswers,
+} from "../../services/assessmentService";
 import { Question, Answer } from "@/types/assessment";
 import { ProgressBar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-
 
 export default function Assessment() {
   const [questions, setQuestions] = useState<Question[]>([]); //question list
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); //current question index
   const [loading, setLoading] = useState(true); //loading state
   const [error, setError] = useState<string | null>(null); //error state
-  const [selectedOption, setSelectedOption] = useState<{[index: number]: Answer;}>({}); //store user's answers
+  const [selectedOption, setSelectedOption] = useState<{
+    [index: number]: Answer;
+  }>({}); //store user's answers
+
   const isOptionSelected = selectedOption[currentQuestionIndex] !== undefined; //check if the user has selected a option
 
   const fadeAnim = useRef(new Animated.Value(0)).current; //animation value
@@ -32,7 +37,7 @@ export default function Assessment() {
       try {
         const data = await fetchAssessmentQuestions(); //call the service
         setQuestions(data);
-      } catch{
+      } catch {
         setError("Failed to load assessment questions");
       } finally {
         setLoading(false);
@@ -64,6 +69,7 @@ export default function Assessment() {
         });
       } catch (error) {
         console.error("Failed to submit assessment", error);
+        throw new Error;
       }
     }
   };
@@ -72,22 +78,34 @@ export default function Assessment() {
   const handleBack = () => {
     if (currentQuestionIndex === 0) {
       //first question, go back to home
-      router.navigate("/(tabs)/Home/HomeScreen");
+      router.push("/(tabs)/Home/HomeScreen");
     } else {
       //otherwise go to back one step
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-      fadeIn();
+      fadeOut(() => {
+        setCurrentQuestionIndex(currentQuestionIndex - 1);
+        fadeIn();
+      });
     }
   };
 
   //-------------ANIMATION-----------------------
   const fadeIn = () => {
-    fadeAnim.setValue(0);
+    fadeAnim.setValue(1); //reset opacity back to 0 (invisible)
     Animated.timing(fadeAnim, {
-      toValue: 1,
+      toValue: 1, //animate from 0 → 1
       duration: 500,
       useNativeDriver: true,
     }).start();
+  };
+
+  const fadeOut = (onComplete?: () => void) => {
+    Animated.timing(fadeAnim, {
+      toValue: 0, // animate from current value → 0
+      duration: 500,
+      useNativeDriver: true,
+    }).start(() => {
+      if(onComplete) onComplete();
+    });
   };
 
   //start fade-in when questions load
@@ -146,7 +164,7 @@ export default function Assessment() {
         </Text>
 
         <Text style={styles.currentQuestion}>{currentQuestion.question}?</Text>
-        
+
         {/* options */}
         {currentQuestion.options.map((opt) => {
           const isSelected =
@@ -164,10 +182,7 @@ export default function Assessment() {
                   },
                 }))
               }
-              style={[
-                styles.options,
-                isSelected && styles.selectedOption,
-              ]}
+              style={[styles.options, isSelected && styles.selectedOption]}
             >
               <Text
                 style={{
@@ -183,10 +198,7 @@ export default function Assessment() {
 
       <TouchableOpacity
         onPress={handleNext}
-        style={[
-          styles.nextButton,
-          { opacity: isOptionSelected ? 1 : 0.5 },
-        ]}
+        style={[styles.nextButton, { opacity: isOptionSelected ? 1 : 0.5 }]}
         disabled={!isOptionSelected}
       >
         <Text style={{ color: "white", fontWeight: "bold" }}>Next</Text>

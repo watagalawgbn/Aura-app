@@ -1,7 +1,7 @@
 //services/assessmentService.tsx
 
 import apiClient from './apiClient';
-import { Question, Option, Answer } from '@/types/assessment';
+import { Question, Answer } from '@/types/assessment';
 
 //--------------GET QUESTIONS----------------
 export const fetchAssessmentQuestions = async (): Promise<Question[]> => {

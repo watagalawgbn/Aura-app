@@ -25,7 +25,7 @@ export const toggleTaskCompletion = async (taskId: string, completed: boolean) =
     return res.data; //return updated task
   } catch (err) {
     console.error("Error toggling task completion", err);
-    throw err;
+    throw new Error("Failed toggling task completion!");
   }
 };
 
@@ -62,7 +62,7 @@ export const getTasks = async (userId: string) => {
     return res.data.tasks; // backend should return { tasks: Task[] }
   } catch (err) {
     console.error("Error fetching tasks", err);
-    return [];
+    throw new Error("Error fetching tasks!");
   }
 };
 

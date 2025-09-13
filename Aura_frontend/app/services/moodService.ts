@@ -22,7 +22,7 @@ export const getMoods = async (range: "week" | "month" | "all" = "week") => {
     return res.data; // backend returns array of moods
   } catch (error) {
     console.error("Error fetching moods: ", error);
-    return [];
+    throw new Error("Failed to fetch mood!");
   }
 };
 
@@ -34,7 +34,7 @@ export const getCurrentMood = async (): Promise<string | null> => {
     return moods[moods.length - 1].mood; // take the latest mood
   } catch (error) {
     console.error("Error fetching current mood:", error);
-    return null;
+   throw new Error("Failed to fetch the current mood!");
   }
 };
 
