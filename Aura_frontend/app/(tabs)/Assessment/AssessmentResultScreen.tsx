@@ -1,10 +1,8 @@
 import { router, useLocalSearchParams } from "expo-router";
 import React from "react";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   StatusBar,
 } from "react-native";
@@ -17,11 +15,8 @@ export default function AssessmentResult() {
   const { scores, recommendations } = useLocalSearchParams();
 
   // Parse JSON params 
-  const parsedScores = typeof scores === "string" ? JSON.parse(scores) : scores;
-  const parsedRecs =
-    typeof recommendations === "string"
-      ? JSON.parse(recommendations)
-      : recommendations;
+  const parsedScores = JSON.parse(scores as string);
+  const parsedRecs = JSON.parse(recommendations as string);
 
   const phqScore = parsedScores.PHQ?.totalScore ?? 0;
   const phqSeverity = parsedScores.PHQ?.severity ?? "Minimal";
@@ -42,6 +37,11 @@ export default function AssessmentResult() {
 
   let status = "";
   let recommendationText = "";
+
+  const hasMeditations = parsedRecs?.meditations?.length > 0;
+  const hasBreathings = parsedRecs?.breathings?.length > 0;
+  const hasRecommendations = hasMeditations || hasBreathings;
+
   if (overallPercent <= 25) {
     status = "You're doing well!";
     recommendationText = "Keep practicing healthy habits.";
@@ -100,13 +100,12 @@ export default function AssessmentResult() {
       </View>
 
       {/* Recommended Actions - Only show if there are recommendations */}
-      {(parsedRecs?.meditations?.length > 0 ||
-        parsedRecs?.breathings?.length > 0) && (
+      {hasRecommendations && ( 
         <>
           <Text style={styles.sectionHeader}>Small Steps Toward Balance</Text>
 
           {/* Meditations subsection */}
-          {parsedRecs?.meditations?.length > 0 && (
+          {hasMeditations && (
             <>
               <Text style={styles.sectionSubheader}>Guided Meditations</Text>
               {parsedRecs.meditations.map((item: any) => (
@@ -132,7 +131,7 @@ export default function AssessmentResult() {
           )}
 
           {/* Breathing exercises subsection */}
-          {parsedRecs?.breathings?.length > 0 && (
+          {hasBreathings && (
             <>
               <Text style={styles.sectionSubheader}>Breathing Exercises</Text>
               {parsedRecs.breathings.map((item: any) => (

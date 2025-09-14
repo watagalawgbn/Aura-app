@@ -3,6 +3,12 @@ export type Option = {
     value: number;
 };
 
+export type OptionProps = {
+  option: { label: string; value: number };
+  isSelected: boolean;
+  onSelect: () => void;
+};
+
 export type Question = {
     id: string;
     question: string;

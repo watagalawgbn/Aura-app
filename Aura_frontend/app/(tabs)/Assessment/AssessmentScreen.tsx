@@ -12,10 +12,23 @@ import {
   fetchAssessmentQuestions,
   submitAssessmentAnswers,
 } from "../../services/assessmentService";
-import { Question, Answer } from "@/types/assessment";
+import { Question, Answer, OptionProps } from "@/types/assessment";
 import { ProgressBar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+
+const Option: React.FC<OptionProps> = ({ option, isSelected, onSelect }) => {
+  return (
+    <TouchableOpacity
+      onPress={onSelect}
+      style={[styles.options, isSelected && styles.selectedOption]}
+    >
+      <Text style={{ color: isSelected ? "#4CAF50" : "black" }}>
+        {option.label}
+      </Text>
+    </TouchableOpacity>
+  );
+};
 
 export default function Assessment() {
   const [questions, setQuestions] = useState<Question[]>([]); //question list
@@ -104,7 +117,7 @@ export default function Assessment() {
       duration: 500,
       useNativeDriver: true,
     }).start(() => {
-      if(onComplete) onComplete();
+      if (onComplete) onComplete();
     });
   };
 
@@ -141,7 +154,7 @@ export default function Assessment() {
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
       <TouchableOpacity onPress={handleBack} style={styles.handleBackButton}>
-        <Ionicons name="arrow-back" size={22} color="black" />
+        <Ionicons name="arrow-back" size={22} color="#000000" />
       </TouchableOpacity>
 
       <Animated.View style={{ opacity: fadeAnim }}>
@@ -166,34 +179,25 @@ export default function Assessment() {
         <Text style={styles.currentQuestion}>{currentQuestion.question}?</Text>
 
         {/* options */}
-        {currentQuestion.options.map((opt) => {
-          const isSelected =
-            selectedOption[currentQuestionIndex]?.answer === opt.value;
-          return (
-            <TouchableOpacity
-              key={`${currentQuestion.id}-${opt.value}`}
-              onPress={() =>
-                setSelectedOption((prev) => ({
-                  ...prev,
-                  [currentQuestionIndex]: {
-                    id: currentQuestion.id,
-                    type: currentQuestion.type,
-                    answer: opt.value,
-                  },
-                }))
-              }
-              style={[styles.options, isSelected && styles.selectedOption]}
-            >
-              <Text
-                style={{
-                  color: isSelected ? "#4CAF50" : "black",
-                }}
-              >
-                {opt.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+        {currentQuestion.options.map((opt) => (
+          <Option
+            key={`${currentQuestion.id}-${opt.value}`} //combine questionId + option value (e.g. "q1-2")
+            option={opt}
+            isSelected={
+              selectedOption[currentQuestionIndex]?.answer === opt.value
+            }
+            onSelect={() => {
+              setSelectedOption((prev) => ({
+                ...prev,
+                [currentQuestionIndex]: {
+                  id: currentQuestion.id,
+                  type: currentQuestion.type,
+                  answer: opt.value,
+                },
+              }));
+            }}
+          />
+        ))}
       </Animated.View>
 
       <TouchableOpacity
