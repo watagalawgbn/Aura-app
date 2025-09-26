@@ -1,3 +1,5 @@
+//(tabs)/jobScreen/[id].tsx
+
 import { useLocalSearchParams } from "expo-router"; // to read params passed from JobCard
 import {
   ScrollView,

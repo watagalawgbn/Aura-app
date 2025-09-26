@@ -12,7 +12,7 @@ const JobListingSchema = new mongoose.Schema({
   employmentType: String,
   postedAtUTC: String,
   applyLink: String,
-  source: { type: String, default: "jsearch" } // who gave us this job
+  source: { type: String, default: "jsearch" } // who gave this job
 }, { timestamps: true });
 
 // TTL: auto-delete after ~30 days (2592000s) to keep cache fresh

@@ -154,19 +154,7 @@ const SignUp: React.FC = () => {
             />
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity style={styles.googleButton} onPress={() => {}}>
-          <View style={styles.googleContent}>
-            <Image
-              source={{
-                uri: "https://img.icons8.com/?size=100&id=17949&format=png&color=000000",
-              }}
-              style={styles.googleIcon}
-            />
-            <Text style={styles.googleText}>Sign in with Google</Text>
-          </View>
-        </TouchableOpacity>
-
+        
         <TouchableOpacity onPress={handleSignUp} style={styles.mainButton}>
           <Text style={styles.mainButtonText}>Sign Up</Text>
         </TouchableOpacity>

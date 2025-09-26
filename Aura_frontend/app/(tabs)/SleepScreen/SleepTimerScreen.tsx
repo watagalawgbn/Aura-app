@@ -24,7 +24,7 @@ const WAKE_MIN = 0;
 const WAKE_MAX = 24 * 60;
 
 const toDisplay = (mins: number) => {
-  const m = ((mins % 1440) + 1440) % 1440; // wrap
+  const m = ((mins % 1440) + 1440) % 1440; // 11PM → 1380
   const h24 = Math.floor(m / 60);
   const min = m % 60;
   const ampm = h24 >= 12 ? "PM" : "AM";
@@ -33,8 +33,7 @@ const toDisplay = (mins: number) => {
   return `${h12}:${mm}${ampm}`;
 };
 
-// midnight should live at the end of the bedtime slider (value = 1440),
-// but logically it's 0 minutes. These helpers keep UX + math happy.
+// midnight at the end of the bedtime slider (value = 1440),
 const bedToSlider = (bed: number) => (bed === 0 ? 1440 : bed);
 const sliderToBed = (v: number) => (v === 1440 ? 0 : v);
 

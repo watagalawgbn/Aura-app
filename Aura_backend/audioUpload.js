@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config({ path: '../.env' });
 const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
@@ -11,6 +11,7 @@ const mongoURI = process.env.MONGO_URI;
 const audioDir = path.join(__dirname, "src", "uploads", "audio");
 const imageDir = path.join(__dirname, "src", "uploads", "images");
 
+//node audioUpload.js
 console.log("Uploading from directory:", audioDir);
 console.log("Audio files:", fs.readdirSync(audioDir));
 console.log("Image files:", fs.readdirSync(imageDir));
@@ -18,7 +19,7 @@ console.log("Image files:", fs.readdirSync(imageDir));
 //get duration of audio file in seconds using ffprobe
 async function getDurationSeconds(filePath) {
   try {
-    const output = execSync(`ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`);
+    const output = execSync(`ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`); 
     return parseFloat(output.toString().trim());
   } catch (err) {
     console.log('Error getting duration for file:', filePath, err.message);

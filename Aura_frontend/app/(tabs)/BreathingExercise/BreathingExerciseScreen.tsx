@@ -24,7 +24,6 @@ import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
 import { saveBreathingSession } from "@/app/services/breathingService";
 import Toast from "react-native-toast-message";
 
-
 const { width } = Dimensions.get("window");
 const CIRCLE_SIZE = width * 0.5;
 const PROGRESS_CIRCLE_SIZE = CIRCLE_SIZE + 100; // outer progress circle size
@@ -110,7 +109,6 @@ export default function BreathingExercise() {
     let currentPhase: Phase = "in";
     setPhase(currentPhase);
     setSeconds(phaseDurations[currentPhase]);
-    animatePhase(currentPhase);
     setSessionStartTime(Date.now());
 
     //countdown for seconds display
@@ -143,21 +141,25 @@ export default function BreathingExercise() {
 
   //---------------STOP SESSION------------------------
   const stopBreathing = (save = true) => {
+    // stop any active animations
     cancelAnimation(scale);
     cancelAnimation(progress);
 
+    //clear scheduled timers( phase change and countdown)
     if (intervalRef.current) clearTimeout(intervalRef.current);
     if (countdownInterval.current) clearInterval(countdownInterval.current);
 
+    //reset visuals + state back to initial values
     scale.value = 1;
     progress.value = 0;
     setPhase("in");
     setSeconds(4);
 
     if (save && sessionStartTime) {
+      //calculate the session duration in seconds
       const durationSec = Math.floor((Date.now() - sessionStartTime) / 1000);
-      setTotalDuration(durationSec);
-      saveBreathingSession(durationSec);
+      setTotalDuration(durationSec); // update state
+      saveBreathingSession(durationSec); // service call
 
       Toast.show({
         type: "success",
@@ -166,7 +168,7 @@ export default function BreathingExercise() {
         position: "bottom",
         visibilityTime: 4000,
         autoHide: true,
-      })
+      });
     }
   };
 
@@ -175,21 +177,23 @@ export default function BreathingExercise() {
     if (isPlaying) {
       startBreathing();
     } else {
-      stopBreathing(true); // only save when user explicitly pauses
+      stopBreathing(false); // only save when user explicitly pauses
     }
     return () => stopBreathing(false); // cleanup without saving
   }, [isPlaying]);
 
+  
   //---------------ANIMATED STYLES-----------------
+  // scale the inner circle as breathing changes
   const animatedCircleStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
 
-  const animatedStroke = useAnimatedProps(() => {
-    return {
-      strokeDashoffset: CIRCUMFERENCE - CIRCUMFERENCE * progress.value,
-    };
-  });
+  // control how much of the circle stroke is visible
+  // progress = 0 → hidden, progress = 1 → full circle
+  const animatedStroke = useAnimatedProps(() => ({
+    strokeDashoffset: CIRCUMFERENCE - CIRCUMFERENCE * progress.value,
+  }));
 
   return (
     <SafeAreaView style={styles.container}>

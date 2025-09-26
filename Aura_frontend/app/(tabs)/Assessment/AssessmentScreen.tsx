@@ -16,6 +16,7 @@ import { Question, Answer, OptionProps } from "@/types/assessment";
 import { ProgressBar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import Toast from "react-native-toast-message";
 
 const Option: React.FC<OptionProps> = ({ option, isSelected, onSelect }) => {
   return (
@@ -72,6 +73,14 @@ export default function Assessment() {
 
       try {
         const result = await submitAssessmentAnswers(formattedAnswers);
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: "Successfully submitted the answers",
+          autoHide: true,
+          position: "top",
+          visibilityTime: 3000,
+        });
         //navigate to results screen with scores
         router.push({
           pathname: "/(tabs)/Assessment/AssessmentResultScreen",
@@ -103,7 +112,7 @@ export default function Assessment() {
 
   //-------------ANIMATION-----------------------
   const fadeIn = () => {
-    fadeAnim.setValue(1); //reset opacity back to 0 (invisible)
+    fadeAnim.setValue(0); //reset opacity back to 0 (invisible)
     Animated.timing(fadeAnim, {
       toValue: 1, //animate from 0 → 1
       duration: 500,
