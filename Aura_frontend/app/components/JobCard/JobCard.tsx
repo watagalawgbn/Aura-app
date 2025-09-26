@@ -16,7 +16,7 @@ type JobCardProps = {
 const JobCard = ({ job, initialSaved = false, onRemove }: JobCardProps) => {
   const router = useRouter();
   const [saved, setSaved] = useState(initialSaved);
-  const [savedId, setSavedId] = useState(job.savedId || null);
+  const [savedId, setSavedId] = useState(job.savedId || null); //stores backend’s SavedJob._id for deletion.
 
   const toggleSave = async () => {
     try {

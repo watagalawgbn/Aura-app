@@ -84,7 +84,7 @@ exports.getRecommendations = async (req, res) => {
       };
     });
 
-    //result.length will be up to 10 when num_pages is 1
+    //if the num_pages is 1 result.length will be up to 10  
     res.json({ query, count: results.length, remoteApplied: !!remote, results });
   } catch (e) {
     console.log("Error: ", e);
@@ -137,8 +137,8 @@ exports.saveJob = async (req, res) => {
 
     // create or keep the user listing link in savedJob
     const saved = await SavedJob.findOneAndUpdate(
-      { userId, jobRef: listing._id },  // unique by user + job listing
-      { userId, jobRef: listing._id },  // no extra payload yet (status/notes later)
+      { userId, jobRef: listing._id },  // checks if the user has already saved this job.
+      { userId, jobRef: listing._id },  // if it doesn’t exist, create it with these fields
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
 

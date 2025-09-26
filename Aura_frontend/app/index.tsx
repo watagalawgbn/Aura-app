@@ -17,7 +17,7 @@ const Index = () => {
     }
   }, [user, loading]);
 
-  //While loading, show splash
+  //While loading , show activityIndicator
   if(loading){
     return(
       <View style={{flex: 1, justifyContent: "center", alignItems:"center"}}>

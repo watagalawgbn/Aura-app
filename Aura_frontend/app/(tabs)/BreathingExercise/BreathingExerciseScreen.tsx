@@ -177,7 +177,7 @@ export default function BreathingExercise() {
     if (isPlaying) {
       startBreathing();
     } else {
-      stopBreathing(true); // only save when user explicitly pauses
+      stopBreathing(false); // only save when user explicitly pauses
     }
     return () => stopBreathing(false); // cleanup without saving
   }, [isPlaying]);

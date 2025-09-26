@@ -16,7 +16,6 @@ export default function SavedJobsScreen() {
         if (!userId) return;
 
         const res = await apiClient.get(`/api/jobs/saved/${userId}`);
-        // `res.data` is an array of SavedJob docs with populated `jobRef`
         const normalized = res.data.map((saved: any) => ({
           savedId: saved._id, // SavedJob document id
           id: saved.jobRef.jobId, // external job id

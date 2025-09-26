@@ -93,7 +93,7 @@ const SleepBetterScreen = () => {
             onPress={() =>
               router.push({
                 pathname: "/(tabs)/SleepScreen/SleepTimerScreen",
-                params: { date: selectedDate }, // ✅ pass selected date
+                params: { date: selectedDate }, // pass selected date
               })
             }
             style={styles.timeSelectorButton}

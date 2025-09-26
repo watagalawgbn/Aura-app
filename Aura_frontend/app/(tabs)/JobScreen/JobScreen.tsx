@@ -86,9 +86,9 @@ const JobScreen = () => {
       try {
         const saved = await AsyncStorage.getItem("jobData");
         if (saved) {
-          const { jobs: savedJobs, skills: savedSkills } = JSON.parse(saved);
-          setJobs(savedJobs || []);
-          setSkillList(savedSkills || []);
+          const { jobs: savedJobs, skills: savedSkills } = JSON.parse(saved); //turn saved data back into an object 
+          setJobs(savedJobs || []); //load jobs into state
+          setSkillList(savedSkills || []); //load skills into state
         }
       } catch (err) {
         console.error("Error loading jobs from storage: ", err);
@@ -100,9 +100,9 @@ const JobScreen = () => {
   //----------------------CLEAR STATE ON EXIT--------------
   useFocusEffect(
     useCallback(() => {
-      // screen focused → keep state
+      //keep state
       return () => {
-        // screen unfocused → clear jobs + skills
+        // clear jobs + skills
         setJobs([]);
         setSkillList([]);
         setSkills("");
@@ -130,7 +130,7 @@ const JobScreen = () => {
   //----------------AUTO FETCH ON PAGE CHANGE------------------
   useEffect(() => {
     if (currentPage > 1) {
-      handleJobs();
+      handleJobs(); // fetch jobs for the next page
     }
   }, [currentPage]);
 

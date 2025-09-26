@@ -4,7 +4,7 @@ import apiClient from './apiClient';
 import { Question, Answer } from '@/types/assessment';
 
 //--------------GET QUESTIONS----------------
-export const fetchAssessmentQuestions = async (): Promise<Question[]> => {
+export const fetchAssessmentQuestions = async (): Promise<Question[]> => { //return type strictly defined as a list of questions.
     try{
         const res = await apiClient.get(`/api/assessment`);
         return res.data; //return an array of questions
@@ -16,7 +16,7 @@ export const fetchAssessmentQuestions = async (): Promise<Question[]> => {
 };
 
 //--------------SUBMIT ANSWERS----------------
-export const submitAssessmentAnswers = async(answers: Answer[]) => {
+export const submitAssessmentAnswers = async(answers: Answer[]) => { //return type
     try{
         const res = await apiClient.post(`/api/assessment/submit`, {answers});
         return res.data; //return scores and severity results
